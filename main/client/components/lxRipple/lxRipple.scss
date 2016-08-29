@@ -1,0 +1,320 @@
+
+ @-webkit-keyframes ripple {
+   0% {
+     opacity: 0.3;
+     -webkit-transform: scale(0); }
+   100% {
+     opacity: 0;
+     -webkit-transform: scale(2.5); } }
+ @-moz-keyframes ripple {
+   0% {
+     opacity: 0.3;
+     -moz-transform: scale(0); }
+   100% {
+     opacity: 0;
+     -moz-transform: scale(2.5); } }
+ @keyframes ripple {
+   0% {
+     opacity: 0.3;
+     -webkit-transform: scale(0);
+     -moz-transform: scale(0);
+     -ms-transform: scale(0);
+     -o-transform: scale(0);
+     transform: scale(0); }
+   100% {
+     opacity: 0;
+     -webkit-transform: scale(2.5);
+     -moz-transform: scale(2.5);
+     -ms-transform: scale(2.5);
+     -o-transform: scale(2.5);
+     transform: scale(2.5); } }
+ @-webkit-keyframes spin {
+   0% {
+     -webkit-transform: rotate(0deg); }
+   100% {
+     -webkit-transform: rotate(359deg); } }
+ @-moz-keyframes spin {
+   0% {
+     -moz-transform: rotate(0deg); }
+   100% {
+     -moz-transform: rotate(359deg); } }
+ @keyframes spin {
+   0% {
+     -webkit-transform: rotate(0deg);
+     -moz-transform: rotate(0deg);
+     -ms-transform: rotate(0deg);
+     -o-transform: rotate(0deg);
+     transform: rotate(0deg); }
+   100% {
+     -webkit-transform: rotate(359deg);
+     -moz-transform: rotate(359deg);
+     -ms-transform: rotate(359deg);
+     -o-transform: rotate(359deg);
+     transform: rotate(359deg); } }
+ .fab {
+   display: inline-block;
+   vertical-align: top;
+   position: relative; }
+   .fab:hover .fab__primary .mdi:nth-of-type(1) {
+     opacity: 0;
+     -webkit-transform: rotate(45deg);
+     -moz-transform: rotate(45deg);
+     -ms-transform: rotate(45deg);
+     -o-transform: rotate(45deg);
+     transform: rotate(45deg); }
+   .fab:hover .fab__primary .mdi:last-child {
+     opacity: 1;
+     -webkit-transform: rotate(0);
+     -moz-transform: rotate(0);
+     -ms-transform: rotate(0);
+     -o-transform: rotate(0);
+     transform: rotate(0); }
+   .fab:hover .fab__actions {
+     pointer-events: auto; }
+     .fab:hover .fab__actions .btn {
+       opacity: 1; }
+     .fab:hover .fab__actions.fab__actions--up .btn {
+       -webkit-transform: scale(1) translateY(-12px);
+       -moz-transform: scale(1) translateY(-12px);
+       -ms-transform: scale(1) translateY(-12px);
+       -o-transform: scale(1) translateY(-12px);
+       transform: scale(1) translateY(-12px); }
+     .fab:hover .fab__actions.fab__actions--right .btn {
+       -webkit-transform: scale(1) translateX(12px);
+       -moz-transform: scale(1) translateX(12px);
+       -ms-transform: scale(1) translateX(12px);
+       -o-transform: scale(1) translateX(12px);
+       transform: scale(1) translateX(12px); }
+     .fab:hover .fab__actions.fab__actions--down .btn {
+       -webkit-transform: scale(1) translateY(12px);
+       -moz-transform: scale(1) translateY(12px);
+       -ms-transform: scale(1) translateY(12px);
+       -o-transform: scale(1) translateY(12px);
+       transform: scale(1) translateY(12px); }
+     .fab:hover .fab__actions.fab__actions--left .btn {
+       -webkit-transform: scale(1) translateX(-12px);
+       -moz-transform: scale(1) translateX(-12px);
+       -ms-transform: scale(1) translateX(-12px);
+       -o-transform: scale(1) translateX(-12px);
+       transform: scale(1) translateX(-12px); }
+
+ .fab__primary .mdi {
+   position: absolute;
+   top: 0;
+   right: 0;
+   bottom: 0;
+   left: 0;
+   -webkit-transition-property: opacity, -webkit-transform;
+   -moz-transition-property: opacity, -moz-transform;
+   transition-property: opacity, transform;
+   -webkit-transition-duration: 0.4s;
+   -moz-transition-duration: 0.4s;
+   transition-duration: 0.4s;
+   -webkit-transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+   -moz-transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+   transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1); }
+   .fab__primary .mdi:nth-of-type(1) {
+     opacity: 1;
+     -webkit-transform: rotate(0);
+     -moz-transform: rotate(0);
+     -ms-transform: rotate(0);
+     -o-transform: rotate(0);
+     transform: rotate(0); }
+   .fab__primary .mdi:last-child {
+     opacity: 0;
+     -webkit-transform: rotate(-45deg);
+     -moz-transform: rotate(-45deg);
+     -ms-transform: rotate(-45deg);
+     -o-transform: rotate(-45deg);
+     transform: rotate(-45deg); }
+
+ .fab__actions {
+   z-index: 999;
+   pointer-events: none; }
+   .fab__actions .btn {
+     display: block;
+     opacity: 0;
+     -webkit-transform: scale(0.6);
+     -moz-transform: scale(0.6);
+     -ms-transform: scale(0.6);
+     -o-transform: scale(0.6);
+     transform: scale(0.6);
+     -webkit-transition-property: opacity, -webkit-transform;
+     -moz-transition-property: opacity, -moz-transform;
+     transition-property: opacity, transform;
+     -webkit-transition-duration: 0.4s;
+     -moz-transition-duration: 0.4s;
+     transition-duration: 0.4s;
+     -webkit-transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+     -moz-transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+     transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1); }
+
+ .fab__actions--up .btn:nth-child(1),
+ .fab__actions--left .btn:nth-child(1) {
+   -webkit-transition-delay: 0.2s;
+   -moz-transition-delay: 0.2s;
+   transition-delay: 0.2s; }
+ .fab__actions--up .btn:nth-child(2),
+ .fab__actions--left .btn:nth-child(2) {
+   -webkit-transition-delay: 0.1s;
+   -moz-transition-delay: 0.1s;
+   transition-delay: 0.1s; }
+ .fab__actions--up .btn:nth-child(3),
+ .fab__actions--left .btn:nth-child(3) {
+   -webkit-transition-delay: 0.06667s;
+   -moz-transition-delay: 0.06667s;
+   transition-delay: 0.06667s; }
+ .fab__actions--up .btn:nth-child(4),
+ .fab__actions--left .btn:nth-child(4) {
+   -webkit-transition-delay: 0.05s;
+   -moz-transition-delay: 0.05s;
+   transition-delay: 0.05s; }
+ .fab__actions--up .btn:nth-child(5),
+ .fab__actions--left .btn:nth-child(5) {
+   -webkit-transition-delay: 0.04s;
+   -moz-transition-delay: 0.04s;
+   transition-delay: 0.04s; }
+ .fab__actions--up .btn:nth-child(6),
+ .fab__actions--left .btn:nth-child(6) {
+   -webkit-transition-delay: 0.03333s;
+   -moz-transition-delay: 0.03333s;
+   transition-delay: 0.03333s; }
+ .fab__actions--up .btn:nth-child(7),
+ .fab__actions--left .btn:nth-child(7) {
+   -webkit-transition-delay: 0.02857s;
+   -moz-transition-delay: 0.02857s;
+   transition-delay: 0.02857s; }
+ .fab__actions--up .btn:nth-child(8),
+ .fab__actions--left .btn:nth-child(8) {
+   -webkit-transition-delay: 0.025s;
+   -moz-transition-delay: 0.025s;
+   transition-delay: 0.025s; }
+ .fab__actions--up .btn:nth-child(9),
+ .fab__actions--left .btn:nth-child(9) {
+   -webkit-transition-delay: 0.02222s;
+   -moz-transition-delay: 0.02222s;
+   transition-delay: 0.02222s; }
+ .fab__actions--up .btn:nth-child(10),
+ .fab__actions--left .btn:nth-child(10) {
+   -webkit-transition-delay: 0.02s;
+   -moz-transition-delay: 0.02s;
+   transition-delay: 0.02s; }
+
+ .fab__actions--down .btn:nth-child(1),
+ .fab__actions--right .btn:nth-child(1) {
+   -webkit-transition-delay: 0.05s;
+   -moz-transition-delay: 0.05s;
+   transition-delay: 0.05s; }
+ .fab__actions--down .btn:nth-child(2),
+ .fab__actions--right .btn:nth-child(2) {
+   -webkit-transition-delay: 0.1s;
+   -moz-transition-delay: 0.1s;
+   transition-delay: 0.1s; }
+ .fab__actions--down .btn:nth-child(3),
+ .fab__actions--right .btn:nth-child(3) {
+   -webkit-transition-delay: 0.15s;
+   -moz-transition-delay: 0.15s;
+   transition-delay: 0.15s; }
+ .fab__actions--down .btn:nth-child(4),
+ .fab__actions--right .btn:nth-child(4) {
+   -webkit-transition-delay: 0.2s;
+   -moz-transition-delay: 0.2s;
+   transition-delay: 0.2s; }
+ .fab__actions--down .btn:nth-child(5),
+ .fab__actions--right .btn:nth-child(5) {
+   -webkit-transition-delay: 0.25s;
+   -moz-transition-delay: 0.25s;
+   transition-delay: 0.25s; }
+ .fab__actions--down .btn:nth-child(6),
+ .fab__actions--right .btn:nth-child(6) {
+   -webkit-transition-delay: 0.3s;
+   -moz-transition-delay: 0.3s;
+   transition-delay: 0.3s; }
+ .fab__actions--down .btn:nth-child(7),
+ .fab__actions--right .btn:nth-child(7) {
+   -webkit-transition-delay: 0.35s;
+   -moz-transition-delay: 0.35s;
+   transition-delay: 0.35s; }
+ .fab__actions--down .btn:nth-child(8),
+ .fab__actions--right .btn:nth-child(8) {
+   -webkit-transition-delay: 0.4s;
+   -moz-transition-delay: 0.4s;
+   transition-delay: 0.4s; }
+ .fab__actions--down .btn:nth-child(9),
+ .fab__actions--right .btn:nth-child(9) {
+   -webkit-transition-delay: 0.45s;
+   -moz-transition-delay: 0.45s;
+   transition-delay: 0.45s; }
+ .fab__actions--down .btn:nth-child(10),
+ .fab__actions--right .btn:nth-child(10) {
+   -webkit-transition-delay: 0.5s;
+   -moz-transition-delay: 0.5s;
+   transition-delay: 0.5s; }
+
+ .fab__actions--left,
+ .fab__actions--right {
+   display: -webkit-box;
+   display: -moz-box;
+   display: box;
+   display: -webkit-flex;
+   display: -moz-flex;
+   display: -ms-flexbox;
+   display: flex;
+   -webkit-box-orient: horizontal;
+   -moz-box-orient: horizontal;
+   box-orient: horizontal;
+   -webkit-box-direction: normal;
+   -moz-box-direction: normal;
+   box-direction: normal;
+   -webkit-flex-direction: row;
+   -moz-flex-direction: row;
+   flex-direction: row;
+   -ms-flex-direction: row;
+   -webkit-box-lines: single;
+   -moz-box-lines: single;
+   box-lines: single;
+   -webkit-flex-wrap: nowrap;
+   -moz-flex-wrap: nowrap;
+   -ms-flex-wrap: nowrap;
+   flex-wrap: nowrap; }
+
+ .fab__actions--up {
+   position: absolute;
+   bottom: 56px;
+   left: 7px; }
+   .fab__actions--up .btn {
+     margin-bottom: 8px; }
+
+ .fab__actions--down {
+   position: absolute;
+   top: 56px;
+   left: 7px; }
+   .fab__actions--down .btn {
+     margin-top: 8px; }
+
+ .fab__actions--left {
+   position: absolute;
+   right: 56px;
+   bottom: 7px; }
+   .fab__actions--left .btn {
+     margin-right: 8px; }
+
+ .fab__actions--right {
+   position: absolute;
+   bottom: 7px;
+   left: 56px; }
+   .fab__actions--right .btn {
+     margin-left: 8px; }
+
+ .fab__progress {
+   position: absolute;
+   top: -4px;
+   left: -4px;
+   height: 64px;
+   width: 64px; }
+   .fab__progress .progress-container {
+     -webkit-transform-origin: left top;
+     -moz-transform-origin: left top;
+     -ms-transform-origin: left top;
+     -o-transform-origin: left top;
+     transform-origin: left top; }

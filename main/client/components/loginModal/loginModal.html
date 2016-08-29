@@ -1,0 +1,100 @@
+<modal id = "login-modal">
+  <i class="remove icon" ng-click = "closeDialog()"></i>
+  <div class = "modal-content">
+    <div class = "background-container">
+      <div class = "contents">
+        <div class = "modal-logo-container">
+          TakhShila
+        </div>
+      </div>
+    </div>
+
+    <div class = "tab tab-default" ng-class = "{'active': current == 'default'}">
+      <div class="ui center aligned basic segment">
+        <button class="ui facebook button" lx-ripple>
+          <i class="facebook icon"></i>
+          Login with Facebook
+        </button>
+        <br>
+        <button class="ui google plus button" lx-ripple>
+          <i class="google plus icon"></i>
+          Login with Google Plus
+        </button>
+        <div class="ui horizontal divider">
+          Or
+        </div>
+        <div class="ui form">
+          <div class="field">
+            <lx-text-field label="Email ID">
+                <input type="text" ng-model="loginForm.email">
+            </lx-text-field>
+            <lx-text-field label="Password">
+                <input type="password" ng-model="loginForm.password">
+            </lx-text-field>
+          </div>
+          <br>
+          <button ng-init = "logging = false" ng-click = "logging = !logging" ng-class = "{'loading': logging}" class="ui button primary" lx-ripple>Login</button>
+          <div class = "row">
+            <div class = "col-md-12 col-sm-12 col-xs-12 login-modal-additional-link">
+              <a ng-href = "#" ng-click = "current = 'forgot-password'">Forgot Password ?</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class = "login-modal-bottom">
+        <div class="ui horizontal divider">
+          &nbsp;
+        </div>
+        New to TakhShila? <a ng-href = "#" ng-click = "current = 'signup'">Sign Up</a>
+      </div>
+    </div>
+
+    <div class = "tab tab-signup" ng-class = "{'active': current == 'signup'}">
+      <div class="ui center aligned basic segment">
+        <div class="heading-text">
+          <i class="angle left icon" ng-click = "current = 'default'"></i>
+          Sign Up With Your Email
+        </div>
+        <div class="ui form">
+          <div class="field">
+            <lx-text-field label="Email ID">
+                <input type="text" ng-model="loginForm.Email">
+            </lx-text-field>
+            <lx-text-field label="Password">
+                <input type="password" ng-model="loginForm.password">
+            </lx-text-field>
+          </div>
+          <br>
+          <button ng-init = "registering = false" ng-click = "registering = !registering" ng-class = "{'loading': registering}" class="ui button primary" lx-ripple>Login</button>
+        </div>
+      </div>
+      <div class = "login-modal-bottom">
+        <div class="ui horizontal divider">
+          &nbsp;
+        </div>
+        Already have an account? <a ng-href = "#" ng-click = "current = 'default'">Login</a>
+      </div>
+    </div>
+
+    <div class = "tab tab-forgot-password" ng-class = "{'active': current == 'forgot-password'}">
+      <div class="ui center aligned basic segment">
+        <div class="heading-text">
+          <i class="angle left icon" ng-click = "current = 'default'"></i>
+          Retrieve Password
+        </div>
+        <p>
+          Enter the email address associated with your account, and we'll email you a link to reset your password.
+        </p>
+        <div class="ui form">
+          <div class="field">
+            <lx-text-field label="Email ID">
+                <input type="text" ng-model="loginForm.Email">
+            </lx-text-field>
+          </div>
+          <br>
+          <button ng-init = "reseting = false" ng-click = "reseting = !reseting" ng-class = "{'loading': reseting}" class="ui button primary" lx-ripple>Rsete Password</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</modal>

@@ -13,10 +13,14 @@
    }
  }
 
+
 // Component styles are injected through grunt
 // injector
 @import 'account/login/login.scss';
 @import 'admin/admin.scss';
 @import 'main/main.scss';
+@import 'loginModal/loginModal.scss';
+@import 'lxRipple/lxRipple.scss';
+@import 'lxTextField/lxTextField.scss';
 @import 'navbar/navbar.scss';
 // endinjector
