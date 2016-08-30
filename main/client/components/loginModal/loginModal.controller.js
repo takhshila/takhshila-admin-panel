@@ -3,12 +3,16 @@
 angular.module('takhshilaApp')
   .controller('LoginModalCtrl', function ($mdDialog, $scope) {
     $scope.message = 'Hello';
-    $scope.loginForm = {
+    $scope.loginFormData = {
       email: null,
-      password: null
+      password: null,
     }
 
     $scope.closeDialog = function() {
       $mdDialog.hide();
     };
+
+    $scope.validate = function(form){
+
+    }
   });

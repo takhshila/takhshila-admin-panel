@@ -24,21 +24,32 @@
           Or
         </div>
         <div class="ui form">
-          <div class="field">
-            <lx-text-field label="Email ID">
-                <input type="text" ng-model="loginForm.email">
-            </lx-text-field>
-            <lx-text-field label="Password">
-                <input type="password" ng-model="loginForm.password">
-            </lx-text-field>
-          </div>
-          <br>
-          <button ng-init = "logging = false" ng-click = "logging = !logging" ng-class = "{'loading': logging}" class="ui button primary" lx-ripple>Login</button>
-          <div class = "row">
-            <div class = "col-md-12 col-sm-12 col-xs-12 login-modal-additional-link">
-              <a ng-href = "#" ng-click = "current = 'forgot-password'">Forgot Password ?</a>
+          <form class="" name = "loginForm" novalidate>
+            <div class="field" ng-class = "{'has-error': loginForm.email.$invalid && loginForm.email.$touched}">
+              <lx-text-field label="Email ID" error = "loginForm.email.$invalid && loginForm.email.$touched">
+                  <input name = "email" type="email" ng-model="loginFormData.email" ng-pattern="/^.+@.+\..+$/" required>
+              </lx-text-field>
+              <div class="help-block" ng-messages="loginForm.email.$error" ng-if="loginForm.email.$touched">
+                  <p ng-message="pattern">Invalid Email.</p>
+                  <p ng-message="required">This field is required.</p>
+              </div>
             </div>
-          </div>
+            <div class="field" ng-class = "{'has-error': loginForm.password.$invalid && loginForm.password.$touched}">
+              <lx-text-field label="Password">
+                  <input name = "password" type="password" ng-model="loginFormData.password" required>
+              </lx-text-field>
+              <div class="help-block" ng-messages="loginForm.password.$error" ng-if="loginForm.password.$touched">
+                  <p ng-message="required">This field is required.</p>
+              </div>
+            </div>
+            <br>
+            <button ng-init = "logging = false" ng-click = "logging = !logging" ng-class = "{'loading': logging}" class="ui button primary" lx-ripple>Login</button>
+            <div class = "row">
+              <div class = "col-md-12 col-sm-12 col-xs-12 login-modal-additional-link">
+                <a ng-href = "#" ng-click = "current = 'forgot-password'">Forgot Password ?</a>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
       <div class = "login-modal-bottom">
