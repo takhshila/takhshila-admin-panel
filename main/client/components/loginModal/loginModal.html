@@ -27,7 +27,7 @@
           <form class="" name = "loginForm" novalidate>
             <div class="field" ng-class = "{'has-error': loginForm.email.$invalid && loginForm.email.$touched}">
               <lx-text-field label="Email ID" error = "loginForm.email.$invalid && loginForm.email.$touched">
-                  <input name = "email" type="email" ng-model="loginFormData.email" ng-pattern="/^.+@.+\..+$/" required focus-on = "loginForm.$submitted && loginForm.email.$invalid">
+                  <input name = "email" type="email" ng-model="loginFormData.email" ng-pattern="/^.+@.+\..+$/" required>
               </lx-text-field>
               <div class="help-block" ng-messages="loginForm.email.$error" ng-if="loginForm.email.$touched">
                   <p ng-message="pattern">Invalid Email.</p>
@@ -36,7 +36,7 @@
             </div>
             <div class="field" ng-class = "{'has-error': loginForm.password.$invalid && loginForm.password.$touched}">
               <lx-text-field label="Password">
-                  <input name = "password" type="password" ng-model="loginFormData.password" required focus-on = "loginForm.$submitted && loginForm.password.$invalid">
+                  <input name = "password" type="password" ng-model="loginFormData.password" required>
               </lx-text-field>
               <div class="help-block" ng-messages="loginForm.password.$error" ng-if="loginForm.password.$touched">
                   <p ng-message="required">This field is required.</p>
@@ -70,13 +70,13 @@
           <form class="" name = "registerForm" novalidate>
             <div class="field" ng-class = "{'has-error': registerForm.firstName.$invalid && registerForm.firstName.$touched}">
               <lx-text-field label="First Name" error = "registerForm.firstName.$invalid && registerForm.firstName.$touched">
-                  <input name = "firstName" type="text" ng-model="registerFormData.name.firstName" required focus-on = "registerForm.$submitted && registerForm.firstName.$invalid">
+                  <input name = "firstName" type="text" ng-model="registerFormData.name.firstName" required>
               </lx-text-field>
               <div class="help-block" ng-messages="registerForm.firstName.$error" ng-if="registerForm.firstName.$touched">
                   <p ng-message="required">This field is required.</p>
               </div>
               <lx-text-field label="Last Name" error = "registerForm.lastName.$invalid && registerForm.lastName.$touched">
-                  <input name = "lastName" type="text" ng-model="registerFormData.name.lastName" required focus-on = "registerForm.$submitted && registerForm.lastName.$invalid">
+                  <input name = "lastName" type="text" ng-model="registerFormData.name.lastName" required>
               </lx-text-field>
               <div class="help-block" ng-messages="registerForm.lastName.$error" ng-if="registerForm.lastName.$touched">
                   <p ng-message="required">This field is required.</p>
@@ -85,16 +85,17 @@
             </div>
             <div class="field" ng-class = "{'has-error': registerForm.email.$invalid && registerForm.email.$touched}">
               <lx-text-field label="Email ID" error = "registerForm.email.$invalid && registerForm.email.$touched">
-                  <input name = "email" type="email" ng-model="registerFormData.email" ng-pattern="/^.+@.+\..+$/" required focus-on = "registerForm.$submitted && registerForm.email.$invalid">
+                  <input name = "email" type="email" ng-model="registerFormData.email" ng-pattern="/^.+@.+\..+$/" required>
               </lx-text-field>
               <div class="help-block" ng-messages="registerForm.email.$error" ng-if="registerForm.email.$touched">
                   <p ng-message="pattern">Invalid Email.</p>
                   <p ng-message="required">This field is required.</p>
+                  <p ng-message="serverError">{{registerForm.email.$error.errorMessage}}</p>
               </div>
             </div>
             <div class="field" ng-class = "{'has-error': registerForm.password.$invalid && registerForm.password.$touched}">
               <lx-text-field label="Password">
-                  <input name = "password" type="password" ng-model="registerFormData.password" required focus-on = "registerForm.$submitted && registerForm.password.$invalid">
+                  <input name = "password" type="password" ng-model="registerFormData.password" required>
               </lx-text-field>
               <div class="help-block" ng-messages="registerForm.password.$error" ng-if="registerForm.password.$touched">
                   <p ng-message="required">This field is required.</p>
@@ -130,7 +131,7 @@
           <form class="" name = "forgotPasswordForm" novalidate>
             <div class="field" ng-class = "{'has-error': forgotPasswordForm.email.$invalid && forgotPasswordForm.email.$touched}">
               <lx-text-field label="Email ID" error = "forgotPasswordForm.email.$invalid && forgotPasswordForm.email.$touched">
-                  <input name = "email" type="email" ng-model="forgotPasswordFormData.email" ng-pattern="/^.+@.+\..+$/" required focus-on = "forgotPasswordForm.$submitted && forgotPasswordForm.email.$invalid">
+                  <input name = "email" type="email" ng-model="forgotPasswordFormData.email" ng-pattern="/^.+@.+\..+$/" required>
               </lx-text-field>
               <div class="help-block" ng-messages="forgotPasswordForm.email.$error" ng-if="forgotPasswordForm.email.$touched">
                   <p ng-message="pattern">Invalid Email.</p>
