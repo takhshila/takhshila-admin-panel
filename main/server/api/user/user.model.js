@@ -6,14 +6,17 @@ var crypto = require('crypto');
 var authTypes = ['github', 'twitter', 'facebook', 'google'];
 
 var UserSchema = new Schema({
-  name: String,
-  email: { type: String, lowercase: true },
+  name: {
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true }
+  },
+  email: { type: String, lowercase: true, required: true },
   role: {
     type: String,
     default: 'user'
   },
-  hashedPassword: String,
-  provider: String,
+  hashedPassword: {type:String, required: true},
+  provider: {type:String, required: true},
   salt: String,
   facebook: {},
   twitter: {},
@@ -60,12 +63,12 @@ UserSchema
  */
 
 // Validate empty email
-UserSchema
-  .path('email')
-  .validate(function(email) {
-    if (authTypes.indexOf(this.provider) !== -1) return true;
-    return email.length;
-  }, 'Email cannot be blank');
+// UserSchema
+//   .path('email')
+//   .validate(function(email) {
+//     if (authTypes.indexOf(this.provider) !== -1) return true;
+//     return email.length;
+//   }, 'Email cannot be blank');
 
 // Validate empty password
 UserSchema

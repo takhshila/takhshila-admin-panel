@@ -13,18 +13,18 @@
     <!-- Collection of nav links, forms, and other content for toggling -->
     <div id="navbarCollapse" class="collapse navbar-collapse">
         <ul class="nav navbar-nav navbar-right">
-          <li class="featured"><a href="#" ng-click = "showAddDialog($event)">Login / SignUp</a></li>
-          <!-- <li class="dropdown">
-              <a data-toggle="dropdown" class="dropdown-toggle" href="#">Messages <b class="caret"></b></a>
+          <li ng-if = "!loggedIn" class="featured"><a href="#" ng-click = "showAddDialog($event)">Login / SignUp</a></li>
+          <li ng-if = "loggedIn" class="dropdown">
+              <a data-toggle="dropdown" class="dropdown-toggle" href="#">Account <b class="caret"></b></a>
               <ul role="menu" class="dropdown-menu">
-                  <li><a href="#">Inbox</a></li>
-                  <li><a href="#">Drafts</a></li>
-                  <li><a href="#">Sent Items</a></li>
+                  <li><a href="#">Profile</a></li>
+                  <li><a href="#">Classes</a></li>
+                  <li><a href="#">Settings</a></li>
                   <li class="divider"></li>
-                  <li><a href="#">Trash</a></li>
+                  <li><a href="#" ng-click = "logout()">Logout</a></li>
               </ul>
-          </li> -->
-          <li ng-class="{'sliding-middle-out': !navStick}"><a href="#">Are you a teacher?</a></li>
+          </li>
+          <li ng-if = "!loggedIn" ng-class="{'sliding-middle-out': !navStick}"><a href="#">Are you a teacher?</a></li>
         </ul>
     </div>
   </div>

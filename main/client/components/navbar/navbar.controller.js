@@ -1,15 +1,23 @@
 'use strict';
 
 angular.module('takhshilaApp')
-  .controller('NavbarCtrl', function ($scope, $mdDialog) {
-
+  .controller('NavbarCtrl', function ($scope, $mdDialog, Auth) {
+    $scope.$watch(function(){
+      return Auth.isLoggedIn();
+    }, function(data){
+      $scope.loggedIn = data;
+    });
     $scope.showAddDialog = function($event){
-      $event.preventDefault();
       var parentEl = angular.element(document.body);
       $mdDialog.show({
-        parent: parentEl,
         templateUrl: 'components/loginModal/loginModal.html',
-        controller: 'LoginModalCtrl'
+        controller: 'LoginModalCtrl',
+        parent: parentEl,
+        targetEvent: $event,
+        disableParentScroll: true
       });
+    }
+    $scope.logout = function(){
+      Auth.logout();
     }
   });

@@ -34,13 +34,13 @@ angular.module('takhshilaApp')
 			function focusUpdate()
 			{
 				scope.data.focused = true;
-				scope.$apply();
+				//scope.$apply();
 			}
 
 			function blurUpdate()
 			{
 				scope.data.focused = false;
-				scope.$apply();
+				//scope.$apply();
 			}
 
 			function modelUpdate()
@@ -51,7 +51,7 @@ angular.module('takhshilaApp')
 			function valueUpdate()
 			{
 				modelUpdate();
-				scope.$apply();
+				//scope.$apply();
 			}
 
 			function updateTextareaHeight()
