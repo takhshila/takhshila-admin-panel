@@ -2,7 +2,10 @@
 
 angular.module('takhshilaApp')
   .controller('LoginModalCtrl', function ($mdDialog, $scope, Auth) {
-    $scope.message = 'Hello';
+    $scope.loginError = false;
+    $scope.loginErrorMessage = null;
+    $scope.registerError = false;
+    $scope.registerErrorMessage = null;
     $scope.loginFormData = {
       email: null,
       password: null,
@@ -36,10 +39,12 @@ angular.module('takhshilaApp')
         Auth.login($scope.loginFormData)
         .then(function(data){
           $scope.logging = false;
-          console.log(data);
+          $scope.closeDialog()
         }, function(err){
           $scope.logging = false;
-          console.log(err);
+          $scope.loginError = true;
+          $scope.loginErrorMessage = err.message;
+          angular.element("[name='" + loginForm.$name + "'] [name='email']").focus();
         })
       }
     }

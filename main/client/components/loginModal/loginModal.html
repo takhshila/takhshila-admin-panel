@@ -25,6 +25,11 @@
         </div>
         <div class="ui form">
           <form class="" name = "loginForm" novalidate>
+            <div class="field form-error" ng-class = "{'has-error': loginError}">
+              <div class="help-block">
+                  <p>{{loginErrorMessage}}</p>
+              </div>
+            </div>
             <div class="field" ng-class = "{'has-error': loginForm.email.$invalid && loginForm.email.$touched}">
               <lx-text-field label="Email ID" error = "loginForm.email.$invalid && loginForm.email.$touched">
                   <input name = "email" type="email" ng-model="loginFormData.email" ng-pattern="/^.+@.+\..+$/" required>
@@ -43,7 +48,7 @@
               </div>
             </div>
             <br>
-            <button ng-init = "logging = false" ng-click = "logging = !logging" ng-class = "{'loading': logging}" class="ui button primary" lx-ripple>Login</button>
+            <button ng-init = "logging = false" ng-click = "validate(loginForm)" ng-class = "{'loading': logging}" class="ui button primary" lx-ripple>Login</button>
             <div class = "row">
               <div class = "col-md-12 col-sm-12 col-xs-12 login-modal-additional-link">
                 <a ng-href = "#" ng-click = "current = 'forgot-password'">Forgot Password ?</a>
@@ -68,6 +73,11 @@
         </div>
         <div class="ui form">
           <form class="" name = "registerForm" novalidate>
+            <div class="field form-error" ng-class = "{'has-error': registerError}">
+              <div class="help-block">
+                  <p>{{registerErrorMessage}}</p>
+              </div>
+            </div>
             <div class="field" ng-class = "{'has-error': registerForm.firstName.$invalid && registerForm.firstName.$touched}">
               <lx-text-field label="First Name" error = "registerForm.firstName.$invalid && registerForm.firstName.$touched">
                   <input name = "firstName" type="text" ng-model="registerFormData.name.firstName" required>

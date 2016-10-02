@@ -3,12 +3,13 @@
 angular.module('takhshilaApp')
   .controller('ShellCtrl', function ($mdSidenav, $mdDialog, $scope, $location, Auth) {
 
-    
+
     $scope.isLoggedIn = Auth.isLoggedIn;
     $scope.isAdmin = Auth.isAdmin;
     $scope.getCurrentUser = Auth.getCurrentUser;
 
     $scope.logout = function() {
+      console.log("Logout Called from shell");
       Auth.logout();
       $location.path('/login');
     };

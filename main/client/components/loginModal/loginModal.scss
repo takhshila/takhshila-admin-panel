@@ -6,6 +6,10 @@ md-dialog.md-default-theme, md-dialog{
   height: 520px;
   width: 620px;
 }
+#login-modal .form-error p{
+  text-align: center;
+  margin-top: 10px;
+}
 #login-modal .modal-content{
   height: 100%;
   overflow: hidden;
@@ -107,6 +111,7 @@ md-dialog.md-default-theme, md-dialog{
   width: 100%;
   margin-bottom: 10px !important;
   padding: 15px 5px !important;
+  margin-top: 10px;
 }
 #login-modal .tab .login-modal-additional-link{
   text-align: right;
