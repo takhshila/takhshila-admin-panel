@@ -20,4 +20,7 @@ angular.module('takhshilaApp')
     $scope.logout = function(){
       Auth.logout();
     }
+    $scope.$watch('scroll', function(value){
+      // console.log(value);
+    });
   });

@@ -1,0 +1,89 @@
+.static-header .text-heading { margin-bottom: -10px; z-index: 20; }
+.static-header .text-heading p { color:#fff; }
+.static-header .container { padding-bottom: 8%;}
+.static-header .list-inline { padding: 30px 0; }
+.static-header .list-inline li { margin-left: 15px; margin-right: 15px; }
+.static-header .video-wrapper { position: absolute; top:0; bottom: 0; left: 0; right: 0; z-index: 10; }
+
+#video-section .video-wrapper{float:left;}
+
+.static-header .video-wrapper .container { position: absolute; bottom: 0; left: 0; right: 0; }
+.static-header .video-container { position: absolute; bottom: 0; left: 0; right: 0; margin-left: auto; margin-right: auto; max-width: 755px; z-index: 99; }
+
+.embed-container { position: relative; padding-bottom: 56.25%; padding-top: 30px; height: 0; overflow: hidden; max-width: 100%; height: auto; z-index: 9; }
+.embed-container .EDGE,
+.embed-container iframe,
+.embed-container object,
+.embed-container embed { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+.embed-container iframe { border: 0; }
+
+/* Hero section */
+#hero .btn-primary:hover, #hero .btn-primary.hovered { background: #7a26e8;  border:1px solid #7323dc;}
+#hero .list-inline { margin:0; }
+.static-header { background: url('../img/background/particle-bg.png') no-repeat center center; -webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover; background-attachment: fixed; min-height: 400px; position: relative; }
+.text-heading { position: relative; width: 100%; left: 0; right: 0; text-align: center; padding-top: 120px; }
+.text-heading p { font-size: 23px; font-weight: 300; }
+.static-header h4 { text-align: center; display: block; position: absolute; bottom: 20px; left: 0; right: 0; width: 100%; margin-bottom: 0; }
+#register-page .text-heading { padding-top: 125px; }
+
+
+
+.section { min-height: 50px; padding-top: 30px; padding-bottom: 30px; position: relative; text-align: center; }
+.section .section-header { margin-top: 30px; margin-bottom: 80px; }
+
+#features-list article { margin:0px 0px 60px 0px; padding: 0px 10px; }
+#features-list article  .icon { font-size:3.3em; }
+#features-list article  p { font-size:15px; color:#8A8A8A;}
+#features-list article:hover .icon { opacity:0.6; }
+#features-list .h7 { margin:12px 0px 13px 0px; }
+
+/* ------- Particle.js --------- */
+#particles-js {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #3A264C;
+  background-image: url("");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 50% 50%;
+}
+
+/* ---- stats.js ---- */
+
+.count-particles{
+  background: #000022;
+  position: absolute;
+  top: 48px;
+  left: 0;
+  width: 80px;
+  color: #13E8E9;
+  font-size: .8em;
+  text-align: left;
+  text-indent: 4px;
+  line-height: 14px;
+  padding-bottom: 2px;
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: bold;
+}
+
+.js-count-particles{
+  font-size: 1.1em;
+}
+
+#stats,
+.count-particles{
+  display: none;
+  -webkit-user-select: none;
+  margin-top: 5px;
+  margin-left: 5px;
+}
+
+#stats{
+  border-radius: 3px 3px 0 0;
+  overflow: hidden;
+}
+
+.count-particles{
+  border-radius: 0 0 3px 3px;
+  }

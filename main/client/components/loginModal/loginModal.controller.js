@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('takhshilaApp')
-  .controller('LoginModalCtrl', function ($mdDialog, $scope, Auth) {
+  .controller('LoginModalCtrl', function ($mdDialog, $scope, $state, Auth) {
     $scope.loginError = false;
     $scope.loginErrorMessage = null;
     $scope.registerError = false;
@@ -19,7 +19,8 @@ angular.module('takhshilaApp')
         lastName: null
       },
       email: null,
-      password: null
+      password: null,
+      isTeacher: ($state.current.name === "teach") ? true: false
     }
 
     $scope.closeDialog = function() {

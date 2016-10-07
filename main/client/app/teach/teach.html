@@ -1,0 +1,204 @@
+<script src='http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js'></script>
+
+<script>
+/* ---- particles.js config ---- */
+
+particlesJS("particles-js", {
+  "particles": {
+    "number": {
+      "value": 30,
+      "density": {
+        "enable": false,
+        "value_area": 100
+      }
+    },
+    "color": {
+      "value": "#ffffff"
+    },
+    "shape": {
+      "type": "circle",
+      "stroke": {
+        "width": 0,
+        "color": "#000000"
+      },
+      "polygon": {
+        "nb_sides": 5
+      },
+      "image": {
+        "src": "img/github.svg",
+        "width": 100,
+        "height": 100
+      }
+    },
+    "opacity": {
+      "value": 0.5,
+      "random": false,
+      "anim": {
+        "enable": false,
+        "speed": 1,
+        "opacity_min": 0.1,
+        "sync": false
+      }
+    },
+    "size": {
+      "value": 2,
+      "random": true,
+      "anim": {
+        "enable": false,
+        "speed": 40,
+        "size_min": 0.1,
+        "sync": false
+      }
+    },
+    "line_linked": {
+      "enable": true,
+      "distance": 150,
+      "color": "#ffffff",
+      "opacity": 0.4,
+      "width": 1
+    },
+    "move": {
+      "enable": true,
+      "speed": 1,
+      "direction": "none",
+      "random": false,
+      "straight": false,
+      "out_mode": "out",
+      "bounce": false,
+      "attract": {
+        "enable": false,
+        "rotateX": 600,
+        "rotateY": 1200
+      }
+    }
+  },
+  "interactivity": {
+    "detect_on": "canvas",
+    "events": {
+      "onhover": {
+        "enable": false,
+        "mode": "grab"
+      },
+      "onclick": {
+        "enable": true,
+        "mode": "push"
+      },
+      "resize": true
+    },
+    "modes": {
+      "grab": {
+        "distance": 140,
+        "line_linked": {
+          "opacity": 1
+        }
+      },
+      "bubble": {
+        "distance": 400,
+        "size": 40,
+        "duration": 2,
+        "opacity": 8,
+        "speed": 3
+      },
+      "repulse": {
+        "distance": 200,
+        "duration": 0.4
+      },
+      "push": {
+        "particles_nb": 4
+      },
+      "remove": {
+        "particles_nb": 2
+      }
+    }
+  },
+  "retina_detect": true
+});
+//# sourceURL=pen.js
+</script>
+
+<navbar></navbar>
+
+<div id="color-landing-page" class="static-header light clearfix">
+  <div id="particles-js"></div>
+  <div class="text-heading">
+    <h1 class="animated" data-animation="bounceInDown" data-delay="0">Teach people online &mdash; Make <span class="highlight">money</span>!</h1>
+    <p class="animated" data-animation="fadeInDown" data-delay="500">From the comfort of your home and time</p>
+  </div>
+  <div class = "clearfix clear"></div>
+  <br><br><br>
+  <div class="container">
+    <div class="row">
+      <div class = "col-md-12 col-sm-12 col-xs-12 center">
+        <button ng-init = "registering = false" ng-click="open_login_modal();" ng-class = "{'loading': registering}" class="big ui button primary border-radius" lx-ripple>Apply to Teach</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section id="features-list" class="section dark">
+  <div class="container">
+    <div class="section-header center visible">
+      <h2>Features & <span class="highlight">Benefits</span></h2>
+    </div>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+      <article class="center">
+        <i class="rupee icon icon-active"></i>
+        <span class="h7">Make good money</span>
+        <p class="thin">Sit amet, consectetur adipiscing elit. In hac divisione rem ipsam prorsus probo elegantiam desidero. </p>
+      </article>
+    </div>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+      <article class="center">
+        <i class="icon location arrow icon-active"></i>
+        <span class="h7">Work from Anywhere</span>
+        <p class="thin">Sit amet, consectetur adipiscing elit. In hac divisione rem ipsam prorsus probo elegantiam desidero. </p>
+      </article>
+    </div>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+      <article class="center">
+        <i class="icon wait icon-active"></i>
+        <span class="h7">Teach Anytime</span>
+        <p class="thin">Sit amet, consectetur adipiscing elit. In hac divisione rem ipsam prorsus probo elegantiam desidero. </p>
+      </article>
+    </div>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+      <article class="center">
+        <i class="icon visa icon-active"></i>
+        <span class="h7">Multiple Payout Options</span>
+        <p class="thin">Sit amet, consectetur adipiscing elit. In hac divisione rem ipsam prorsus probo elegantiam desidero. </p>
+      </article>
+    </div>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+      <article class="center">
+        <i class="icon users icon-active"></i>
+        <span class="h7">International Community</span>
+        <p class="thin">Sit amet, consectetur adipiscing elit. In hac divisione rem ipsam prorsus probo elegantiam desidero. </p>
+      </article>
+    </div>
+    <div class="col-md-6 col-sm-6 col-xs-12">
+      <article class="center">
+        <i class="icon child icon-active"></i>
+        <span class="h7">Be Your Own Boss</span>
+        <p class="thin">Sit amet, consectetur adipiscing elit. In hac divisione rem ipsam prorsus probo elegantiam desidero. </p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id = "about-video-section" class="section grayBg">
+  <div class="container">
+    <div class="section-header center visible">
+      <h2>The <span class="highlight">Pesonalized</span> Story</h2>
+    </div>
+    <div class="row">
+      <div class = "col-md-7 col-sm-12 col-xs-12">
+        <div class="embed-container">
+          <iframe src='http://player.vimeo.com/video/89527215?title=0&amp;byline=0&amp;portrait=0;api=1' allowFullScreen></iframe>
+        </div>
+      </div>
+      <div class = "col-md-5 col-sm-12 col-xs-12">
+        <p>This is a text related to the video</p>
+      </div>
+    </div>
+  </div>
+</section>

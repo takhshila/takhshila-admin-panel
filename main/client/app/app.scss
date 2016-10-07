@@ -13,12 +13,44 @@
    }
  }
 
+h1 { font-size: 58px; font-weight: 300; display: block; }
+h2 { font-size: 47px; font-weight: 300; display: block; }
+h3 { font-size: 34px; font-weight: 300; display: block; }
+h4 { font-size: 28px; font-weight: 300; display: block; }
+h5 { font-size: 24px; font-weight: 300; display: block; }
+h6 { font-size: 20px; font-weight: 700; display: block; }
+.h7 { font-size: 17px; font-weight: 700; display: block; }
+
+.highlight { color: #00918b; }
+h1, .h1, h2, .h2, h3, .h3, h4, .h4 { margin-top: 20px; margin-bottom: 20px; }
+h5, .h5, h6, .h6, .h7 { margin-top: 20px; margin-bottom: 10px; }
+
+p { font-size: 16px; line-height: 27px; color: #1D1D1D; }
+small { font-weight: 300; font-size: 15px; line-height: 26px; }
+
+a { color: #00918b; text-decoration: none; }
+a:hover, a:active, a:focus { color: #00918b; text-decoration: none; outline: none; }
+::selection { background-color: #00918b; color: #fff; }
+
+hr { width: 100%; border-top: 1px solid #E9E9E9; display: inline-block; }
+
+hr { width: 100%; border-top: 1px solid #E9E9E9; display: inline-block; }
+
+.light { color: #fff; background: #333; }
+.dark { color: #000; background: #fff; }
+.highlight { color: #00918b; }
+.center {text-align:center;}
+.resp-center {text-align:center;}
+
+
+.icon-active { color: #00918b; }
 
 // Component styles are injected through grunt
 // injector
 @import 'account/login/login.scss';
 @import 'admin/admin.scss';
 @import 'main/main.scss';
+@import 'teach/teach.scss';
 @import 'loginModal/loginModal.scss';
 @import 'lxRipple/lxRipple.scss';
 @import 'lxTextField/lxTextField.scss';

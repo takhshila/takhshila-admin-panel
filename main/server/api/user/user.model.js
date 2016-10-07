@@ -11,6 +11,7 @@ var UserSchema = new Schema({
     lastName: { type: String, required: true }
   },
   email: { type: String, lowercase: true, required: true },
+  isTeacher: { type: Boolean, default: false },
   role: {
     type: String,
     default: 'user'
@@ -44,7 +45,8 @@ UserSchema
   .get(function() {
     return {
       'name': this.name,
-      'role': this.role
+      'role': this.role,
+      'isTeacher' : this.isTeacher
     };
   });
 
@@ -54,7 +56,8 @@ UserSchema
   .get(function() {
     return {
       '_id': this._id,
-      'role': this.role
+      'role': this.role,
+      'isTeacher' : this.isTeacher
     };
   });
 
