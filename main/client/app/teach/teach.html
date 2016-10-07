@@ -121,7 +121,7 @@ particlesJS("particles-js", {
 <div id="color-landing-page" class="static-header light clearfix">
   <div id="particles-js"></div>
   <div class="text-heading">
-    <h1 class="animated" data-animation="bounceInDown" data-delay="0">Teach people online &mdash; Make <span class="highlight">money</span>!</h1>
+    <h1 class="animated" data-animation="bounceInDown" data-delay="0"><span class="highlight">Teach </span>people online!</h1>
     <p class="animated" data-animation="fadeInDown" data-delay="500">From the comfort of your home and time</p>
   </div>
   <div class = "clearfix clear"></div>
@@ -129,7 +129,7 @@ particlesJS("particles-js", {
   <div class="container">
     <div class="row">
       <div class = "col-md-12 col-sm-12 col-xs-12 center">
-        <button ng-init = "registering = false" ng-click="open_login_modal();" ng-class = "{'loading': registering}" class="big ui button primary border-radius" lx-ripple>Apply to Teach</button>
+        <button ng-init = "registering = false" ng-click = "showAddDialog($event)" ng-class = "{'loading': registering}" class="big ui button primary border-radius" lx-ripple>Apply to Teach</button>
       </div>
     </div>
   </div>
