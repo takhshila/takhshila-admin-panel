@@ -16,7 +16,10 @@
         <ul class="nav navbar-nav navbar-right">
           <li ng-if = "!loggedIn" class="featured"><a href="#" ng-click = "showAddDialog($event)">Login / SignUp</a></li>
           <li ng-if = "loggedIn" class="dropdown">
-              <a data-toggle="dropdown" class="dropdown-toggle" href="#">Account <b class="caret"></b></a>
+              <a data-toggle="dropdown" class="ui label dropdown-toggle" href="#">
+                <img class="ui right spaced avatar image" src="http://semantic-ui.com/images/avatar/small/elliot.jpg">
+                Pratik Raj <b class="caret"></b>
+              </a>
               <ul role="menu" class="dropdown-menu">
                   <li><a ui-sref="profile()">Profile</a></li>
                   <li><a href="#">Classes</a></li>

@@ -2,5 +2,5 @@
 
 angular.module('takhshilaApp')
   .controller('ProfileCtrl', function ($scope) {
-    $scope.message = 'Hello';
+    $scope.navStick = true;
   });
