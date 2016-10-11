@@ -6,6 +6,8 @@ angular.module('takhshilaApp')
       .state('teach', {
         url: '/teach',
         templateUrl: 'app/teach/teach.html',
-        controller: 'TeachCtrl'
+        controller: 'TeachCtrl',
+        authenticate: false,
+        navStick: false
       });
   });

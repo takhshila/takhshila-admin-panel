@@ -2,14 +2,5 @@
 
 angular.module('takhshilaApp')
   .controller('MainCtrl', function ($scope) {
-    $scope.scroll = null;
-    $scope.navStick = false;
 
-    $scope.$watch('scroll', function(value){
-      if(value > 400){
-        $scope.navStick = true;
-      }else{
-        $scope.navStick = false;
-      }
-    });
   });

@@ -1,6 +1,6 @@
 'use strict';
 
 angular.module('takhshilaApp')
-  .controller('ProfileCtrl', function ($scope) {
-    $scope.navStick = true;
+  .controller('ProfileCtrl', function ($rootScope, $scope) {
+    console.log($rootScope.currentUser);
   });

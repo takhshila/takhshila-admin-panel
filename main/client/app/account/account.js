@@ -17,12 +17,14 @@ angular.module('takhshilaApp')
         url: '/profile',
         templateUrl: 'app/account/profile/profile.html',
         controller: 'ProfileCtrl',
+        navStick: true,
         authenticate: true
       })
       .state('settings', {
         url: '/settings',
         templateUrl: 'app/account/settings/settings.html',
         controller: 'SettingsCtrl',
+        navStick: true,
         authenticate: true
       });
   });

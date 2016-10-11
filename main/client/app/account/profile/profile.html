@@ -1,11 +1,64 @@
 <navbar></navbar>
-<div class="container">
+<div class="container" id = "profile">
   <div class="row">
-    <div class="col-md-12 col-sm-12">
+    <div class="col-md-3 col-sm-3">
+      <div class="ui card">
+        <div class="image">
+          <img src="http://semantic-ui.com/images/avatar2/large/kristy.png">
+        </div>
+        <div class="content">
+          <a class="header">{{currentUser.name.firstName}}&nbsp;{{currentUser.name.lastName}}</a>
+          <div class="meta">
+            <span class="date">Joined in 2013</span>
+          </div>
+          <div class="description">
+            Kristy is an art director living in New York.
+          </div>
+        </div>
+        <div class="extra">
+          Rating:
+          <div class="ui star rating">
+            <i class="icon active"></i>
+            <i class="icon active"></i>
+            <i class="icon active"></i>
+            <i class="icon active"></i>
+          </div>
+        </div>
+      </div>
+      <div class="ui vertical steps">
+        <div class="active step">
+          <i class="truck icon"></i>
+          <div class="content">
+            <div class="title">Shipping</div>
+            <div class="description">Choose your shipping options</div>
+          </div>
+        </div>
+        <div class="step">
+          <i class="credit card icon"></i>
+          <div class="content">
+            <div class="title">Billing</div>
+            <div class="description">Enter billing information</div>
+          </div>
+        </div>
+        <div class="step">
+          <i class="info icon"></i>
+          <div class="content">
+            <div class="title">Confirm Order</div>
+            <div class="description">Verify order details</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-9 col-sm-9">
       <div class="ui attached message">
         <div class="header">
           Welcome to our site!
         </div>
+      </div>
+      <div class="ui segment">
+        <p>
+          This is the details
+        </p>
       </div>
     </div>
   </div>
