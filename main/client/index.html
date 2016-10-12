@@ -31,6 +31,9 @@
     <![endif]-->
 
     <!-- Add your site or application content here -->
+    <div id="mask" ng-show = "loading">
+        <div id="loader"></div>
+    </div>
     <div ng-class = "navStick ? 'body-margin-top' : ''" ui-view="" ng-controller = "InitCtrl"></div>
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->

@@ -1,7 +1,7 @@
 <navbar></navbar>
 <div class="container" id = "profile">
   <div class="row">
-    <div class="col-md-3 col-sm-3">
+    <div class="col-md-3 col-sm-3 left">
       <div class="ui card">
         <div class="image">
           <img src="http://semantic-ui.com/images/avatar2/large/kristy.png">
@@ -16,50 +16,99 @@
           </div>
         </div>
         <div class="extra">
-          Rating:
           <div class="ui star rating">
             <i class="icon active"></i>
             <i class="icon active"></i>
             <i class="icon active"></i>
             <i class="icon active"></i>
+            <i class="icon "></i>
           </div>
         </div>
       </div>
       <div class="ui vertical steps">
-        <div class="active step">
-          <i class="truck icon"></i>
+        <a class="active step">
           <div class="content">
-            <div class="title">Shipping</div>
-            <div class="description">Choose your shipping options</div>
+            <div class="description"><i class="info icon"></i>Details</div>
           </div>
-        </div>
-        <div class="step">
-          <i class="credit card icon"></i>
+        </a>
+        <a class="step">
           <div class="content">
-            <div class="title">Billing</div>
-            <div class="description">Enter billing information</div>
+            <div class="description"><i class="info icon"></i>Classes</div>
           </div>
-        </div>
-        <div class="step">
-          <i class="info icon"></i>
+        </a>
+        <a class="step">
           <div class="content">
-            <div class="title">Confirm Order</div>
-            <div class="description">Verify order details</div>
+            <div class="description"><i class="info icon"></i>Teachers</div>
           </div>
-        </div>
+        </a>
       </div>
     </div>
-    <div class="col-md-9 col-sm-9">
-      <div class="ui attached message">
-        <div class="header">
-          Welcome to our site!
+    <div class="col-md-9 col-sm-9 right">
+      <div class="row">
+        <div class="ui attached message">
+          <div class="header">
+            About {{currentUser.name.firstName}}
+          </div>
+        </div>
+        <div class="ui segment">
+          <p>
+            This is the details
+          </p>
         </div>
       </div>
-      <div class="ui segment">
-        <p>
-          This is the details
-        </p>
+
+      <div class="row" ng-if = "currentUser.isTeacher">
+        <div class="ui attached message">
+          <div class="header">
+            Specialization
+          </div>
+        </div>
+        <div class="ui segment">
+          <p>
+            This is the details
+          </p>
+        </div>
       </div>
+
+      <div class="row" ng-if = "currentUser.isTeacher">
+        <div class="ui attached message">
+          <div class="header">
+            Demo Videos
+          </div>
+        </div>
+        <div class="ui segment">
+          <p>
+            This is the details
+          </p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="ui attached message">
+          <div class="header">
+            Education & Experiences
+          </div>
+        </div>
+        <div class="ui segment">
+          <p>
+            This is the details
+          </p>
+        </div>
+      </div>
+
+      <div class="row" ng-if = "currentUser.isTeacher">
+        <div class="ui attached message">
+          <div class="header">
+            Reviews & Ratings
+          </div>
+        </div>
+        <div class="ui segment">
+          <p>
+            This is the details
+          </p>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>

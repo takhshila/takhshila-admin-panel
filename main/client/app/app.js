@@ -67,6 +67,7 @@ angular.module('takhshilaApp', [
   .run(function ($rootScope, $state, Auth) {
     // Redirect to login if route requires auth and you're not logged in
     $rootScope.$on('$stateChangeStart', function (event, next) {
+      $rootScope.isLoading = true;
       Auth.isLoggedInAsync(function(loggedIn) {
         if (next.authenticate && !loggedIn) {
           event.preventDefault();

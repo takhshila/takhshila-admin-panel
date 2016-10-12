@@ -1,6 +1,6 @@
 'use strict';
 
 angular.module('takhshilaApp')
-  .controller('MainCtrl', function ($scope) {
-
+  .controller('MainCtrl', function ($rootScope, $scope) {
+    console.log($rootScope.isLoading);
   });
