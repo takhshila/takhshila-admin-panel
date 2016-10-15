@@ -11,13 +11,15 @@ var UserSchema = new Schema({
     lastName: { type: String, required: true }
   },
   email: { type: String, lowercase: true, required: true },
+  about: { type: String },
+  status: { type: String },
   isTeacher: { type: Boolean, default: false },
   role: {
     type: String,
     default: 'user'
   },
-  hashedPassword: {type:String, required: true},
-  provider: {type:String, required: true},
+  hashedPassword: { type:String, required: true },
+  provider: { type:String, required: true },
   salt: String,
   facebook: {},
   twitter: {},
