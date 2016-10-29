@@ -1,0 +1,27 @@
+<modal id = "profile-pic-modal">
+  <div class = "modal-header">
+    <div class = "title">Crop Photo</div>
+    <i class="remove icon" ng-click = "closeDialog()"></i>
+  </div>
+  <div class = "modal-content">
+    <div ng-if="dataUrl" class="img-container">
+      <img ng-if="dataUrl" ng-src="{{dataUrl}}" width="500"
+           ng-cropper
+           ng-cropper-proxy="cropperProxy"
+           ng-cropper-show="showEvent"
+           ng-cropper-hide="hideEvent"
+           ng-cropper-options="options">
+    </div>
+
+    <div class="preview-container">
+      <img ng-src="{{preview.dataUrl}}">
+    </div>
+  </div>
+  <div class = "modal-footer">
+    <div class="ui buttons">
+      <button class="ui button" ng-click = "closeDialog()">Cancel</button>
+      <div class="or"></div>
+      <button class="ui primary button" ng-click = "scale(250)">Crop & Save</button>
+    </div>
+  </div>
+</modal>

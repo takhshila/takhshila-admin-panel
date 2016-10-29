@@ -24,4 +24,16 @@
       margin-bottom: 10px;
     }
   }
+  .img-container {
+    max-width: 800px;
+    float: left;
+  }
+
+  .preview-container {
+    float: right;
+  }
+
+  .preview-container img {
+    max-width: 200px;
+  }
 }

@@ -4,7 +4,11 @@
     <div class="col-md-3 col-sm-3 left">
       <div class="ui card">
         <div class="image">
-          <img src="http://semantic-ui.com/images/avatar2/large/kristy.png">
+          <img ng-src="{{currentUser.profilePhoto.dataURI}}" ng-click = "uploadProfilePic()">
+          <form id = "uploadProfilePicForm">
+            <input type="file" id = "uploadProfilePic" onchange="angular.element(this).scope().onFile(this.files[0])" style = "display:none;">
+          </form>
+          <i class="remove icon" ng-click = "closeDialog()"></i>
         </div>
         <div class="content">
           <a class="header">{{currentUser.name.firstName}}&nbsp;{{currentUser.name.lastName}}</a>
@@ -108,7 +112,6 @@
           </p>
         </div>
       </div>
-
     </div>
   </div>
 </div>

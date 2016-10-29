@@ -8,7 +8,8 @@ angular.module('takhshilaApp', [
   'ngMessages',
   'btford.socket-io',
   'ui.router',
-  'ngMaterial'
+  'ngMaterial',
+  'ngCropper'
 ])
   .config(function($mdIconProvider) {
     $mdIconProvider

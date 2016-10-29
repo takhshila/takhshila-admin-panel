@@ -78,6 +78,60 @@ exports.changePassword = function(req, res, next) {
     }
   });
 };
+/**
+ * Update my basic info
+ */
+exports.updateBasicInfo = function(req, res, next) {
+  var userId = req.user._id;
+  var basicInfo = req.body.basicInfo;
+  if(basicInfo === undefined || basicInfo === null) { return res.status(400).send('Invalid Value'); }
+
+  User.findById(userId, function (err, user) {
+    if (err) { return handleError(res, err); }
+    if(!user) { return res.status(404).send('Not Found'); }
+    user.basicInfo = String(basicInfo);
+    user.save(function (err) {
+      if (err) { return handleError(res, err); }
+      return res.status(200).json(user);
+    });
+  });
+};
+/**
+ * Update my status
+ */
+exports.updateStatus = function(req, res, next) {
+  var userId = req.user._id;
+  var status = req.body.status;
+  if(status === undefined || status === null) { return res.status(400).send('Invalid Value'); }
+
+  User.findById(userId, function (err, user) {
+    if (err) { return handleError(res, err); }
+    if(!user) { return res.status(404).send('Not Found'); }
+    user.status = String(status);
+    user.save(function (err) {
+      if (err) { return handleError(res, err); }
+      return res.status(200).json(user);
+    });
+  });
+};
+/**
+ * Update profile photo
+ */
+exports.updateProfilePhoto = function(req, res, next) {
+  var userId = req.user._id;
+  var profilePhoto = req.body.profilePhoto;
+  if(profilePhoto === undefined || profilePhoto === null) { return res.status(400).send('Invalid Image'); }
+
+  User.findById(userId, function (err, user) {
+    if (err) { return handleError(res, err); }
+    if(!user) { return res.status(404).send('Not Found'); }
+    user.profilePhoto.dataURI = profilePhoto;
+    user.save(function (err) {
+      if (err) { return handleError(res, err); }
+      return res.status(200).json(user);
+    });
+  });
+};
 
 /**
  * Get my info
@@ -99,3 +153,7 @@ exports.me = function(req, res, next) {
 exports.authCallback = function(req, res, next) {
   res.redirect('/');
 };
+
+function handleError(res, err) {
+  return res.status(500).send(err);
+}

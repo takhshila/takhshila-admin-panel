@@ -11,13 +11,34 @@ var UserSchema = new Schema({
     lastName: { type: String, required: true }
   },
   email: { type: String, lowercase: true, required: true },
-  about: { type: String },
-  status: { type: String },
   isTeacher: { type: Boolean, default: false },
-  role: {
-    type: String,
-    default: 'user'
+  profileSetup: { type: Boolean, default: false },
+  role: { type: String, default: 'user' },
+  profilePhoto: {
+    fileName: String,
+    filePath: String,
+    fileURI: String,
+    dataURI: String
   },
+  rate: {
+    value: Number,
+    currency: { type: String, default: 'USD'}
+  },
+  basicInfo: String,
+  status: String,
+  education: [{
+    degree: String,
+    school: String,
+    field: String,
+    start: Date,
+    end: Date
+  }],
+  experience: [{
+    company: String,
+    designation: String,
+    start: Date,
+    end: Date
+  }],
   hashedPassword: { type:String, required: true },
   provider: { type:String, required: true },
   salt: String,

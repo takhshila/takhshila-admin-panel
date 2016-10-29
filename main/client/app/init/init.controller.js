@@ -41,6 +41,19 @@ angular.module('takhshilaApp')
         disableParentScroll: true
       });
     }
+
+    $rootScope.showProfilePicModal = function($event){
+      var parentEl = angular.element(document.body);
+      $mdDialog.show({
+        templateUrl: 'components/profilePicModal/profilePicModal.html',
+        controller: 'ProfilePicModalCtrl',
+        parent: parentEl,
+        targetEvent: $event,
+        disableParentScroll: true,
+        clickOutsideToClose: true
+      });
+    }
+
     $rootScope.logout = function(){
       Auth.logout();
     }
