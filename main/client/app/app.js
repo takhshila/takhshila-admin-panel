@@ -9,7 +9,8 @@ angular.module('takhshilaApp', [
   'btford.socket-io',
   'ui.router',
   'ngMaterial',
-  'ngCropper'
+  'ngCropper',
+  'ngFileUpload'
 ])
   .config(function($mdIconProvider) {
     $mdIconProvider

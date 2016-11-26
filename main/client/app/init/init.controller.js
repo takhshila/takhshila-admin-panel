@@ -54,6 +54,18 @@ angular.module('takhshilaApp')
       });
     }
 
+    $rootScope.showVideoUploadModal = function($event){
+      var parentEl = angular.element(document.body);
+      $mdDialog.show({
+        templateUrl: 'components/videoUploadModal/videoUploadModal.html',
+        controller: 'VideoUploadModalCtrl',
+        parent: parentEl,
+        targetEvent: $event,
+        disableParentScroll: true,
+        clickOutsideToClose: true
+      });
+    }
+
     $rootScope.logout = function(){
       Auth.logout();
     }

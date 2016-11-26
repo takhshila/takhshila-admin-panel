@@ -1,5 +1,6 @@
 'use strict';
 
+var _ = require('lodash');
 var User = require('./user.model');
 var passport = require('passport');
 var config = require('../../config/environment');
@@ -132,7 +133,24 @@ exports.updateProfilePhoto = function(req, res, next) {
     });
   });
 };
+/**
+ * Update Rate per Hour
+ */
+exports.updateRatePerHour = function(req, res, next) {
+  var userId = req.user._id;
+  var ratePerHour = req.body.ratePerHour;
 
+  User.findById(userId, function (err, user) {
+    if (err) { return handleError(res, err); }
+    if(!user) { return res.status(404).send('Not Found'); }
+    if(!user.isTeacher) { return res.status(404).send('You are not allowed to add rate per hour'); }
+    user.ratePerHour = ratePerHour;
+    user.save(function (err) {
+      if (err) { return handleError(res, err); }
+      return res.status(200).json(user);
+    });
+  });
+};
 /**
  * Get my info
  */
@@ -147,6 +165,111 @@ exports.me = function(req, res, next) {
   });
 };
 
+/**
+ * Add Education
+ */
+exports.addEducation = function (req, res, next) {
+  var userId = req.user._id;
+  var education = req.body;
+  if(education === undefined || education === null) { return res.status(400).send('Invalid Education Details'); }
+
+  User.findById(userId, function (err, user) {
+    if (err) { return handleError(res, err); }
+    if(!user) { return res.status(404).send('Not Found'); }
+    user.education.push(education);
+    user.save(function (err) {
+      if (err) { return handleError(res, err); }
+      return res.status(200).json(user);
+    });
+  });
+};
+/**
+ * Update user education
+ */
+exports.updateEducation = function(req, res, next) {
+  var userId = req.user._id;
+  if(req.body._id) { delete req.body._id; }
+  User.findById(userId, function (err, user) {
+    if (err) { return handleError(res, err); }
+    if(!user) { return res.status(404).send('Not Found'); }
+    if(!user.education.id(req.params.id)){ return res.status(404).send('Not Found'); }
+    _.merge(user.education.id(req.params.id), req.body);
+    user.save(function (err) {
+      if (err) { return handleError(res, err); }
+      return res.status(200).json(user);
+    });
+  });
+};
+/**
+ * Delete Education
+ */
+exports.deleteEducation = function (req, res, next) {
+  var userId = req.user._id;
+  if(req.body._id) { delete req.body._id; }
+  User.findById(userId, function (err, user) {
+    if (err) { return handleError(res, err); }
+    if(!user) { return res.status(404).send('Not Found'); }
+    if(!user.education.id(req.params.id)){ return res.status(404).send('Not Found'); }
+    user.education.id(req.params.id).remove();
+    user.save(function (err) {
+      if (err) { return handleError(res, err); }
+      return res.status(200).json(user);
+    });
+  });
+};
+
+/**
+ * Add Experience
+ */
+exports.addExperience = function (req, res, next) {
+  var userId = req.user._id;
+  var experience = req.body;
+  if(experience === undefined || experience === null) { return res.status(400).send('Invalid Education Details'); }
+
+  User.findById(userId, function (err, user) {
+    if (err) { return handleError(res, err); }
+    if(!user) { return res.status(404).send('Not Found'); }
+    user.experience.push(experience);
+    user.save(function (err) {
+      if (err) { return handleError(res, err); }
+      return res.status(200).json(user);
+    });
+  });
+};
+/**
+ * Update user Experience
+ */
+exports.updateExperience = function(req, res, next) {
+  var userId = req.user._id;
+  if(req.body._id) { delete req.body._id; }
+  User.findById(userId, function (err, user) {
+    if (err) { return handleError(res, err); }
+    if(!user) { return res.status(404).send('Not Found'); }
+    if(!user.experience.id(req.params.id)){ return res.status(404).send('Not Found'); }
+    _.merge(user.experience.id(req.params.id), req.body);
+    user.save(function (err) {
+      if (err) { return handleError(res, err); }
+      return res.status(200).json(user);
+    });
+  });
+};
+/**
+ * Delete Experience
+ */
+exports.deleteExperience = function (req, res, next) {
+  var userId = req.user._id;
+  if(req.body._id) { delete req.body._id; }
+  User.findById(userId, function (err, user) {
+    if (err) { return handleError(res, err); }
+    if(!user) { return res.status(404).send('Not Found'); }
+    if(!user.experience.id(req.params.id)){ return res.status(404).send('Not Found'); }
+    user.experience.id(req.params.id).remove();
+    user.save(function (err) {
+      if (err) { return handleError(res, err); }
+      return res.status(200).json(user);
+    });
+  });
+};
 /**
  * Authentication callback
  */
