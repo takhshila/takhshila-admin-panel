@@ -20,22 +20,22 @@ var UserSchema = new Schema({
     fileURI: String,
     dataURI: String
   },
-  rate: {
+  ratePerHour: {
     value: Number,
-    currency: { type: String, default: 'USD'}
+    currency: { type: String, default: 'INR'}
   },
   basicInfo: String,
   status: String,
   education: [{
-    degree: String,
-    school: String,
+    degree: {type: String, required: true},
+    school: {type: String, required: true},
     field: String,
     start: Date,
     end: Date
   }],
   experience: [{
-    company: String,
-    designation: String,
+    company: {type: String, required: true},
+    designation: {type: String, required: true},
     start: Date,
     end: Date
   }],
