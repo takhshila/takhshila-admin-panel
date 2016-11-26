@@ -71,7 +71,9 @@ angular.module('takhshilaApp')
 	      })
 	      .then(Cropper.encode).then(function(dataUrl) {
 	        ($scope.preview || ($scope.preview = {})).dataUrl = dataUrl;
-	        console.log(dataUrl);
+	        // console.log(dataUrl);
+          $rootScope.currentUser.profilePhoto.dataURI = dataUrl;
+          $scope.closeDialog();
 	      });
 	  }
 
@@ -82,7 +84,8 @@ angular.module('takhshilaApp')
 	  $scope.options = {
 	    maximize: false,
 	    aspectRatio: 1 / 1,
-	    viewMode: 3,
+	    viewMode: 2,
+      responsive: true,
 	    crop: function(dataNew) {
 	      data = dataNew;
 	    }
