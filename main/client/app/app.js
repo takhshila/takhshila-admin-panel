@@ -10,7 +10,8 @@ angular.module('takhshilaApp', [
   'ui.router',
   'ngMaterial',
   'ngCropper',
-  'ngFileUpload'
+  'ngFileUpload',
+  'ui.calendar'
 ])
   .config(function($mdIconProvider) {
     $mdIconProvider

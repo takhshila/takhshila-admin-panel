@@ -128,6 +128,19 @@
           </p>
         </div>
       </div>
+
+      <div class="row" ng-if = "currentUser.isTeacher">
+        <div class="ui attached message">
+          <div class="header">
+            Availability
+          </div>
+        </div>
+        <div class="ui segment">
+          <p>
+            <div ui-calendar="uiConfig.calendar" ng-model="eventSources" calendar = "availabilityCalendar"></div>
+          </p>
+        </div>
+      </div>
     </div>
   </div>
 </div>
