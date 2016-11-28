@@ -28,8 +28,6 @@ angular.module('takhshilaApp')
 
     $scope.renderView = function(view){
       $scope.events.length = 0;
-      console.log("renderView Called");
-      console.log($scope.events);
       if(view === undefined){
         view = uiCalendarConfig.calendars["availabilityCalendar"].fullCalendar('getView');
       }
@@ -67,10 +65,11 @@ angular.module('takhshilaApp')
       var endDay = new Date(event.start._d).getDay();
 
       if(startDay == endDay){
-        var dayIndex = event.dayIndex;
         var i = event.availabilityIndex;
-        availability[weekDays[dayIndex]][i].endHour = event.end.get('hour');
-        availability[weekDays[dayIndex]][i].endMinute = event.end.get('minute');
+        availability[weekDays[startDay]][i].startHour = event.start.get('hour');
+        availability[weekDays[startDay]][i].startMinute = event.start.get('minute');
+        availability[weekDays[startDay]][i].endHour = event.end.get('hour');
+        availability[weekDays[startDay]][i].endMinute = event.end.get('minute');
       }else{
         var dayIndex = event.dayIndex;
         var i = event.availabilityIndex;
@@ -89,22 +88,17 @@ angular.module('takhshilaApp')
           endMinute: endMinute
         });
       }
+      $scope.renderView();
     }
 
     $scope.dayClicked = function(datetime){
-      // $scope.events.length = 0;
-      var clickedDateTime = new Date(datetime._i[0], datetime._i[1], datetime._i[2], datetime._i[3], datetime._i[4]);
-      var day = clickedDateTime.getDay();
-      var startHour = datetime._i[3];
-      var startMinute = datetime._i[4];
-      var endHour, endMinute = 0;
-      if(startMinute > 0){
-        endHour = startHour + 1;
-        endMinute = 0;
-      }else{
-        endHour = startHour;
-        endMinute = startMinute + 30;
-      }
+      var day = datetime.day();
+      var startHour = datetime.get('hour');
+      var startMinute = datetime.get('minute');
+      datetime.add(30, 'minutes');
+      var endHour = datetime.get('hour');
+      var endMinute = datetime.get('minute');
+
       availability[weekDays[day]].push({
         startHour: startHour,
         startMinute: startMinute,
@@ -114,13 +108,17 @@ angular.module('takhshilaApp')
       $scope.renderView();
     }
 
+    $scope.checkConnectedTime = function(day = null){
+      // This function will be used to check if two times are alternative meaning has matching end and start time
+    }
+
     $scope.uiConfig = {
       calendar:{
         height: 450,
         editable: true,
         header:{
           left: '',
-          center: '"Weekly Scheduler"',
+          center: 'title',
           right: 'today prev,next'
         },
         defaultView: 'agendaWeek',
