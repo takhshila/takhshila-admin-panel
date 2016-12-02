@@ -12,7 +12,6 @@ angular.module('takhshilaApp')
     var weekDays = ['sunday', 'monday', 'tuesday', 'wednessday', 'thursday', 'friday', 'saturday'];
 
     var availability = {
-      repeat: true,
       sunday: [],
       monday: [],
       tuesday: [],
@@ -27,6 +26,12 @@ angular.module('takhshilaApp')
     $scope.eventSources = [$scope.events];
 
     $scope.renderView = function(view){
+      for(var dayIndex = 0; dayIndex < weekDays.length; dayIndex++){
+        availability[weekDays[dayIndex]].sort(function(a, b){
+          return a.startHour - b.startHour;
+        });
+      }
+      $scope.checkConnectedTime();
       $scope.events.length = 0;
       if(view === undefined){
         view = uiCalendarConfig.calendars["availabilityCalendar"].fullCalendar('getView');
@@ -58,6 +63,7 @@ angular.module('takhshilaApp')
       var i = event.availabilityIndex;
       availability[weekDays[dayIndex]][i].endHour = event.end.get('hour');
       availability[weekDays[dayIndex]][i].endMinute = event.end.get('minute');
+      $scope.renderView();
     }
 
     $scope.eventDrop = function(event){
@@ -108,8 +114,19 @@ angular.module('takhshilaApp')
       $scope.renderView();
     }
 
-    $scope.checkConnectedTime = function(day = null){
+    $scope.checkConnectedTime = function(){
       // This function will be used to check if two times are alternative meaning has matching end and start time
+      for(var dayIndex = 0; dayIndex < weekDays.length; dayIndex++){
+        for(var i = availability[weekDays[dayIndex]].length - 1; i >= 0 ; i--){
+          if(availability[weekDays[dayIndex]][i-1] != undefined){
+            if(availability[weekDays[dayIndex]][i-1].endHour == availability[weekDays[dayIndex]][i].startHour){
+              availability[weekDays[dayIndex]][i-1].endHour = availability[weekDays[dayIndex]][i].endHour;
+              availability[weekDays[dayIndex]][i-1].endMinute = availability[weekDays[dayIndex]][i].endMinute;
+              availability[weekDays[dayIndex]].splice(i, 1);
+            }
+          }
+        }
+      }
     }
 
     $scope.uiConfig = {
@@ -119,7 +136,8 @@ angular.module('takhshilaApp')
         header:{
           left: '',
           center: 'title',
-          right: 'today prev,next'
+          // right: 'today prev,next'
+          right: ''
         },
         defaultView: 'agendaWeek',
         eventOverlap: false,

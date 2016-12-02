@@ -39,6 +39,50 @@ var UserSchema = new Schema({
     start: Date,
     end: Date
   }],
+  availability: {
+    sunday: [{
+      startHour: {type: Number, required: true},
+      startMinute: {type: Number, required: true},
+      endHour: {type: Number, required: true},
+      endMinute: {type: Number, required: true}
+    }],
+    monday: [{
+      startHour: {type: Number, required: true},
+      startMinute: {type: Number, required: true},
+      endHour: {type: Number, required: true},
+      endMinute: {type: Number, required: true}
+    }],
+    tuesday: [{
+      startHour: {type: Number, required: true},
+      startMinute: {type: Number, required: true},
+      endHour: {type: Number, required: true},
+      endMinute: {type: Number, required: true}
+    }],
+    wednessday: [{
+      startHour: {type: Number, required: true},
+      startMinute: {type: Number, required: true},
+      endHour: {type: Number, required: true},
+      endMinute: {type: Number, required: true}
+    }],
+    thursday: [{
+      startHour: {type: Number, required: true},
+      startMinute: {type: Number, required: true},
+      endHour: {type: Number, required: true},
+      endMinute: {type: Number, required: true}
+    }],
+    friday: [{
+      startHour: {type: Number, required: true},
+      startMinute: {type: Number, required: true},
+      endHour: {type: Number, required: true},
+      endMinute: {type: Number, required: true}
+    }],
+    saturday: [{
+      startHour: {type: Number, required: true},
+      startMinute: {type: Number, required: true},
+      endHour: {type: Number, required: true},
+      endMinute: {type: Number, required: true}
+    }]
+  },
   hashedPassword: { type:String, required: true },
   provider: { type:String, required: true },
   salt: String,

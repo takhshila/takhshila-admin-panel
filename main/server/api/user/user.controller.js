@@ -139,12 +139,32 @@ exports.updateProfilePhoto = function(req, res, next) {
 exports.updateRatePerHour = function(req, res, next) {
   var userId = req.user._id;
   var ratePerHour = req.body.ratePerHour;
+  if(isNaN(ratePerHour)){ return res.status(400).send('Invalid Rate');}
 
   User.findById(userId, function (err, user) {
     if (err) { return handleError(res, err); }
     if(!user) { return res.status(404).send('Not Found'); }
     if(!user.isTeacher) { return res.status(404).send('You are not allowed to add rate per hour'); }
     user.ratePerHour = ratePerHour;
+    user.save(function (err) {
+      if (err) { return handleError(res, err); }
+      return res.status(200).json(user);
+    });
+  });
+};
+/**
+ * Update user availability
+ */
+exports.updateAvailability = function(req, res, next) {
+  var userId = req.user._id;
+  var availability = req.body.availability;
+  if(typeof availability !== 'object'){return res.status(400).send('Invalid Availability');}
+
+  User.findById(userId, function (err, user) {
+    if (err) { return handleError(res, err); }
+    if(!user) { return res.status(404).send('Not Found'); }
+    if(!user.isTeacher) { return res.status(404).send('You are not allowed to update availability'); }
+    user.availability = availability;
     user.save(function (err) {
       if (err) { return handleError(res, err); }
       return res.status(200).json(user);
