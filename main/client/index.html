@@ -34,7 +34,7 @@
     <![endif]-->
 
     <!-- Add your site or application content here -->
-    <div id="mask" ng-show = "loading">
+    <div id="mask" ng-show = "isLoading">
         <div id="loader"></div>
     </div>
     <div ng-class = "navStick ? 'body-margin-top' : ''" ui-view="" ng-controller = "InitCtrl"></div>
@@ -97,6 +97,10 @@
           <script src="app/main/main.js"></script>
           <script src="app/teach/teach.controller.js"></script>
           <script src="app/teach/teach.js"></script>
+          <script src="app/user/user.controller.js"></script>
+          <script src="app/user/user.js"></script>
+          <script src="app/user/userFactory/userFactory.service.js"></script>
+          <script src="components/api/api.service.js"></script>
           <script src="components/auth/auth.service.js"></script>
           <script src="components/auth/user.service.js"></script>
           <script src="components/focusOn/focusOn.directive.js"></script>

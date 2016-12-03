@@ -9,21 +9,25 @@ angular.module('takhshilaApp')
         Auth.isLoggedInAsync(function(loggedIn){
           $rootScope.currentUser = Auth.getCurrentUser();
           $rootScope.loggedIn = loggedIn;
-          if($state.current.authenticate && !loggedIn){
-            $state.go('main');
-          }
-          if(!$state.current.authenticate && loggedIn){
-            $state.go('main');
+          if(typeof $state.current.authenticate !== "undefined"){
+            if($state.current.authenticate && !loggedIn){
+              $state.go('main');
+            }
+            if(!$state.current.authenticate && loggedIn){
+              $state.go('main');
+            }
           }
           $scope.$watch(function(){
             return Auth.isLoggedIn();
           }, function(data){
             $rootScope.loggedIn = data;
-            if($state.current.authenticate && !data){
-              $state.go('main');
-            }
-            if(!$state.current.authenticate && data){
-              $state.go('main');
+            if(typeof $state.current.authenticate !== "undefined"){
+              if($state.current.authenticate && !data){
+                $state.go('main');
+              }
+              if(!$state.current.authenticate && data){
+                $state.go('main');
+              }
             }
             $rootScope.currentUser = Auth.getCurrentUser();
           });

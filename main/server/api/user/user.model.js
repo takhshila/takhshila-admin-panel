@@ -117,6 +117,23 @@ UserSchema
     };
   });
 
+// Teacher profile information
+UserSchema
+  .virtual('teacherProfile')
+  .get(function() {
+    return {
+      'name': this.name,
+      'role': this.role,
+      'isTeacher' : this.isTeacher,
+      'profilePhoto': this.profilePhoto,
+      'ratePerHour': this.ratePerHour,
+      'basicInfo': this.basicInfo,
+      'education': this.education,
+      'experience': this.experience,
+      'availability': this.availability
+    };
+  });
+
 // Non-sensitive info we'll be putting in the token
 UserSchema
   .virtual('token')

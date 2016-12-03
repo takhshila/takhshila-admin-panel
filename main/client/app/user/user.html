@@ -1,0 +1,146 @@
+<navbar></navbar>
+<div class="container" id = "profile">
+  <div class="row">
+    <div class="col-md-3 col-sm-3 left">
+      <div class="ui card">
+        <div class="image">
+          <img ng-src="{{currentUser.profilePhoto.dataURI}}" ng-click = "uploadProfilePic()">
+          <form id = "uploadProfilePicForm">
+            <input type="file" id = "uploadProfilePic" onchange="angular.element(this).scope().onFile(this.files[0])" style = "display:none;">
+          </form>
+          <i class="remove icon" ng-click = "closeDialog()"></i>
+        </div>
+        <div class="content">
+          <a class="header">{{currentUser.name.firstName}}&nbsp;{{currentUser.name.lastName}}</a>
+          <div class="meta">
+            <span class="date">Joined in 2013</span>
+          </div>
+          <div class="description">
+            Kristy is an art director living in New York.
+          </div>
+        </div>
+        <div class="extra">
+          <div class="ui star rating">
+            <i class="icon active"></i>
+            <i class="icon active"></i>
+            <i class="icon active"></i>
+            <i class="icon active"></i>
+            <i class="icon "></i>
+          </div>
+        </div>
+      </div>
+      <div class="ui vertical steps">
+        <a class="active step">
+          <div class="content">
+            <div class="description"><i class="info icon"></i>Details</div>
+          </div>
+        </a>
+        <a class="step">
+          <div class="content">
+            <div class="description"><i class="info icon"></i>Classes</div>
+          </div>
+        </a>
+        <a class="step">
+          <div class="content">
+            <div class="description"><i class="info icon"></i>Teachers</div>
+          </div>
+        </a>
+      </div>
+    </div>
+    <div class="col-md-9 col-sm-9 right">
+      <div class="row">
+        <div class="ui attached message">
+          <div class="header">
+            About {{currentUser.name.firstName}}
+          </div>
+        </div>
+        <div class="ui segment">
+          <p>
+            This is the details
+          </p>
+        </div>
+      </div>
+
+      <div class="row" ng-if = "currentUser.isTeacher">
+        <div class="ui attached message">
+          <div class="header">
+            Specialization
+          </div>
+        </div>
+        <div class="ui segment">
+          <p>
+            This is the details
+          </p>
+        </div>
+      </div>
+
+      <div class="row" ng-if = "currentUser.isTeacher">
+        <div class="ui attached message">
+          <div class="header">
+            Demo Videos
+          </div>
+        </div>
+        <div class="ui segment">
+          <p ng-click = "uploadVideo()">
+            This is the details
+          <form id = "uploadVideoForm">
+            <input type="file" id = "uploadVideo" onchange="angular.element(this).scope().onVideoSelect(this.files)" style = "display:none;">
+          </form>
+          </p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="ui attached message">
+          <div class="header">
+            Education
+          </div>
+        </div>
+        <div class="ui segment">
+          <p>
+            This is the details
+          </p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="ui attached message">
+          <div class="header">
+            Experiences
+          </div>
+        </div>
+        <div class="ui segment">
+          <p>
+            This is the details
+          </p>
+        </div>
+      </div>
+
+      <div class="row" ng-if = "currentUser.isTeacher">
+        <div class="ui attached message">
+          <div class="header">
+            Reviews & Ratings
+          </div>
+        </div>
+        <div class="ui segment">
+          <p>
+            This is the details
+          </p>
+        </div>
+      </div>
+
+      <div class="row" ng-if = "currentUser.isTeacher">
+        <div class="ui attached message">
+          <div class="header">
+            Availability
+          </div>
+        </div>
+        <div class="ui segment">
+          <p>
+            <div ui-calendar="uiConfig.calendar" ng-model="eventSources" calendar = "availabilityCalendar"></div>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
