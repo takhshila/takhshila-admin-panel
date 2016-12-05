@@ -1,0 +1,71 @@
+#userProfile{
+  .ui{
+    margin: 0px;
+    border-radius: 0px;
+    box-shadow: none;
+    border: 1px solid rgba(34, 36, 38, 0.15);
+  }
+  .ui.card{
+    .image{
+      border-radius: 0px !important;
+    }
+  }
+  .ui.vertical.steps{
+    width: 100%;
+  }
+  .ui.star{
+    border: 0px;
+    width: 100%;
+    padding: 0.35em 0em;
+    font-size: 2em;
+  }
+  .right{
+    .row{
+      margin-bottom: 10px;
+    }
+  }
+  .img-container {
+    max-width: 800px;
+    float: left;
+  }
+
+  .preview-container {
+    float: right;
+  }
+
+  .preview-container img {
+    max-width: 200px;
+  }
+
+  .fc-ltr .fc-time-grid .fc-event-container{
+    margin: 0px;
+  }
+  .fc-time-grid .fc-event, .fc-time-grid .fc-bgevent{
+    border: 0px;
+    border-radius: 0px;
+  }
+  .fc-time-grid-event.fc-short .fc-time, .fc-time-grid-event.fc-short .fc-title{
+    display: none;
+  }
+  .fc-event .fc-bg{
+    background: transparent;
+    cursor: pointer;
+    opacity: 0;
+  }
+  .fc-event.active .fc-bg{
+    background: #129DFA;
+    opacity: 1;
+  }
+  .fc-event .fc-bg:hover,
+  .fc-event .fc-bg:active{
+    background: #94D2FC;
+    opacity: 1;
+    .fc-time-grid-event.fc-short .fc-time, .fc-time-grid-event.fc-short .fc-title{
+      display: block;
+    }
+  }
+  .fc-event.active .fc-bg:hover,
+  .fc-event.active .fc-bg:active{
+    background: #129DFA;
+  }
+}

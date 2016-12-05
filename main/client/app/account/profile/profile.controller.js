@@ -2,6 +2,7 @@
 
 angular.module('takhshilaApp')
   .controller('ProfileCtrl', function ($rootScope, $scope, $timeout, Cropper, uiCalendarConfig, Upload, Auth) {
+    $rootScope.isLoading = false;
     if(Cropper.currentFile === undefined){
       Cropper.currentFile = null;
     }
