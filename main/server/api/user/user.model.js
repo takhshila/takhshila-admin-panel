@@ -15,10 +15,10 @@ var UserSchema = new Schema({
   profileSetup: { type: Boolean, default: false },
   role: { type: String, default: 'user' },
   profilePhoto: {
-    fileName: String,
-    filePath: String,
-    fileURI: String,
-    dataURI: String
+    fileName: { type: String, default: null },
+    filePath: { type: String, default: null },
+    fileURI: { type: String, default: null },
+    dataURI: { type: String, default: null }
   },
   ratePerHour: {
     value: Number,

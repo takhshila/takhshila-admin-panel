@@ -70,10 +70,10 @@ angular.module('takhshilaApp')
 	        return Cropper.scale(blob, {width: width});
 	      })
 	      .then(Cropper.encode).then(function(dataUrl) {
-	        ($scope.preview || ($scope.preview = {})).dataUrl = dataUrl;
-	        // console.log(dataUrl);
-          $rootScope.currentUser.profilePhoto.dataURI = dataUrl;
-          $scope.closeDialog();
+		    ($scope.preview || ($scope.preview = {})).dataUrl = dataUrl;
+	        console.log(dataUrl);
+	        $rootScope.currentUser.profilePhoto.dataURI = dataUrl;
+	        $scope.closeDialog();
 	      });
 	  }
 
@@ -85,7 +85,7 @@ angular.module('takhshilaApp')
 	    maximize: false,
 	    aspectRatio: 1 / 1,
 	    viewMode: 2,
-      responsive: true,
+      	responsive: false,
 	    crop: function(dataNew) {
 	      data = dataNew;
 	    }

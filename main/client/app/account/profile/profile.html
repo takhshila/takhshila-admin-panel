@@ -8,7 +8,7 @@
           <form id = "uploadProfilePicForm">
             <input type="file" id = "uploadProfilePic" onchange="angular.element(this).scope().onFile(this.files[0])" style = "display:none;">
           </form>
-          <i class="remove icon" ng-click = "closeDialog()"></i>
+          <i class="remove icon" ng-click = "uploadProfilePic()"></i>
         </div>
         <div class="content">
           <a class="header">{{currentUser.name.firstName}}&nbsp;{{currentUser.name.lastName}}</a>

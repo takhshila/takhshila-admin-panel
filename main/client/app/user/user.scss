@@ -1,4 +1,21 @@
 #userProfile{
+  .userInfoContainer{
+    .ui.segment{
+      margin: 0px;
+      padding: 0px;
+      .ui.card{
+        border: 0px;
+      }
+      .imageContainer{
+        margin: 0px;
+        padding: 0px;
+        .ui.card{
+          border: 0px;
+          border-right: 1px solid rgba(34, 36, 38, 0.15);
+        }
+      }
+    }
+  }
   .ui{
     margin: 0px;
     border-radius: 0px;
@@ -19,7 +36,7 @@
     padding: 0.35em 0em;
     font-size: 2em;
   }
-  .right{
+  .left{
     .row{
       margin-bottom: 10px;
     }

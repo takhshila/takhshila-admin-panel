@@ -1,67 +1,36 @@
 <navbar></navbar>
 <div class="container" id = "userProfile">
   <div class="row">
-    <div class="col-md-3 col-sm-3 left">
-      <div class="ui card">
-        <div class="image">
-          <img ng-src="{{currentUser.profilePhoto.dataURI}}" ng-click = "uploadProfilePic()">
-          <form id = "uploadProfilePicForm">
-            <input type="file" id = "uploadProfilePic" onchange="angular.element(this).scope().onFile(this.files[0])" style = "display:none;">
-          </form>
-          <i class="remove icon" ng-click = "closeDialog()"></i>
-        </div>
-        <div class="content">
-          <a class="header">{{currentUser.name.firstName}}&nbsp;{{currentUser.name.lastName}}</a>
-          <div class="meta">
-            <span class="date">Joined in 2013</span>
-          </div>
-          <div class="description">
-            Kristy is an art director living in New York.
-          </div>
-        </div>
-        <div class="extra">
-          <div class="ui star rating">
-            <i class="icon active"></i>
-            <i class="icon active"></i>
-            <i class="icon active"></i>
-            <i class="icon active"></i>
-            <i class="icon "></i>
-          </div>
-        </div>
-      </div>
-      <div class="ui vertical steps">
-        <a class="active step">
-          <div class="content">
-            <div class="description"><i class="info icon"></i>Details</div>
-          </div>
-        </a>
-        <a class="step">
-          <div class="content">
-            <div class="description"><i class="info icon"></i>Classes</div>
-          </div>
-        </a>
-        <a class="step">
-          <div class="content">
-            <div class="description"><i class="info icon"></i>Teachers</div>
-          </div>
-        </a>
-      </div>
-    </div>
-    <div class="col-md-9 col-sm-9 right">
+    <div class="col-md-8 col-sm-8 left">
       <div class="row">
-        <div class="ui attached message">
-          <div class="header">
-            About {{currentUser.name.firstName}}
+        <div class="userInfoContainer">
+          <div class="ui segment">
+            <div class="col-md-3 col-sm-3 imageContainer">
+              <div class="ui card">
+                <div class="image">
+                  <img ng-src="{{user.profilePhoto.dataURI}}">
+                </div>
+              </div>
+            </div>
+            <div class="col-md-9 col-sm-9 aboutContainer">
+              <div class="ui card">
+                <div class="content">
+                  <a class="header">{{user.name.firstName}}&nbsp;{{user.name.lastName}}</a>
+                  <div class="meta">
+                    <span class="date">Joined in 2013</span>
+                  </div>
+                  <div class="description">
+                    Kristy is an art director living in New York.
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class = "clear"></div>
           </div>
-        </div>
-        <div class="ui segment">
-          <p>
-            This is the details
-          </p>
         </div>
       </div>
 
-      <div class="row" ng-if = "currentUser.isTeacher">
+      <div class="row" ng-if = "user.isTeacher">
         <div class="ui attached message">
           <div class="header">
             Specialization
@@ -74,7 +43,7 @@
         </div>
       </div>
 
-      <div class="row" ng-if = "currentUser.isTeacher">
+      <div class="row" ng-if = "user.isTeacher">
         <div class="ui attached message">
           <div class="header">
             Demo Videos
@@ -116,7 +85,7 @@
         </div>
       </div>
 
-      <div class="row" ng-if = "currentUser.isTeacher">
+      <div class="row" ng-if = "user.isTeacher">
         <div class="ui attached message">
           <div class="header">
             Reviews & Ratings
@@ -129,7 +98,7 @@
         </div>
       </div>
 
-      <div class="row" ng-if = "currentUser.isTeacher">
+      <div class="row" ng-if = "user.isTeacher">
         <div class="ui attached message">
           <div class="header">
             Availability
@@ -141,6 +110,9 @@
           </p>
         </div>
       </div>
+    </div>
+    <div class="col-md-4 col-sm-4 right">
+
     </div>
   </div>
 </div>

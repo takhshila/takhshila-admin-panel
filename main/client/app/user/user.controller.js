@@ -23,25 +23,28 @@ angular.module('takhshilaApp')
     userFactory.getUserDetails($stateParams.ID)
     .success(function(response){
       $rootScope.isLoading = false;
-      console.log(response);
+      $scope.user = response;
+      console.log($scope.user);
       availability = response.availability;
-      $scope.renderView();
-      $scope.uiConfig = {
-        calendar:{
-          height: 450,
-          editable: false,
-          header:{
-            left: '',
-            center: 'title',
-            right: 'today prev,next'
-            // right: ''
-          },
-          defaultView: 'agendaWeek',
-          eventClick: $scope.alertEventOnClick,
-          eventRender: $scope.eventRender,
-          viewRender: $scope.renderView
-        }
-      };
+      $timeout(function(){
+        $scope.renderView();
+        $scope.uiConfig = {
+          calendar:{
+            height: 450,
+            editable: false,
+            header:{
+              left: '',
+              center: 'title',
+              right: 'today prev,next'
+              // right: ''
+            },
+            defaultView: 'agendaWeek',
+            eventClick: $scope.alertEventOnClick,
+            eventRender: $scope.eventRender,
+            viewRender: $scope.renderView
+          }
+        };
+      }, 0)
     })
     .error(function(err){
       $rootScope.isLoading = false;
@@ -61,7 +64,6 @@ angular.module('takhshilaApp')
       }else {
         angular.element(element.currentTarget).addClass("active");
       }
-      // $compile(element)($scope);
     }
 
     $scope.renderView = function(view){
@@ -70,7 +72,6 @@ angular.module('takhshilaApp')
           return a.startHour - b.startHour;
         });
       }
-      // $scope.checkConnectedTime();
       $scope.disconnectTime();
       $scope.events.length = 0;
       if(view === undefined){
