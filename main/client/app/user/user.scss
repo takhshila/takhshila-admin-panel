@@ -85,4 +85,11 @@
   .fc-event.active .fc-bg:active{
     background: #129DFA;
   }
+
+  .right{
+    .selectedSessionContainer{
+      width: 100%;
+      float: right;
+    }
+  }
 }
