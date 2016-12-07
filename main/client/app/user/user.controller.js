@@ -17,6 +17,7 @@ angular.module('takhshilaApp')
     }
 
     $scope.events = [];
+    $scope.selectedSessions = [];
 
     $scope.eventSources = [$scope.events];
 
@@ -63,6 +64,40 @@ angular.module('takhshilaApp')
         angular.element(element.currentTarget).removeClass("active");
       }else {
         angular.element(element.currentTarget).addClass("active");
+      }
+      var _selectedSessionPushed = false;
+      var _selectedDate = event.start.format('ddd, MMMM Do YYYY');
+      var _selectedStartHour = event.start.get('hour');
+      var _selectedStartMinute = event.start.get('minute');
+      var _selectedEndHour = event.end.get('hour');
+      var _selectedEndMinute = event.end.get('minute');
+
+      for(var i = 0; i < $scope.selectedSessions.length; i++){
+        if($scope.selectedSessions[i].date.toString() == _selectedDate.toString()){
+          if($scope.selectedSessions[i].endHour == _selectedStartHour){
+            $scope.selectedSessions[i].endHour = _selectedEndHour;
+            $scope.selectedSessions[i].endMinute = _selectedEndMinute;
+            $scope.selectedSessions[i].endTime = event.end.format('h:mm a');
+            _selectedSessionPushed = true;
+          }else if($scope.selectedSessions[i].startHour == _selectedEndHour){
+            $scope.selectedSessions[i].startHour = _selectedStartHour;
+            $scope.selectedSessions[i].startMinute = _selectedStartMinute
+            $scope.selectedSessions[i].endTime = event.start.format('h:mm a');
+            _selectedSessionPushed = true;
+          }
+        }
+      }
+      if(!_selectedSessionPushed){
+        var _session = {
+          date: event.start.format('ddd, MMMM Do YYYY'),
+          startHour: _selectedStartHour,
+          startMinute: _selectedStartMinute,
+          endHour: _selectedEndHour,
+          endMinute: _selectedEndMinute,
+          startTime: event.start.format('h:mm a'),
+          endTime: event.end.format('h:mm a')
+        }
+        $scope.selectedSessions.push(_session);
       }
     }
 

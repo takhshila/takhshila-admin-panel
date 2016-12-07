@@ -119,8 +119,9 @@
           </div>
         </div>
         <div class="ui segment">
-          <p>
-            This is the details
+          <p ng-repeat = "session in selectedSessions">
+            <span class = "sessionDateTime">{{session.date}} from {{session.startTime}} to {{session.endTime}}</span>
+            <span class = "sessionCost">{{session.cost}}</span>
           </p>
         </div>
       </div>
