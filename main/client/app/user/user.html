@@ -100,7 +100,7 @@
 
       <div class="row" ng-if = "user.isTeacher">
         <div class="ui attached message">
-          <div class="header">
+          <div class="header" id = "availabilitySelector">
             Availability
           </div>
         </div>
@@ -113,18 +113,39 @@
     </div>
     <div class="col-md-4 col-sm-4 right">
       <div class="row selectedSessionContainer" ng-if = "user.isTeacher">
-        <div class="ui attached message">
-          <div class="header">
-            Selected Session
+        <div class="fixed">
+          <div class="ui attached message">
+            <div class="header">
+              Selected Session
+            </div>
           </div>
-        </div>
-        <div class="ui segment">
-          <p ng-repeat = "session in selectedSessions">
-            <span class = "sessionDateTime">{{session.date}} from {{session.startTime}} to {{session.endTime}}</span>
-            <span class = "sessionCost">{{session.cost}}</span>
-          </p>
+          <div class="ui segment">
+            <div ng-if = "selectedSessions.length">
+              <div ng-repeat = "session in selectedSessions">
+                <div class="selectedSession">
+                  <span class = "sessionDateTime">{{session.date}} {{session.startTime}} to {{session.endTime}}</span>
+                  <span class = "sessionCost">{{session.currency}}&nbsp;{{session.cost}}</span>
+                  <div class = "clear"></div>
+                </div>
+              </div>
+              <span class = "bookClassButtonContainer">
+                <button class = "ui button primary">Book Class Now</button>
+                <button class = "ui primary basic button">Talk to Teacher</button>
+              </span>
+            </div>
+            <div ng-if = "!selectedSessions.length">
+              <div class="no-info">
+                <span class = "text">No Session Selected.</span>
+                <span class = "button">
+                  <button scroll-to-item scroll-to="#availabilitySelector" class = "ui button primary">Book Class Now</button>
+                  <button class = "ui primary basic button">Talk to Teacher</button>
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+    <div class = "clear"></div>
   </div>
 </div>

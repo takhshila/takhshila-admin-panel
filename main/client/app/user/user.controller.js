@@ -16,50 +16,22 @@ angular.module('takhshilaApp')
       saturday: []
     }
 
-    $scope.events = [];
-    $scope.selectedSessions = [];
+    var calculateTotal = function(){
+      var _totalCost = 0;
+      for(var i = 0; i < $scope.selectedSessions.length; i++){
+        _totalCost += $scope.selectedSessions[i].cost;
+      }
+      $scope.totalCost = parseFloat(_totalCost).toFixed(2);
+    }
 
-    $scope.eventSources = [$scope.events];
-
-    userFactory.getUserDetails($stateParams.ID)
-    .success(function(response){
-      $rootScope.isLoading = false;
-      $scope.user = response;
-      console.log($scope.user);
-      availability = response.availability;
-      $timeout(function(){
-        $scope.renderView();
-        $scope.uiConfig = {
-          calendar:{
-            height: 450,
-            editable: false,
-            header:{
-              left: '',
-              center: 'title',
-              right: 'today prev,next'
-              // right: ''
-            },
-            defaultView: 'agendaWeek',
-            eventClick: $scope.alertEventOnClick,
-            eventRender: $scope.eventRender,
-            viewRender: $scope.renderView
-          }
-        };
-      }, 0)
-    })
-    .error(function(err){
-      $rootScope.isLoading = false;
-      console.log(err);
-    });
-
-    $scope.eventRender = function( event, element, view ) {
+    var eventRender = function( event, element, view ) {
         // element.attr({'tooltip': event.title, 'tooltip-append-to-body': true});
         element.attr({'uib-popover': '"I have a title!"', 'popover-title': '"The title."', 'popover-trigger': "'mouseenter'"});
         // element.append('<md-tooltip md-autohide="false">Play Music</md-tooltip>');
         $compile(element)($scope);
     };
 
-    $scope.alertEventOnClick = function(event, element, view){
+    var alertEventOnClick = function(event, element, view){
       if(angular.element(element.currentTarget).hasClass("active")){
         angular.element(element.currentTarget).removeClass("active");
       }else {
@@ -78,11 +50,13 @@ angular.module('takhshilaApp')
             $scope.selectedSessions[i].endHour = _selectedEndHour;
             $scope.selectedSessions[i].endMinute = _selectedEndMinute;
             $scope.selectedSessions[i].endTime = event.end.format('h:mm a');
+            $scope.selectedSessions[i].cost += parseFloat($scope.user.ratePerHour.value).toFixed(2);
             _selectedSessionPushed = true;
           }else if($scope.selectedSessions[i].startHour == _selectedEndHour){
             $scope.selectedSessions[i].startHour = _selectedStartHour;
             $scope.selectedSessions[i].startMinute = _selectedStartMinute
             $scope.selectedSessions[i].endTime = event.start.format('h:mm a');
+            $scope.selectedSessions[i].cost += parseFloat($scope.user.ratePerHour.value).toFixed(2);
             _selectedSessionPushed = true;
           }
         }
@@ -95,19 +69,22 @@ angular.module('takhshilaApp')
           endHour: _selectedEndHour,
           endMinute: _selectedEndMinute,
           startTime: event.start.format('h:mm a'),
-          endTime: event.end.format('h:mm a')
+          endTime: event.end.format('h:mm a'),
+          cost: parseFloat($scope.user.ratePerHour.value).toFixed(2),
+          currency: $scope.user.ratePerHour.currency
         }
         $scope.selectedSessions.push(_session);
+        calculateTotal();
       }
     }
 
-    $scope.renderView = function(view){
+    var renderView = function(view){
       for(var dayIndex = 0; dayIndex < weekDays.length; dayIndex++){
         availability[weekDays[dayIndex]].sort(function(a, b){
           return a.startHour - b.startHour;
         });
       }
-      $scope.disconnectTime();
+      disconnectTime();
       $scope.events.length = 0;
       if(view === undefined){
         view = uiCalendarConfig.calendars["availabilityCalendar"].fullCalendar('getView');
@@ -134,22 +111,7 @@ angular.module('takhshilaApp')
       }
     }
 
-    $scope.checkConnectedTime = function(){
-      // This function will be used to check if two times are alternative meaning has matching end and start time
-      for(var dayIndex = 0; dayIndex < weekDays.length; dayIndex++){
-        for(var i = availability[weekDays[dayIndex]].length - 1; i >= 0 ; i--){
-          if(availability[weekDays[dayIndex]][i-1] != undefined){
-            if(availability[weekDays[dayIndex]][i-1].endHour == availability[weekDays[dayIndex]][i].startHour){
-              availability[weekDays[dayIndex]][i-1].endHour = availability[weekDays[dayIndex]][i].endHour;
-              availability[weekDays[dayIndex]][i-1].endMinute = availability[weekDays[dayIndex]][i].endMinute;
-              availability[weekDays[dayIndex]].splice(i, 1);
-            }
-          }
-        }
-      }
-    }
-
-    $scope.disconnectTime = function(){
+    var disconnectTime = function(){
       var _availability = {};
       var _view = uiCalendarConfig.calendars["availabilityCalendar"].fullCalendar('getView');
       var _date = new Date(_view.start._d);
@@ -183,4 +145,37 @@ angular.module('takhshilaApp')
       }
     }
 
+    $scope.events = [];
+    $scope.selectedSessions = [];
+    $scope.eventSources = [$scope.events];
+
+    userFactory.getUserDetails($stateParams.ID)
+    .success(function(response){
+      $rootScope.isLoading = false;
+      $scope.user = response;
+      availability = response.availability;
+      $timeout(function(){
+        renderView();
+        $scope.uiConfig = {
+          calendar:{
+            height: 450,
+            editable: false,
+            header:{
+              left: '',
+              center: 'title',
+              right: 'today prev,next'
+              // right: ''
+            },
+            defaultView: 'agendaWeek',
+            eventClick: alertEventOnClick,
+            eventRender: eventRender,
+            viewRender: renderView
+          }
+        };
+      }, 0)
+    })
+    .error(function(err){
+      $rootScope.isLoading = false;
+      console.log(err);
+    });
   });
