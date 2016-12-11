@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('takhshilaApp')
-  .controller('ProfileCtrl', function ($rootScope, $scope, $timeout, Cropper, uiCalendarConfig, Upload, Auth) {
+  .controller('ProfileCtrl', function ($rootScope, $scope, $timeout, Cropper, uiCalendarConfig, Upload, Auth, userFactory) {
     $rootScope.isLoading = false;
     if(Cropper.currentFile === undefined){
       Cropper.currentFile = null;
@@ -22,134 +22,117 @@ angular.module('takhshilaApp')
       saturday: []
     }
 
-    $scope.events = [];
 
-    $scope.eventSources = [$scope.events];
-
-    $scope.renderView = function(view){
-      for(var dayIndex = 0; dayIndex < weekDays.length; dayIndex++){
-        availability[weekDays[dayIndex]].sort(function(a, b){
-          return a.startHour - b.startHour;
-        });
-      }
-      $scope.checkConnectedTime();
-      $scope.events.length = 0;
-      if(view === undefined){
-        view = uiCalendarConfig.calendars["availabilityCalendar"].fullCalendar('getView');
-      }
-      var date = new Date(view.start._d);
-      var d = date.getDate();
-      var m = date.getMonth();
-      var y = date.getFullYear();
-      for(var dayIndex = 0; dayIndex < weekDays.length; dayIndex++){
-        for(var i = 0; i < availability[weekDays[dayIndex]].length; i++){
+    $scope.getEvents = function(start, end, callback){
+      userFactory.getAvailability($rootScope.currentUser._id, {start: start, end: end})
+      .success(function(response){
+        $scope.events.length = 0;
+        for(var i = 0; i < response.length; i++){
           $scope.events.push({
-            title: 'Available',
-            start: new Date(y, m, d+dayIndex, availability[weekDays[dayIndex]][i].startHour, availability[weekDays[dayIndex]][i].startMinute),
-            end: new Date(y, m, d+dayIndex, availability[weekDays[dayIndex]][i].endHour, availability[weekDays[dayIndex]][i].endMinute),
-            allDay: false,
-            dayIndex: dayIndex,
-            availabilityIndex: i,
-            color: '#5cb85c'
+            start: moment(response[i].start, 'MMM DD, YYYY HH:mm'),
+            end: moment(response[i].end, 'MMM DD, YYYY HH:mm')
           });
         }
-      }
-      if(uiCalendarConfig.calendars["availabilityCalendar"]){
-        uiCalendarConfig.calendars["availabilityCalendar"].fullCalendar('refetchEvents');
-      }
-    }
-
-    $scope.eventResize = function(event){
-      var dayIndex = event.dayIndex;
-      var i = event.availabilityIndex;
-      availability[weekDays[dayIndex]][i].endHour = event.end.get('hour');
-      availability[weekDays[dayIndex]][i].endMinute = event.end.get('minute');
-      $scope.renderView();
-    }
-
-    $scope.eventDrop = function(event){
-      var startDay = new Date(event.start._i).getDay();
-      var endDay = new Date(event.start._d).getDay();
-
-      if(startDay == endDay){
-        var i = event.availabilityIndex;
-        availability[weekDays[startDay]][i].startHour = event.start.get('hour');
-        availability[weekDays[startDay]][i].startMinute = event.start.get('minute');
-        availability[weekDays[startDay]][i].endHour = event.end.get('hour');
-        availability[weekDays[startDay]][i].endMinute = event.end.get('minute');
-      }else{
-        var dayIndex = event.dayIndex;
-        var i = event.availabilityIndex;
-
-        var startHour = event.start.get('hour');
-        var startMinute = event.start.get('minute');
-        var endHour = event.end.get('hour');
-        var endMinute = event.end.get('minute');
-
-        var removedEvent = availability[weekDays[dayIndex]].splice(i, 1);
-
-        availability[weekDays[endDay]].push({
-          startHour: startHour,
-          startMinute: startMinute,
-          endHour: endHour,
-          endMinute: endMinute
-        });
-      }
-      $scope.renderView();
-    }
-
-    $scope.dayClicked = function(datetime){
-      var day = datetime.day();
-      var startHour = datetime.get('hour');
-      var startMinute = datetime.get('minute');
-      datetime.add(30, 'minutes');
-      var endHour = datetime.get('hour');
-      var endMinute = datetime.get('minute');
-
-      availability[weekDays[day]].push({
-        startHour: startHour,
-        startMinute: startMinute,
-        endHour: endHour,
-        endMinute: endMinute
+        checkConnectedTime();
+        console.log($scope.events);
+        uiCalendarConfig.calendars["availabilityCalendar"].fullCalendar('rerenderEvents');
+      })
+      .error(function(err){
+        console.log(err);
       });
-      $scope.renderView();
-    }
+    };
 
-    $scope.checkConnectedTime = function(){
-      // This function will be used to check if two times are alternative meaning has matching end and start time
-      for(var dayIndex = 0; dayIndex < weekDays.length; dayIndex++){
-        for(var i = availability[weekDays[dayIndex]].length - 1; i >= 0 ; i--){
-          if(availability[weekDays[dayIndex]][i-1] != undefined){
-            if(availability[weekDays[dayIndex]][i-1].endHour == availability[weekDays[dayIndex]][i].startHour){
-              availability[weekDays[dayIndex]][i-1].endHour = availability[weekDays[dayIndex]][i].endHour;
-              availability[weekDays[dayIndex]][i-1].endMinute = availability[weekDays[dayIndex]][i].endMinute;
-              availability[weekDays[dayIndex]].splice(i, 1);
-            }
+    $scope.events = [];
+    $scope.eventSources = [$scope.events, $scope.getEvents];
+
+    var checkConnectedTime = function(){
+      $scope.events.sort(function(a, b){
+        return a.start.unix() - b.start.unix();
+      });
+      for(var i = $scope.events.length - 1; i >= 0; i--){
+        if($scope.events[i-1] !== undefined){
+          if($scope.events[i].start.unix() == $scope.events[i-1].end.unix()){
+            $scope.events[i-1].end = $scope.events[i].end;
+            var _removedEvent = $scope.events.splice(i, 1);
           }
         }
       }
     }
 
+    var eventResize = function(event){
+      var _index = $scope.events.map(function(obj) { return obj._id; }).indexOf(event._id);
+      $scope.events[_index].start = event.start;
+      $scope.events[_index].end = event.end;
+      checkConnectedTime();
+    }
+
+    var alertEventOnClick = function(event){
+      var _index = $scope.events.map(function(obj) { return obj._id; }).indexOf(event._id);
+      $scope.events.splice(_index, 1);
+    }
+
+    var eventDrop = function(event, dayDelta, minuteDelta){
+      var _index = $scope.events.map(function(obj) { return obj._id; }).indexOf(event._id);
+      if(_index > -1){
+        $scope.events[_index].start = moment(event.start, 'MMM DD, YYYY HH:mm');
+        $scope.events[_index].end = moment(event.end, 'MMM DD, YYYY HH:mm');
+        $timeout(function(){
+          checkConnectedTime();
+        },200);
+      }
+    }
+
+    var dayClicked = function(datetime){
+      var _start = moment(datetime, 'MMM DD, YYYY HH:mm');
+      var _end = moment(datetime.add(30, 'minutes'), 'MMM DD, YYYY HH:mm');
+      $scope.events.push({
+        description: "",
+        className: "",
+        icon: "",
+        allDay: false,
+        start: _start,
+        end: _end
+      });
+      checkConnectedTime();
+      $('#availabilityCalendar').fullCalendar('rerenderEvents');
+    }
+
     $scope.uiConfig = {
       calendar:{
-        height: 450,
+        height: 750,
         editable: true,
         header:{
           left: '',
           center: 'title',
-          // right: 'today prev,next'
-          right: ''
+          right: 'today prev,next'
+          // right: ''
         },
         defaultView: 'agendaWeek',
         eventOverlap: false,
-        // eventStartEditable: false,
-        eventClick: $scope.alertEventOnClick,
-        dayClick: $scope.dayClicked,
-        eventResize: $scope.eventResize,
-        eventDrop: $scope.eventDrop,
-        viewRender: $scope.renderView
+        eventStartEditable: true,
+        eventClick: alertEventOnClick,
+        dayClick: dayClicked,
+        eventResize: eventResize,
+        eventDrop: eventDrop
       }
     };
+
+    $scope.updateAvailability = function(){
+      for(var i = 0; i < $scope.events.length; i++){
+        console.log($scope.events[i].start);
+        $scope.events[i].start = moment($scope.events[i].start, 'MMM DD, YYYY HH:mm').format();
+        $scope.events[i].end = moment($scope.events[i].end, 'MMM DD, YYYY HH:mm').format();
+      }
+      console.log($scope.events);
+      userFactory.updateAvailability({availability: $scope.events})
+      .success(function(response){
+        // $scope.getEvents();
+        console.log(response);
+      })
+      .error(function(err){
+        console.log(err);
+      });
+    }
 
     $scope.uploadProfilePic = function(){
       angular.element('#uploadProfilePic').trigger('click');
@@ -166,4 +149,5 @@ angular.module('takhshilaApp')
       Upload.currentVideo = videoFile;
   		$rootScope.showVideoUploadModal();
   	};
+
   });

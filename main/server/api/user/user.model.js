@@ -41,46 +41,32 @@ var UserSchema = new Schema({
   }],
   availability: {
     sunday: [{
-      startHour: {type: Number, required: true},
-      startMinute: {type: Number, required: true},
-      endHour: {type: Number, required: true},
-      endMinute: {type: Number, required: true}
+      start: {type: String, required: true},
+      end: {type: String, required: true}
     }],
     monday: [{
-      startHour: {type: Number, required: true},
-      startMinute: {type: Number, required: true},
-      endHour: {type: Number, required: true},
-      endMinute: {type: Number, required: true}
+      start: {type: String, required: true},
+      end: {type: String, required: true}
     }],
     tuesday: [{
-      startHour: {type: Number, required: true},
-      startMinute: {type: Number, required: true},
-      endHour: {type: Number, required: true},
-      endMinute: {type: Number, required: true}
+      start: {type: String, required: true},
+      end: {type: String, required: true}
     }],
     wednessday: [{
-      startHour: {type: Number, required: true},
-      startMinute: {type: Number, required: true},
-      endHour: {type: Number, required: true},
-      endMinute: {type: Number, required: true}
+      start: {type: String, required: true},
+      end: {type: String, required: true}
     }],
     thursday: [{
-      startHour: {type: Number, required: true},
-      startMinute: {type: Number, required: true},
-      endHour: {type: Number, required: true},
-      endMinute: {type: Number, required: true}
+      start: {type: String, required: true},
+      end: {type: String, required: true}
     }],
     friday: [{
-      startHour: {type: Number, required: true},
-      startMinute: {type: Number, required: true},
-      endHour: {type: Number, required: true},
-      endMinute: {type: Number, required: true}
+      start: {type: String, required: true},
+      end: {type: String, required: true}
     }],
     saturday: [{
-      startHour: {type: Number, required: true},
-      startMinute: {type: Number, required: true},
-      endHour: {type: Number, required: true},
-      endMinute: {type: Number, required: true}
+      start: {type: String, required: true},
+      end: {type: String, required: true}
     }]
   },
   hashedPassword: { type:String, required: true },
@@ -113,7 +99,12 @@ UserSchema
     return {
       'name': this.name,
       'role': this.role,
-      'isTeacher' : this.isTeacher
+      'isTeacher' : this.isTeacher,
+      'profilePhoto': this.profilePhoto,
+      'ratePerHour': this.ratePerHour,
+      'basicInfo': this.basicInfo,
+      'education': this.education,
+      'experience': this.experience
     };
   });
 
@@ -129,8 +120,7 @@ UserSchema
       'ratePerHour': this.ratePerHour,
       'basicInfo': this.basicInfo,
       'education': this.education,
-      'experience': this.experience,
-      'availability': this.availability
+      'experience': this.experience
     };
   });
 

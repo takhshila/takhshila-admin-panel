@@ -27,6 +27,7 @@ router.post('/experience', auth.isAuthenticated(), controller.addExperience);
 router.put('/experience/:id', auth.isAuthenticated(), controller.updateExperience);
 router.delete('/experience/:id', auth.isAuthenticated(), controller.deleteExperience);
 
+router.post('/availability/:id', controller.getAvailability);
 router.put('/availability', auth.isAuthenticated(), controller.updateAvailability);
 
 module.exports = router;

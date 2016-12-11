@@ -106,7 +106,7 @@
         </div>
         <div class="ui segment">
           <p>
-            <div ui-calendar="uiConfig.calendar" ng-model="eventSources" calendar = "availabilityCalendar"></div>
+            <div id = "availabilityCalendar"></div>
           </p>
         </div>
       </div>
@@ -123,7 +123,7 @@
             <div ng-if = "selectedSessions.length">
               <div ng-repeat = "session in selectedSessions">
                 <div class="selectedSession">
-                  <span class = "sessionDateTime">{{session.date}} {{session.startTime}} to {{session.endTime}}</span>
+                  <span class = "sessionDateTime">{{session.dateFormated}} {{session.startTimeFormated}} to {{session.endTimeFormated}}</span>
                   <span class = "sessionCost">{{session.currency}}&nbsp;{{session.cost}}</span>
                   <div class = "clear"></div>
                 </div>

@@ -19,7 +19,7 @@
   .selectedSession{
     padding: 10px 0px;
     margin-top: 10px;
-    border-bottom: 1px dashed rgba(34, 36, 38, 0.15)
+    border-bottom: 1px dashed rgba(34, 36, 38, 0.15);
   }
   .sessionDateTime{
     width: 65%;
@@ -75,6 +75,14 @@
   .fc-time-grid .fc-event, .fc-time-grid .fc-bgevent{
     border: 0px;
     border-radius: 0px;
+    &.available{
+      background: #CFF1C2;
+      opacity: 1;
+    }
+    &.active{
+      background: #129DFA;
+      opacity: 1;
+    }
   }
   .fc-time-grid-event.fc-short .fc-time, .fc-time-grid-event.fc-short .fc-title{
     display: none;

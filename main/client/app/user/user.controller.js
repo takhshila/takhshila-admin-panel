@@ -1,181 +1,294 @@
 'use strict';
 
 angular.module('takhshilaApp')
-  .controller('UserCtrl', function ($rootScope, $scope, $stateParams, $timeout, $compile, uiCalendarConfig, userFactory) {
-    $rootScope.isLoading = true;
+.controller('UserCtrl', function ($rootScope, $scope, $stateParams, $timeout, $compile, uiCalendarConfig, userFactory) {
+  $rootScope.isLoading = true;
 
-    var weekDays = ['sunday', 'monday', 'tuesday', 'wednessday', 'thursday', 'friday', 'saturday'];
+  // var weekDays = ['sunday', 'monday', 'tuesday', 'wednessday', 'thursday', 'friday', 'saturday'];
 
-    var availability = {
-      sunday: [],
-      monday: [],
-      tuesday: [],
-      wednessday: [],
-      thursday: [],
-      friday: [],
-      saturday: []
-    }
+  // var availability = {
+  //   sunday: [],
+  //   monday: [],
+  //   tuesday: [],
+  //   wednessday: [],
+  //   thursday: [],
+  //   friday: [],
+  //   saturday: []
+  // }
 
-    var calculateTotal = function(){
-      var _totalCost = 0;
-      for(var i = 0; i < $scope.selectedSessions.length; i++){
-        _totalCost += $scope.selectedSessions[i].cost;
-      }
-      $scope.totalCost = parseFloat(_totalCost).toFixed(2);
-    }
-
-    var eventRender = function( event, element, view ) {
-        // element.attr({'tooltip': event.title, 'tooltip-append-to-body': true});
-        element.attr({'uib-popover': '"I have a title!"', 'popover-title': '"The title."', 'popover-trigger': "'mouseenter'"});
-        // element.append('<md-tooltip md-autohide="false">Play Music</md-tooltip>');
-        $compile(element)($scope);
-    };
-
-    var alertEventOnClick = function(event, element, view){
-      if(angular.element(element.currentTarget).hasClass("active")){
-        angular.element(element.currentTarget).removeClass("active");
-      }else {
-        angular.element(element.currentTarget).addClass("active");
-      }
-      var _selectedSessionPushed = false;
-      var _selectedDate = event.start.format('ddd, MMMM Do YYYY');
-      var _selectedStartHour = event.start.get('hour');
-      var _selectedStartMinute = event.start.get('minute');
-      var _selectedEndHour = event.end.get('hour');
-      var _selectedEndMinute = event.end.get('minute');
-
-      for(var i = 0; i < $scope.selectedSessions.length; i++){
-        if($scope.selectedSessions[i].date.toString() == _selectedDate.toString()){
-          if($scope.selectedSessions[i].endHour == _selectedStartHour){
-            $scope.selectedSessions[i].endHour = _selectedEndHour;
-            $scope.selectedSessions[i].endMinute = _selectedEndMinute;
-            $scope.selectedSessions[i].endTime = event.end.format('h:mm a');
-            $scope.selectedSessions[i].cost += parseFloat($scope.user.ratePerHour.value).toFixed(2);
-            _selectedSessionPushed = true;
-          }else if($scope.selectedSessions[i].startHour == _selectedEndHour){
-            $scope.selectedSessions[i].startHour = _selectedStartHour;
-            $scope.selectedSessions[i].startMinute = _selectedStartMinute
-            $scope.selectedSessions[i].endTime = event.start.format('h:mm a');
-            $scope.selectedSessions[i].cost += parseFloat($scope.user.ratePerHour.value).toFixed(2);
-            _selectedSessionPushed = true;
-          }
-        }
-      }
-      if(!_selectedSessionPushed){
-        var _session = {
-          date: event.start.format('ddd, MMMM Do YYYY'),
-          startHour: _selectedStartHour,
-          startMinute: _selectedStartMinute,
-          endHour: _selectedEndHour,
-          endMinute: _selectedEndMinute,
-          startTime: event.start.format('h:mm a'),
-          endTime: event.end.format('h:mm a'),
-          cost: parseFloat($scope.user.ratePerHour.value).toFixed(2),
-          currency: $scope.user.ratePerHour.currency
-        }
-        $scope.selectedSessions.push(_session);
-        calculateTotal();
-      }
-    }
-
-    var renderView = function(view){
-      for(var dayIndex = 0; dayIndex < weekDays.length; dayIndex++){
-        availability[weekDays[dayIndex]].sort(function(a, b){
-          return a.startHour - b.startHour;
+  $scope.getEvents = function(start, end, timezone, callback){
+    userFactory.getAvailability($stateParams.ID, {start: start, end: end})
+    .success(function(response){
+      $scope.events.length = 0;
+      for(var i = 0; i < response.length; i++){
+        $scope.events.push({
+          _id: i+1,
+          start: moment(response[i].start, 'MMM DD, YYYY HH:mm'),
+          end: moment(response[i].end, 'MMM DD, YYYY HH:mm'),
+          className: response[i].status,
+          status: response[i].status
         });
       }
-      disconnectTime();
-      $scope.events.length = 0;
-      if(view === undefined){
-        view = uiCalendarConfig.calendars["availabilityCalendar"].fullCalendar('getView');
+      console.log($scope.events);
+      callback($scope.events);
+    })
+    .error(function(err){
+      console.log(err);
+    });
+  };
+
+  var checkConnectedTime = function(){
+    $scope.events.sort(function(a, b){
+      return a.start.unix() - b.start.unix();
+    });
+    for(var i = $scope.events.length - 1; i >= 0; i--){
+      if($scope.events[i-1] !== undefined){
+        if($scope.events[i].start.unix() == $scope.events[i-1].end.unix()){
+          $scope.events[i-1].end = $scope.events[i].end;
+          var _removedEvent = $scope.events.splice(i, 1);
+        }
       }
-      var date = new Date(view.start._d);
-      var d = date.getDate();
-      var m = date.getMonth();
-      var y = date.getFullYear();
-      for(var dayIndex = 0; dayIndex < weekDays.length; dayIndex++){
-        for(var i = 0; i < availability[weekDays[dayIndex]].length; i++){
-          $scope.events.push({
-            title: 'Book Class Now',
-            start: new Date(y, m, d+dayIndex, availability[weekDays[dayIndex]][i].startHour, availability[weekDays[dayIndex]][i].startMinute),
-            end: new Date(y, m, d+dayIndex, availability[weekDays[dayIndex]][i].endHour, availability[weekDays[dayIndex]][i].endMinute),
-            allDay: false,
-            dayIndex: dayIndex,
-            availabilityIndex: i,
-            color: '#CFF1C2'
+    }
+  }
+
+  $scope.events = [];
+  $scope.selectedSessions = [];
+
+  var calculateTotal = function(){
+    var _totalCost = 0;
+    for(var i = 0; i < $scope.selectedSessions.length; i++){
+      _totalCost += $scope.selectedSessions[i].cost;
+    }
+    $scope.totalCost = parseFloat(_totalCost).toFixed(2);
+  }
+
+  var eventRender = function( event, element, view ) {
+    // element.attr({'tooltip': event.title, 'tooltip-append-to-body': true});
+    element.attr({'uib-popover': '"I have a title!"', 'popover-title': '"The title."', 'popover-trigger': "'mouseenter'"});
+    // element.append('<md-tooltip md-autohide="false">Play Music</md-tooltip>');
+    $compile(element)($scope);
+  };
+
+  // var alertEventOnClick = function(event, element, view){
+  //   var _clickedStartDateTime = new Date(event.start).getTime();
+  //   var _clickedEndDateTime = new Date(event.end).getTime();
+  //
+  //   var _processInsert = true;
+  //
+  //   for(var i = 0; i < $scope.selectedSessions.length; i++){
+  //     var _sessionStartDateTime = new Date($scope.selectedSessions[i].startDateTime).getTime();
+  //     var _sessionEndDateTime = new Date($scope.selectedSessions[i].endDateTime).getTime();
+  //     if(_clickedStartDateTime >= _sessionStartDateTime && _clickedEndDateTime <= _sessionEndDateTime){
+  //       $scope.selectedSessions.splice(i, 1);
+  //       _processInsert = false;
+  //       $('.fc-time-grid-event').removeClass('active');
+  //       break;
+  //     }else if(_clickedStartDateTime == _sessionEndDateTime){
+  //       $scope.selectedSessions[i].elements.push(element.currentTarget);
+  //       $scope.selectedSessions[i].endDateTime = event.end;
+  //       $scope.selectedSessions[i].endTimeFormated = event.end.format('hh:mm a');
+  //       $scope.selectedSessions[i].cost += parseFloat(($scope.user.ratePerHour.value)/2);
+  //       _processInsert = false;
+  //       break;
+  //     }else if(_clickedEndDateTime == _sessionStartDateTime){
+  //       $scope.selectedSessions[i].elements.push(element.currentTarget);
+  //       $scope.selectedSessions[i].startDateTime = event.start;
+  //       $scope.selectedSessions[i].startTimeFormated = event.start.format('hh:mm a');
+  //       $scope.selectedSessions[i].cost += parseFloat(($scope.user.ratePerHour.value)/2);
+  //       _processInsert = false;
+  //       break;
+  //     }
+  //   }
+  //   if(_processInsert){
+  //     $scope.selectedSessions.push({
+  //       startDateTime: event.start,
+  //       endDateTime: event.end,
+  //       dateFormated: event.start.format('dddd, MMMM Do YYYY'),
+  //       startTimeFormated: event.start.format('hh:mm a'),
+  //       endTimeFormated: event.end.format('hh:mm a'),
+  //       elements: [element.currentTarget],
+  //       cost: parseFloat(($scope.user.ratePerHour.value)/2),
+  //       currency: $scope.user.ratePerHour.currency
+  //     });
+  //   }
+  //
+  //
+  //   $scope.selectedSessions.sort(function(a, b){
+  //     return new Date(a.startDateTime).getTime() - new Date(b.startDateTime).getTime();
+  //   });
+  //
+  //   for(var i = $scope.selectedSessions.length - 1; i >= 0; i--){
+  //     for(var j = 0; j < $scope.selectedSessions[i].elements.length; j++){
+  //       angular.element($scope.selectedSessions[i].elements[j]).addClass("active");
+  //     }
+  //     if($scope.selectedSessions[i-1] !== undefined){
+  //       if(new Date($scope.selectedSessions[i].startDateTime).getTime() == new Date($scope.selectedSessions[i-1].endDateTime).getTime()){
+  //         $scope.selectedSessions[i-1].endDateTime = $scope.selectedSessions[i].endDateTime;
+  //         $scope.selectedSessions[i-1].endTimeFormated = $scope.selectedSessions[i].endTimeFormated;
+  //         $scope.selectedSessions[i-1].cost += $scope.selectedSessions[i].cost;
+  //         $scope.selectedSessions.splice(i, 1);
+  //       }
+  //     }
+  //   }
+  //   calculateTotal();
+  //   $scope.$apply();
+  // }
+
+  // var renderView = function(view){
+  //   disconnectTime();
+  //   var _count = 0;
+  //   $scope.events.length = 0;
+  //   if(view === undefined){
+  //     view = uiCalendarConfig.calendars["availabilityCalendar"].fullCalendar('getView');
+  //   }
+  //   var date = new Date(view.start._d);
+  //   var d = date.getDate();
+  //   var m = date.getMonth();
+  //   var y = date.getFullYear();
+  //   for(var dayIndex = 0; dayIndex < weekDays.length; dayIndex++){
+  //     _count++;
+  //     for(var i = 0; i < availability[weekDays[dayIndex]].length; i++){
+  //       _count++
+  //       $scope.events.push({
+  //         title: 'Book Class Now',
+  //         start: new Date(y, m, d+dayIndex, availability[weekDays[dayIndex]][i].startHour, availability[weekDays[dayIndex]][i].startMinute),
+  //         end: new Date(y, m, d+dayIndex, availability[weekDays[dayIndex]][i].endHour, availability[weekDays[dayIndex]][i].endMinute),
+  //         allDay: false,
+  //         dayIndex: dayIndex,
+  //         availabilityIndex: i,
+  //         color: '#CFF1C2'
+  //       });
+  //     }
+  //   }
+  //
+  //   console.log("Count is " + _count);
+  //   // for(var n = 0; n < $scope.events.length; n++){
+  //   //   console.log($scope.events[n].start.getTime());
+  //   // }
+  //   if(uiCalendarConfig.calendars["availabilityCalendar"]){
+  //     uiCalendarConfig.calendars["availabilityCalendar"].fullCalendar('refetchEvents');
+  //   }
+  // }
+
+  // var disconnectTime = function(){
+  //   for(var dayIndex = 0; dayIndex < weekDays.length; dayIndex++){
+  //     availability[weekDays[dayIndex]].sort(function(a, b){
+  //       return a.startHour - b.startHour;
+  //     });
+  //   }
+  //   var _availability = {};
+  //   var _view = uiCalendarConfig.calendars["availabilityCalendar"].fullCalendar('getView');
+  //   var _date = new Date(_view.start._d);
+  //   var _d = _date.getDate();
+  //   var _m = _date.getMonth();
+  //   var _y = _date.getFullYear();
+  //   for(var dayIndex = 0; dayIndex < weekDays.length; dayIndex++){
+  //     _availability[weekDays[dayIndex]] = [];
+  //     for(var i = 0; i < availability[weekDays[dayIndex]].length ; i++){
+  //       var _startTime = new Date(_y, _m, _d+dayIndex, availability[weekDays[dayIndex]][i].startHour, availability[weekDays[dayIndex]][i].startMinute).getTime();
+  //       var _endTime = new Date(_y, _m, _d+dayIndex, availability[weekDays[dayIndex]][i].endHour, availability[weekDays[dayIndex]][i].endMinute).getTime();
+  //       var _difference = Math.round((_endTime - _startTime) / 60000);
+  //       if(_difference > 30){
+  //         do {
+  //           _availability[weekDays[dayIndex]].push({
+  //             startHour: new Date(_startTime).getHours(),
+  //             startMinute: new Date(_startTime).getMinutes(),
+  //             endHour: new Date(_startTime + (30*60000)).getHours(),
+  //             endMinute: new Date(_startTime + (30*60000)).getMinutes()
+  //           });
+  //           _startTime = _startTime + (30*60000);
+  //           _difference = Math.round((_endTime - _startTime) / 60000);
+  //         } while (_difference > 30);
+  //       }else{
+  //         _availability[weekDays[dayIndex]].push(availability[weekDays[dayIndex]][i]);
+  //       }
+  //     }
+  //   }
+  //   for(var day in _availability){
+  //     availability[day] = _availability[day];
+  //   }
+  // }
+
+  var alertEventOnClick = function(event, element, view){
+    if($(this).hasClass('active')){
+      $(this).removeClass('active');
+      $(this).addClass('available');
+    }else{
+      $(this).addClass('active');
+      $(this).removeClass('available');
+    }
+    var _index = $scope.events.map(function(obj) { return obj._id; }).indexOf(event._id);
+
+    var _clickedStart = moment(event.start, 'MMM DD, YYYY HH:mm');
+    var _clickedEnd = moment(event.end, 'MMM DD, YYYY HH:mm');
+    if($scope.events[_index].status == "booked"){
+      return;
+    }else if($scope.events[_index].status == "available"){
+      $scope.events[_index].status = "selected";
+    }else {
+      $scope.events[_index].status = "available";
+    }
+    updateEventStatus();
+  }
+
+  var updateEventStatus = function(){
+    $scope.events.sort(function(a, b){
+      return a.start.unix() - b.start.unix();
+    })
+    $scope.selectedSessions.length = 0;
+    for(var i = $scope.events.length-1; i >= 0 ; i--){
+      if($scope.events[i].status == "selected"){
+        var _processInsert = true;
+        if($scope.selectedSessions.length){
+          if($scope.selectedSessions[$scope.selectedSessions.length-1].start.unix() == $scope.events[i].end.unix()){
+            $scope.selectedSessions[$scope.selectedSessions.length-1].start = moment($scope.events[i].start, 'MMM DD, YYYY HH:mm');
+            $scope.selectedSessions[$scope.selectedSessions.length-1].startTimeFormated = moment($scope.events[i].start, 'MMM DD, YYYY HH:mm').format('hh:mm a');
+            $scope.selectedSessions[$scope.selectedSessions.length-1].cost += parseFloat(($scope.user.ratePerHour.value)/2);
+            _processInsert = false;
+          }
+        }
+
+        if(_processInsert){
+          $scope.selectedSessions.push({
+            start: moment($scope.events[i].start, 'MMM DD, YYYY HH:mm'),
+            end: moment($scope.events[i].end, 'MMM DD, YYYY HH:mm'),
+            dateFormated: moment($scope.events[i].start, 'MMM DD, YYYY HH:mm').format('dddd, MMMM Do YYYY'),
+            startTimeFormated: moment($scope.events[i].start, 'MMM DD, YYYY HH:mm').format('hh:mm a'),
+            endTimeFormated: moment($scope.events[i].end, 'MMM DD, YYYY HH:mm').format('hh:mm a'),
+            cost: parseFloat(($scope.user.ratePerHour.value)/2),
+            currency: $scope.user.ratePerHour.currency
           });
         }
       }
-      if(uiCalendarConfig.calendars["availabilityCalendar"]){
-        uiCalendarConfig.calendars["availabilityCalendar"].fullCalendar('refetchEvents');
-      }
     }
+    $scope.$apply();
+  }
 
-    var disconnectTime = function(){
-      var _availability = {};
-      var _view = uiCalendarConfig.calendars["availabilityCalendar"].fullCalendar('getView');
-      var _date = new Date(_view.start._d);
-      var _d = _date.getDate();
-      var _m = _date.getMonth();
-      var _y = _date.getFullYear();
-      for(var dayIndex = 0; dayIndex < weekDays.length; dayIndex++){
-        _availability[weekDays[dayIndex]] = [];
-        for(var i = 0; i < availability[weekDays[dayIndex]].length ; i++){
-          var _startTime = new Date(_y, _m, _d+dayIndex, availability[weekDays[dayIndex]][i].startHour, availability[weekDays[dayIndex]][i].startMinute).getTime();
-          var _endTime = new Date(_y, _m, _d+dayIndex, availability[weekDays[dayIndex]][i].endHour, availability[weekDays[dayIndex]][i].endMinute).getTime();
-          var _difference = Math.round((_endTime - _startTime) / 60000);
-          if(_difference > 30){
-            do {
-              _availability[weekDays[dayIndex]].push({
-                startHour: new Date(_startTime).getHours(),
-                startMinute: new Date(_startTime).getMinutes(),
-                endHour: new Date(_startTime + (30*60000)).getHours(),
-                endMinute: new Date(_startTime + (30*60000)).getMinutes()
-              });
-              _startTime = _startTime + (30*60000);
-              _difference = Math.round((_endTime - _startTime) / 60000);
-            } while (_difference > 30);
-          }else{
-            _availability[weekDays[dayIndex]].push(availability[weekDays[dayIndex]][i]);
-          }
-        }
-      }
-      for(var day in _availability){
-        availability[day] = _availability[day];
-      }
-    }
-
-    $scope.events = [];
-    $scope.selectedSessions = [];
-    $scope.eventSources = [$scope.events];
-
-    userFactory.getUserDetails($stateParams.ID)
-    .success(function(response){
-      $rootScope.isLoading = false;
-      $scope.user = response;
-      availability = response.availability;
-      $timeout(function(){
-        renderView();
-        $scope.uiConfig = {
-          calendar:{
-            height: 450,
-            editable: false,
-            header:{
-              left: '',
-              center: 'title',
-              right: 'today prev,next'
-              // right: ''
-            },
-            defaultView: 'agendaWeek',
-            eventClick: alertEventOnClick,
-            eventRender: eventRender,
-            viewRender: renderView
-          }
-        };
-      }, 0)
-    })
-    .error(function(err){
-      $rootScope.isLoading = false;
-      console.log(err);
+  userFactory.getUserDetails($stateParams.ID)
+  .success(function(response){
+    $rootScope.isLoading = false;
+    $scope.user = response;
+    $(function () {
+      setTimeout(function(){
+        $('#availabilityCalendar').fullCalendar({
+          height: 750,
+          editable: false,
+          header:{
+            left: '',
+            center: 'title',
+            right: 'today prev,next'
+            // right: ''
+          },
+          defaultView: 'agendaWeek',
+          eventClick: alertEventOnClick,
+          eventRender: eventRender,
+          events: $scope.getEvents
+        });
+      }, 0);
     });
+  })
+  .error(function(err){
+    $rootScope.isLoading = false;
+    console.log(err);
   });
+});

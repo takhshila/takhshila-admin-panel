@@ -1,6 +1,7 @@
 'use strict';
 
 var _ = require('lodash');
+var moment = require('moment');
 var User = require('./user.model');
 var passport = require('passport');
 var config = require('../../config/environment');
@@ -169,11 +170,79 @@ exports.updateAvailability = function(req, res, next) {
     if (err) { return handleError(res, err); }
     if(!user) { return res.status(404).send('Not Found'); }
     if(!user.isTeacher) { return res.status(404).send('You are not allowed to update availability'); }
-    user.availability = availability;
+    var _availability = {
+      sunday: [],
+      monday: [],
+      tuesday: [],
+      wednessday: [],
+      thursday: [],
+      friday: [],
+      saturday: []
+    };
+    var _weekDays = ['sunday', 'monday', 'tuesday', 'wednessday', 'thursday', 'friday', 'saturday'];
+    for(var i = 0; i < availability.length; i++){
+      // var _day = moment(availability[i].start).get('day');
+      var _start = moment(availability[i].start, 'YYYY-mm-DD HH:mm');
+      var _end = moment(availability[i].end, 'YYYY-mm-DD HH:mm');
+      var _day = (_start.day() - 1);
+      if(_day == -1){
+        _day = 6;
+      }
+
+      _availability[_weekDays[_day]].push({
+        start: _start.format('HH:mm'),
+        end: _end.format('HH:mm')
+      });
+    }
+    console.log(_availability);
+    user.availability = _availability;
     user.save(function (err) {
       if (err) { return handleError(res, err); }
       return res.status(200).json(user);
     });
+  });
+};
+/**
+ * Get user availability based on specified date and time
+ */
+exports.getAvailability = function(req, res, next) {
+  var userId = req.params.id;
+  User.findOne({
+    _id: userId
+  }, '-salt -hashedPassword', function(err, user) { // don't ever give out the password or salt
+    if (err) return next(err);
+    if (!user) return res.status(400).send('Invalid User');
+    var _events = [];
+    var _weekDays = ['sunday', 'monday', 'tuesday', 'wednessday', 'thursday', 'friday', 'saturday'];
+    for(var day = 0; day < _weekDays.length; day++){
+      for(var i = 0; i < user.availability[_weekDays[day]].length; i++){
+        var startDate = moment(req.body.start);
+        var endDate = moment(req.body.end);
+        var _startDate = moment(startDate, 'YYYY-mm-DD').add(day, 'days').format("MMM DD, YYYY");
+        var _startTime = user.availability[_weekDays[day]][i].start.toString();
+        var _endTime = user.availability[_weekDays[day]][i].end.toString();
+        var _startDateTime = moment(_startDate + _startTime, 'MMM DD, YYYY HH:mm');
+        var _endDateTime = moment(_startDate + _endTime, 'MMM DD, YYYY HH:mm');
+
+        var _difference = (_endDateTime.unix() - _startDateTime.unix()) / 60;
+        if(_difference > 30){
+          do{
+            _events.push({
+              start: _startDateTime.format('MMM DD, YYYY HH:mm'),
+              end: _startDateTime.add(30, 'minutes').format('MMM DD, YYYY HH:mm'),
+              status: 'available'
+            });
+            _difference -= 30;
+          }while(_difference >= 30)
+        }else {
+          _events.push({
+            start: _startDateTime.format('MMM DD, YYYY HH:mm'),
+            end: _startDateTime.add(30, 'minutes').format('MMM DD, YYYY HH:mm')
+          });
+        }
+      }
+    }
+    res.json(_events);
   });
 };
 /**
