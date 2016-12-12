@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('takhshilaApp')
-.controller('UserCtrl', function ($rootScope, $scope, $stateParams, $timeout, $compile, uiCalendarConfig, userFactory) {
+.controller('UserCtrl', function ($rootScope, $scope, $stateParams, $timeout, $compile, uiCalendarConfig, userFactory, userClassFactory) {
   $rootScope.isLoading = true;
 
   // var weekDays = ['sunday', 'monday', 'tuesday', 'wednessday', 'thursday', 'friday', 'saturday'];
@@ -15,6 +15,27 @@ angular.module('takhshilaApp')
   //   friday: [],
   //   saturday: []
   // }
+
+  $scope.bookClass = function(){
+    if($scope.selectedSessions.length){
+      for(var i = 0; i < $scope.selectedSessions.length; i++){
+        $scope.selectedSessions[i].start = moment($scope.selectedSessions[i].start, 'MMM DD, YYYY HH:mm').format();
+        $scope.selectedSessions[i].end = moment($scope.selectedSessions[i].end, 'MMM DD, YYYY HH:mm').format();
+      }
+      var _classData = {
+        teacherID: $stateParams.ID,
+        classData: $scope.selectedSessions
+      }
+      console.log(_classData);
+      userClassFactory.requestClass('', _classData)
+      .success(function(response){
+        console.log(response);
+      })
+      .error(function(err){
+        console.log(err);
+      });
+    }
+  }
 
   $scope.getEvents = function(start, end, timezone, callback){
     userFactory.getAvailability($stateParams.ID, {start: start, end: end})

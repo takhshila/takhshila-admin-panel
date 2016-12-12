@@ -129,7 +129,8 @@
                 </div>
               </div>
               <span class = "bookClassButtonContainer">
-                <button class = "ui button primary">Book Class Now</button>
+                <button ng-if = "loggedIn" ng-click = "bookClass($event)" class = "ui button primary">Book Class Now</button>
+                <button ng-if = "!loggedIn" ng-click = "showLoginModal($event)" class = "ui button primary">Book Class Now</button>
                 <button class = "ui primary basic button">Talk to Teacher</button>
               </span>
             </div>
