@@ -3,9 +3,11 @@
 var _ = require('lodash');
 var moment = require('moment');
 var User = require('./user.model');
+var Userclass = require('../userclass/userclass.model');
 var passport = require('passport');
 var config = require('../../config/environment');
 var jwt = require('jsonwebtoken');
+var moment = require('moment');
 
 var validationError = function(res, err) {
   return res.status(422).json(err);
@@ -182,8 +184,8 @@ exports.updateAvailability = function(req, res, next) {
     var _weekDays = ['sunday', 'monday', 'tuesday', 'wednessday', 'thursday', 'friday', 'saturday'];
     for(var i = 0; i < availability.length; i++){
       // var _day = moment(availability[i].start).get('day');
-      var _start = moment(availability[i].start, 'YYYY-mm-DD HH:mm');
-      var _end = moment(availability[i].end, 'YYYY-mm-DD HH:mm');
+      var _start = moment(availability[i].start, 'YYYY-MM-DD HH:mm');
+      var _end = moment(availability[i].end, 'YYYY-MM-DD HH:mm');
       var _day = (_start.day() - 1);
       if(_day == -1){
         _day = 6;
@@ -194,7 +196,6 @@ exports.updateAvailability = function(req, res, next) {
         end: _end.format('HH:mm')
       });
     }
-    console.log(_availability);
     user.availability = _availability;
     user.save(function (err) {
       if (err) { return handleError(res, err); }
@@ -213,36 +214,109 @@ exports.getAvailability = function(req, res, next) {
     if (err) return next(err);
     if (!user) return res.status(400).send('Invalid User');
     var _events = [];
+    var _bookedClass = [];
     var _weekDays = ['sunday', 'monday', 'tuesday', 'wednessday', 'thursday', 'friday', 'saturday'];
-    for(var day = 0; day < _weekDays.length; day++){
-      for(var i = 0; i < user.availability[_weekDays[day]].length; i++){
-        var startDate = moment(req.body.start);
-        var endDate = moment(req.body.end);
-        var _startDate = moment(startDate, 'YYYY-mm-DD').add(day, 'days').format("MMM DD, YYYY");
-        var _startTime = user.availability[_weekDays[day]][i].start.toString();
-        var _endTime = user.availability[_weekDays[day]][i].end.toString();
-        var _startDateTime = moment(_startDate + _startTime, 'MMM DD, YYYY HH:mm');
-        var _endDateTime = moment(_startDate + _endTime, 'MMM DD, YYYY HH:mm');
 
-        var _difference = (_endDateTime.unix() - _startDateTime.unix()) / 60;
-        if(_difference > 30){
+    var _dayOfWeek = _weekDays.indexOf(moment().format('dddd').toLowerCase());
+    var _currentTime = moment().valueOf();
+    var _weekStartDate = moment(req.body.start);
+    console.log(moment(_currentTime).format('MMM DD, YYYY'));
+    Userclass.find({
+      'teacherID': userId,
+      'requestedTime.start': {$gte: _currentTime}
+    }, function(err, userclass){
+      var _bookedClasses = {};
+      for(var a = 0; a < userclass.length; a++){
+        var _bookedClassStart = parseInt(userclass[a].requestedTime.start);
+        var _bookedClassEnd = parseInt(userclass[a].requestedTime.end);
+        var _bookedTimeDifference = (_bookedClassEnd - _bookedClassStart) / (60*1000);
+        if(_bookedTimeDifference > 30){
           do{
-            _events.push({
-              start: _startDateTime.format('MMM DD, YYYY HH:mm'),
-              end: _startDateTime.add(30, 'minutes').format('MMM DD, YYYY HH:mm'),
-              status: 'available'
-            });
-            _difference -= 30;
-          }while(_difference >= 30)
-        }else {
-          _events.push({
-            start: _startDateTime.format('MMM DD, YYYY HH:mm'),
-            end: _startDateTime.add(30, 'minutes').format('MMM DD, YYYY HH:mm')
-          });
+            _bookedClasses[_bookedClassStart] = {
+              start: _bookedClassStart,
+              end: _bookedClassStart + (30 * 1000),
+              status: userclass[a].status
+            }
+            _bookedClassStart += (30 * 1000);
+            _bookedTimeDifference -= 30;
+          }while (_bookedTimeDifference >= 30)
+        }else{
+          _bookedClasses[_bookedClassStart] = {
+            start: _bookedClassStart,
+            end: _bookedClassEnd,
+            status: userclass[a].status
+          };
         }
       }
-    }
-    res.json(_events);
+
+      for(var day = 0; day < _weekDays.length; day++){
+        if(day < _dayOfWeek){
+          continue;
+        }
+        for(var i = 0; i < user.availability[_weekDays[day]].length; i++){
+
+          var _startTime = moment(user.availability[_weekDays[day]][i].start, 'HH:mm').format('HH:mm');
+          var _endTime = moment(user.availability[_weekDays[day]][i].end, 'HH:mm').format('HH:mm');
+
+          var _startDate = moment(_weekStartDate, 'YYYY-MM-DD').add(day, 'days').format('MMM DD, YYYY');
+          if(_endTime == "00:00"){
+            var _endDate = moment(_weekStartDate, 'YYYY-MM-DD').add(day+1, 'days').format('MMM DD, YYYY');
+          }else{
+            var _endDate = moment(_weekStartDate, 'YYYY-MM-DD').add(day, 'days').format('MMM DD, YYYY');
+          }
+
+          var _startDateTime = moment(_startDate + _startTime, 'MMM DD, YYYY HH:mm');
+          var _endDateTime = moment(_endDate + _endTime, 'MMM DD, YYYY HH:mm');
+          if( req.params.id && _endDateTime.valueOf() < _currentTime){ continue; }
+          var _difference = (_endDateTime.valueOf() - _startDateTime.valueOf()) / (60 * 1000);
+          if(_difference > 30){
+            do{
+              if(_startDateTime.valueOf() >= _currentTime){
+                var _status = 'available';
+                if(_bookedClasses[_startDateTime.valueOf()] !== undefined){
+                  _status = _bookedClasses[_startDateTime.valueOf()].status;
+                }
+                _events.push({
+                  start: _startDateTime.format('MMM DD, YYYY HH:mm'),
+                  end: _startDateTime.add(30, 'minutes').format('MMM DD, YYYY HH:mm'),
+                  status: _status
+                });
+              }else {
+                _startDateTime.add(30, 'minutes').format('MMM DD, YYYY HH:mm');
+              }
+              _difference -= 30;
+            }while(_difference >= 30)
+          }else {
+            if(_startDateTime.valueOf() >= _currentTime){
+              var _status = 'available';
+              if(_bookedClasses[_startDateTime.valueOf()] !== undefined){
+                _status = _bookedClasses[_startDateTime.valueOf()].status;
+              }
+              _events.push({
+                start: _startDateTime.format('MMM DD, YYYY HH:mm'),
+                end: _startDateTime.add(30, 'minutes').format('MMM DD, YYYY HH:mm'),
+                status: _status
+              });
+            }
+          }
+        }
+      }
+      res.json(_events);
+      
+    });
+  });
+};
+/**
+ * Get current user availability based on specified date and time
+ */
+exports.getCurrentUserAvailability = function(req, res, next) {
+  var userId = req.user._id;
+  User.findOne({
+    _id: userId
+  }, '-salt -hashedPassword', function(err, user) { // don't ever give out the password or salt
+    if (err) return next(err);
+    if (!user) return res.status(400).send('Invalid User');
+    res.json(user.availability);
   });
 };
 /**

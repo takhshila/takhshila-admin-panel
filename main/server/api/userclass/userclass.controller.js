@@ -31,14 +31,16 @@ exports.create = function(req, res) {
       studentID: req.user._id,
       teacherID: req.body.teacherID,
       requestedTime: {
-        date: moment(req.body.classData[i].start, 'YYYY-mm-DD HH:mm').format('MMM DD, YYYY'),
-        start: moment(req.body.classData[i].start, 'YYYY-mm-DD HH:mm').format('HH:mm'),
-        end: moment(req.body.classData[i].end, 'YYYY-mm-DD HH:mm').format('HH:mm')
+        start: (moment(req.body.classData[i].start, 'YYYY-MM-DD HH:mm').valueOf()),
+        end: (moment(req.body.classData[i].end, 'YYYY-MM-DD HH:mm').valueOf()),
+        dateFormated: moment(req.body.classData[i].start, 'YYYY-MM-DD HH:mm').format('MMM DD, YYYY'),
+        startFormated: moment(req.body.classData[i].start, 'YYYY-MM-DD HH:mm').format('HH:mm'),
+        endFormated: moment(req.body.classData[i].end, 'YYYY-MM-DD HH:mm').format('HH:mm')
       }
     }
     _classData.push(_data);
   }
-
+  console.log(_classData);
   Userclass.create(_classData, function(err, userclass) {
     if(err) { return handleError(res, err); }
     return res.status(201).json(userclass);

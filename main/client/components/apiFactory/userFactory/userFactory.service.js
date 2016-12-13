@@ -10,6 +10,9 @@ angular.module('takhshilaApp')
       getAvailability: function(id, params){
         return api.post(subUrl + 'availability/' + id, params);
       },
+      getCurrentUserAvailability: function(){
+        return api.get(subUrl + 'availability', '', '');
+      },
       updateAvailability: function(data){
         return api.put(subUrl, 'availability', data);
       }

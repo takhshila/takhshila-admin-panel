@@ -24,14 +24,26 @@ angular.module('takhshilaApp')
 
 
     $scope.getEvents = function(start, end, callback){
-      userFactory.getAvailability($rootScope.currentUser._id, {start: start, end: end})
+      userFactory.getCurrentUserAvailability()
       .success(function(response){
         $scope.events.length = 0;
-        for(var i = 0; i < response.length; i++){
-          $scope.events.push({
-            start: moment(response[i].start, 'MMM DD, YYYY HH:mm'),
-            end: moment(response[i].end, 'MMM DD, YYYY HH:mm')
-          });
+        for(var day in response){
+          for(var i = 0; i < response[day].length; i++){
+            var _weekDayCount = weekDays.indexOf(day);
+            var _startTime = moment(response[day][i].start, 'HH:mm').format('HH:mm');
+            var _endTime = moment(response[day][i].end, 'HH:mm').format('HH:mm');
+
+            var _startDate = moment(start, 'ddd MMM DD YYYY').add(_weekDayCount, 'days').format('MMM DD, YYYY');
+            if(_endTime == "00:00"){
+              var _endDate = moment(start, 'ddd MMM DD YYYY').add(_weekDayCount+1, 'days').format('MMM DD, YYYY');
+            }else{
+              var _endDate = moment(start, 'ddd MMM DD YYYY').add(_weekDayCount, 'days').format('MMM DD, YYYY');
+            }
+            $scope.events.push({
+              start: moment(_startDate + _startTime, 'MMM DD, YYYY HH:mm'),
+              end: moment(_endDate + _endTime, 'MMM DD, YYYY HH:mm')
+            });
+          }
         }
         checkConnectedTime();
         console.log($scope.events);
@@ -47,11 +59,11 @@ angular.module('takhshilaApp')
 
     var checkConnectedTime = function(){
       $scope.events.sort(function(a, b){
-        return a.start.unix() - b.start.unix();
+        return a.start.valueOf() - b.start.valueOf();
       });
       for(var i = $scope.events.length - 1; i >= 0; i--){
         if($scope.events[i-1] !== undefined){
-          if($scope.events[i].start.unix() == $scope.events[i-1].end.unix()){
+          if($scope.events[i].start.valueOf() == $scope.events[i-1].end.valueOf()){
             $scope.events[i-1].end = $scope.events[i].end;
             var _removedEvent = $scope.events.splice(i, 1);
           }

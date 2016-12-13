@@ -60,11 +60,11 @@ angular.module('takhshilaApp')
 
   var checkConnectedTime = function(){
     $scope.events.sort(function(a, b){
-      return a.start.unix() - b.start.unix();
+      return a.start.valueOf() - b.start.valueOf();
     });
     for(var i = $scope.events.length - 1; i >= 0; i--){
       if($scope.events[i-1] !== undefined){
-        if($scope.events[i].start.unix() == $scope.events[i-1].end.unix()){
+        if($scope.events[i].start.valueOf() == $scope.events[i-1].end.valueOf()){
           $scope.events[i-1].end = $scope.events[i].end;
           var _removedEvent = $scope.events.splice(i, 1);
         }
@@ -254,14 +254,14 @@ angular.module('takhshilaApp')
 
   var updateEventStatus = function(){
     $scope.events.sort(function(a, b){
-      return a.start.unix() - b.start.unix();
+      return a.start.valueOf() - b.start.valueOf();
     })
     $scope.selectedSessions.length = 0;
     for(var i = $scope.events.length-1; i >= 0 ; i--){
       if($scope.events[i].status == "selected"){
         var _processInsert = true;
         if($scope.selectedSessions.length){
-          if($scope.selectedSessions[$scope.selectedSessions.length-1].start.unix() == $scope.events[i].end.unix()){
+          if($scope.selectedSessions[$scope.selectedSessions.length-1].start.valueOf() == $scope.events[i].end.valueOf()){
             $scope.selectedSessions[$scope.selectedSessions.length-1].start = moment($scope.events[i].start, 'MMM DD, YYYY HH:mm');
             $scope.selectedSessions[$scope.selectedSessions.length-1].startTimeFormated = moment($scope.events[i].start, 'MMM DD, YYYY HH:mm').format('hh:mm a');
             $scope.selectedSessions[$scope.selectedSessions.length-1].cost += parseFloat(($scope.user.ratePerHour.value)/2);

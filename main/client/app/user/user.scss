@@ -79,6 +79,14 @@
       background: #CFF1C2;
       opacity: 1;
     }
+    &.requested{
+      background: #F2711C;
+      opacity: 0.8;
+    }
+    &.booked{
+      background: #DB2828;
+      opacity: 0.8;
+    }
     &.active{
       background: #129DFA;
       opacity: 1;
