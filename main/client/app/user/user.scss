@@ -69,19 +69,68 @@
     max-width: 200px;
   }
 
+  .fc .fc-toolbar > * > :first-child {
+      margin-left: 0;
+      font-weight: 100;
+      font-size: 18px;
+      letter-spacing: 3px;
+  }
+  .fc .fc-axis {
+      padding: 2px 30px;
+  }
+  .fc-head-container.fc-widget-header{
+    border: 0px;
+    .fc-row.fc-widget-header{
+      border: 0px;
+    }
+    table th,
+    table td{
+      border: 0px;
+      &.fc-day-header{
+        padding: 20px;
+        font-weight: 100;
+      }
+    }
+  }
+
   .fc-ltr .fc-time-grid .fc-event-container{
     margin: 0px;
   }
-  .fc-time-grid .fc-event, .fc-time-grid .fc-bgevent{
+  .fc-time-grid .fc-slats td {
+      height: 2.5em;
+  }
+  .fc-time-grid-event .fc-content {
+      overflow: hidden;
+      text-align: center;
+      font-size: 18px;
+      z-index: -1;
+  }
+  .fc-time-grid .fc-event,
+  .fc-time-grid .fc-bgevent{
     border: 0px;
-    border-radius: 0px;
+    margin: 1px;
+    padding: 5px;
+    // border-radius: 0px;
+    .fc-bg{
+      background: transparent;
+      cursor: pointer;
+      opacity: 0;
+    }
     &.available{
-      background: #CFF1C2;
+      background: #40E4C3;
       opacity: 1;
+      .fc-bg:hover{
+        background: #129DFA;
+        opacity: 0.75;
+      }
     }
     &.requested{
-      background: #F2711C;
-      opacity: 0.8;
+      background-color: #E7E7E7;
+      background-image: repeating-linear-gradient(45deg,transparent,transparent 10px,#fff 0,#fff 15px);
+      opacity: 1;
+      .fc-bg{
+        cursor: default;
+      }
     }
     &.booked{
       background: #DB2828;
@@ -94,23 +143,6 @@
   }
   .fc-time-grid-event.fc-short .fc-time, .fc-time-grid-event.fc-short .fc-title{
     display: none;
-  }
-  .fc-event .fc-bg{
-    background: transparent;
-    cursor: pointer;
-    opacity: 0;
-  }
-  .fc-event.active .fc-bg{
-    background: #129DFA;
-    opacity: 1;
-  }
-  .fc-event .fc-bg:hover,
-  .fc-event .fc-bg:active{
-    background: #94D2FC;
-    opacity: 1;
-    .fc-time-grid-event.fc-short .fc-time, .fc-time-grid-event.fc-short .fc-title{
-      display: block;
-    }
   }
   .fc-event.active .fc-bg:hover,
   .fc-event.active .fc-bg:active{

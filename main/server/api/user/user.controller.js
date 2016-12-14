@@ -234,20 +234,24 @@ exports.getAvailability = function(req, res, next) {
           do{
             _bookedClasses[_bookedClassStart] = {
               start: _bookedClassStart,
-              end: _bookedClassStart + (30 * 1000),
+              end: _bookedClassStart + (30 * 60 * 1000),
+              dateTime: moment(_bookedClassStart).format("MMM DD, YYYY HH:mm a"),
               status: userclass[a].status
             }
-            _bookedClassStart += (30 * 1000);
+            _bookedClassStart += (30 * 60 * 1000);
             _bookedTimeDifference -= 30;
           }while (_bookedTimeDifference >= 30)
         }else{
           _bookedClasses[_bookedClassStart] = {
             start: _bookedClassStart,
             end: _bookedClassEnd,
+            dateTime: moment(_bookedClassStart).format("MMM DD, YYYY HH:mm a"),
             status: userclass[a].status
           };
         }
       }
+
+      console.log(_bookedClasses);
 
       for(var day = 0; day < _weekDays.length; day++){
         if(day < _dayOfWeek){
@@ -302,7 +306,7 @@ exports.getAvailability = function(req, res, next) {
         }
       }
       res.json(_events);
-      
+
     });
   });
 };

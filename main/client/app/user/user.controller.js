@@ -84,9 +84,13 @@ angular.module('takhshilaApp')
   }
 
   var eventRender = function( event, element, view ) {
-    // element.attr({'tooltip': event.title, 'tooltip-append-to-body': true});
-    element.attr({'uib-popover': '"I have a title!"', 'popover-title': '"The title."', 'popover-trigger': "'mouseenter'"});
-    // element.append('<md-tooltip md-autohide="false">Play Music</md-tooltip>');
+    if(event.status == "available"){
+      // element.attr({'uib-popover': '"I have a title!"', 'popover-title': '"The title."', 'popover-trigger': "'mouseenter'"});
+      // console.log(event.start);
+      element.find('.fc-time').html(moment(event.start, 'MMM DD, YYYY HH:mm').format('HH:mm a'));
+    }else {
+      element.find('.fc-time').html('');
+    }
     $compile(element)($scope);
   };
 
@@ -231,6 +235,23 @@ angular.module('takhshilaApp')
   // }
 
   var alertEventOnClick = function(event, element, view){
+    var _index = $scope.events.map(function(obj) { return obj._id; }).indexOf(event._id);
+
+    var _clickedStart = moment(event.start, 'MMM DD, YYYY HH:mm');
+    var _clickedEnd = moment(event.end, 'MMM DD, YYYY HH:mm');
+
+    // var _allowedToBook = false;
+    // if($scope.selectedSessions.length >= 2){
+    //   for(var i = 0; i < $scope.selectedSessions.length; i++){
+    //     if($scope.selectedSessions[i].start.valueOf() == _clickedEnd.valueOf()
+    //         || $scope.selectedSessions[i].end.valueOf() == _clickedStart.valueOf()){
+    //           _allowedToBook = true;
+    //         }
+    //   }
+    // }else {
+    //   _allowedToBook = true;
+    // }
+
     if($(this).hasClass('active')){
       $(this).removeClass('active');
       $(this).addClass('available');
@@ -238,10 +259,7 @@ angular.module('takhshilaApp')
       $(this).addClass('active');
       $(this).removeClass('available');
     }
-    var _index = $scope.events.map(function(obj) { return obj._id; }).indexOf(event._id);
 
-    var _clickedStart = moment(event.start, 'MMM DD, YYYY HH:mm');
-    var _clickedEnd = moment(event.end, 'MMM DD, YYYY HH:mm');
     if($scope.events[_index].status == "booked"){
       return;
     }else if($scope.events[_index].status == "available"){
@@ -292,14 +310,17 @@ angular.module('takhshilaApp')
     $(function () {
       setTimeout(function(){
         $('#availabilityCalendar').fullCalendar({
-          height: 750,
+          height: 1024,
           editable: false,
+          allDaySlot: false,
+          scrollTime :  "5:00",
           header:{
-            left: '',
+            left: 'prev',
             center: 'title',
-            right: 'today prev,next'
+            right: 'next'
             // right: ''
           },
+          titleFormat: 'MMMM D, YYYY ',
           defaultView: 'agendaWeek',
           eventClick: alertEventOnClick,
           eventRender: eventRender,

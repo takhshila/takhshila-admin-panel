@@ -9,6 +9,9 @@ a, span, .btn, .package-title, .package-price, .package-detail li, .overlay, .so
   -o-transition: all 200ms ease-out;
   transition: all 200ms ease-out;
 }
+body.body-margin-top{
+  background: #F2F2F2;
+}
 .clear,
 .clearfix{
   clear: both;
