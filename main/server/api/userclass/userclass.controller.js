@@ -3,6 +3,7 @@
 var _ = require('lodash');
 var moment = require('moment');
 var Userclass = require('./userclass.model');
+var Notification = require('../notification/notification.model');
 
 // Get list of userclasss
 exports.index = function(req, res) {
@@ -40,9 +41,18 @@ exports.create = function(req, res) {
     }
     _classData.push(_data);
   }
-  console.log(_classData);
   Userclass.create(_classData, function(err, userclass) {
     if(err) { return handleError(res, err); }
+    for(var i = 0; i < userclass.length; i++){
+      var _notificationData = {
+        userID: req.user._id,
+        fromUserID: req.body.teacherID,
+        notificationType: 'newclass',
+        notificationStatus: 'unread',
+        referenceClass: userclass[i]._id
+      }
+      Notification.create(_notificationData, function(err, notification){});
+    }
     return res.status(201).json(userclass);
   });
 };

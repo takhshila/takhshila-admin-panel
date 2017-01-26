@@ -251,12 +251,12 @@ exports.getAvailability = function(req, res, next) {
         }
       }
 
-      console.log(_bookedClasses);
+      console.log(user.availability);
 
       for(var day = 0; day < _weekDays.length; day++){
-        if(day < _dayOfWeek){
-          continue;
-        }
+        // if(day < _dayOfWeek){
+        //   continue;
+        // }
         for(var i = 0; i < user.availability[_weekDays[day]].length; i++){
 
           var _startTime = moment(user.availability[_weekDays[day]][i].start, 'HH:mm').format('HH:mm');
@@ -305,6 +305,7 @@ exports.getAvailability = function(req, res, next) {
           }
         }
       }
+
       res.json(_events);
 
     });

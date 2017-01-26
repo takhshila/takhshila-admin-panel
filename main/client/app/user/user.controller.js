@@ -30,6 +30,7 @@ angular.module('takhshilaApp')
       userClassFactory.requestClass('', _classData)
       .success(function(response){
         console.log(response);
+        $('#availabilityCalendar').fullCalendar('refetchEvents')
       })
       .error(function(err){
         console.log(err);
