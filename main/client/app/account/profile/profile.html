@@ -51,13 +51,24 @@
       <div class="row">
         <div class="ui attached message">
           <div class="header">
-            About {{currentUser.name.firstName}}
+            <span class="title">About {{currentUser.name.firstName}}</span>
+            <div class="action-container">
+              <a ng-show="!edit.basicInfo.editing" class="edit-action" ng-click="editBasicInfo($event)">
+                <i class="write icon"></i>
+              </a>
+              <div ng-show="edit.basicInfo.editing" class="ui buttons">
+                <button class="ui primary button" ng-class = "{'loading': edit.basicInfo.progress}" ng-disabled="edit.basicInfo.progress" ng-click="saveBasicInfo()">Save</button>
+                <div class="or"></div>
+                <button class="ui button" ng-disabled="edit.basicInfo.progress" ng-click="cancelEditBasicInfo()">Cancel</button>
+              </div>
+            </div>
           </div>
         </div>
         <div class="ui segment">
-          <p>
-            This is the details
+          <p ng-show="!edit.basicInfo.editing">
+            {{currentUser.basicInfo}}
           </p>
+          <textarea autofocus class="editable-area" ng-disabled="edit.basicInfo.progress" ng-model="edit.basicInfo.data" ng-show="edit.basicInfo.editing">{{edit.basicInfo.data}}</textarea>
         </div>
       </div>
 

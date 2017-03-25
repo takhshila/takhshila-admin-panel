@@ -22,6 +22,39 @@
   .right{
     .row{
       margin-bottom: 10px;
+      .header{
+          .title{
+            display: inline-block;
+            width: 74%;
+            text-align: left;
+          }
+          .action-container{
+            display: inline-block;
+            width: 25%;
+            text-align: right;
+            .ui{
+              &.buttons{
+                border: 0px;
+              }
+            }
+            a{
+              cursor: pointer;
+              padding: 15px 5px;
+            }
+          }
+      }
+      .segment{
+        .editable-area{
+          width: 100%;
+          min-height: 100px;
+          resize: vertical;
+          border: 1px solid #eee;
+          &:focus{
+            outline: none;
+            border: 1px solid #ccc;
+          }
+        }
+      }
     }
   }
   .img-container {

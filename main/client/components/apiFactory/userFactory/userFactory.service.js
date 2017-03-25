@@ -15,6 +15,9 @@ angular.module('takhshilaApp')
       },
       updateAvailability: function(data){
         return api.put(subUrl, 'availability', data);
+      },
+      updateBasicInfo: function(data){
+        return api.put(subUrl, 'basicinfo', data);
       }
     }
 

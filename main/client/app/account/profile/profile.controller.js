@@ -10,6 +10,14 @@ angular.module('takhshilaApp')
   		Upload.currentVideo = null;
   	}
 
+    $scope.edit = {
+      basicInfo: {
+        editing: false,
+        progress: false,
+        data: null,
+      }
+    }
+
     var weekDays = ['sunday', 'monday', 'tuesday', 'wednessday', 'thursday', 'friday', 'saturday'];
 
     var availability = {
@@ -52,7 +60,7 @@ angular.module('takhshilaApp')
       .error(function(err){
         console.log(err);
       });
-    };
+    }
 
     $scope.events = [];
     $scope.eventSources = [$scope.events, $scope.getEvents];
@@ -127,7 +135,7 @@ angular.module('takhshilaApp')
         eventResize: eventResize,
         eventDrop: eventDrop
       }
-    };
+    }
 
     $scope.updateAvailability = function(){
       for(var i = 0; i < $scope.events.length; i++){
@@ -156,10 +164,36 @@ angular.module('takhshilaApp')
     $scope.onFile = function(blob) {
       Cropper.currentFile = blob;
       $rootScope.showProfilePicModal();
-    };
+    }
   	$scope.onVideoSelect = function(videoFile) {
       Upload.currentVideo = videoFile;
   		$rootScope.showVideoUploadModal();
-  	};
+  	}
+
+    $scope.editBasicInfo = function(evt){
+      angular.element(evt.currentTarget).addClass('ng-hide');
+      $scope.edit.basicInfo.editing = true;
+      $scope.edit.basicInfo.data = $scope.currentUser.basicInfo;
+    }
+    $scope.saveBasicInfo = function(){
+      if($scope.edit.basicInfo.data !== $scope.currentUser.basicInfo && $scope.edit.basicInfo.data !== null){
+        $scope.edit.basicInfo.progress = true;
+        userFactory.updateBasicInfo({basicInfo: $scope.edit.basicInfo.data})
+        .success(function(response){
+          $scope.edit.basicInfo.progress = false;
+          $scope.currentUser.basicInfo = response.basicInfo;
+          console.log(response);
+          $scope.edit.basicInfo.editing = false;
+        })
+        .error(function(err){
+          $scope.edit.basicInfo.progress = false;
+          console.log(err);
+        });
+      }
+    }
+    $scope.cancelEditBasicInfo = function(){
+      $scope.edit.basicInfo.editing = false;
+      $scope.edit.basicInfo.data = null;
+    }
 
   });
