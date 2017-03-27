@@ -4,7 +4,7 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 var TopicSchema = new Schema({
-  topicName: {type: String, unique : true, required : true, dropDups: true},
+  topicName: {type: String, unique : true, required : true, dropDups: true, lowercase: true, trim: true},
   subjectName: {type: String},
   addedByID: {type: String, ref: 'User', required: true},
   addedOn: {type: Date, default: Date.now},
