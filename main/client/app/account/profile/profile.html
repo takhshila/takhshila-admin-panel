@@ -75,13 +75,26 @@
       <div class="row" ng-if = "currentUser.isTeacher">
         <div class="ui attached message">
           <div class="header">
-            Specialization
+            <span class="title">Specialization</span>
+            <div class="action-container">
+              <a ng-show="!edit.specialization.editing" class="edit-action" ng-click="editSpecialization($event)">
+                <i class="write icon"></i>
+              </a>
+              <div ng-show="edit.specialization.editing" class="ui buttons">
+                <button class="ui primary button" ng-class = "{'loading': edit.specialization.progress}" ng-disabled="edit.specialization.progress" ng-click="saveSpecialization()">Save</button>
+                <div class="or"></div>
+                <button class="ui button" ng-disabled="edit.specialization.progress" ng-click="cancelEditSpecialization()">Cancel</button>
+              </div>
+            </div>
           </div>
         </div>
         <div class="ui segment">
-          <p>
-            This is the details
+          <p ng-show="!edit.specialization.editing">
+            
           </p>
+          <div ng-show="edit.specialization.editing">
+            
+          </div>
         </div>
       </div>
 

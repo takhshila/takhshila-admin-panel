@@ -4,6 +4,7 @@ var _ = require('lodash');
 var moment = require('moment');
 var User = require('./user.model');
 var Userclass = require('../userclass/userclass.model');
+var Topic = require('../topic/topic.model');
 var passport = require('passport');
 var config = require('../../config/environment');
 var jwt = require('jsonwebtoken');
@@ -43,8 +44,9 @@ exports.create = function (req, res, next) {
  */
 exports.show = function (req, res, next) {
   var userId = req.params.id;
-
-  User.findById(userId, function (err, user) {
+  User.findById(userId)
+  .populate('specialization.topic')
+  .exec( function (err, user) {
     if (err) return next(err);
     if (!user) return res.status(401).send('Unauthorized');
     if(user.isTeacher){
@@ -335,6 +337,66 @@ exports.me = function(req, res, next) {
     if (err) return next(err);
     if (!user) return res.status(401).send('Unauthorized');
     res.json(user);
+  });
+};
+
+/**
+ * Add Specializtion
+ */
+exports.addSpecialization = function (req, res, next) {
+  var userId = req.user._id;
+
+  var specialization = req.body;
+  User.findById(userId, function (err, user){
+    if (err) { return handleError(res, err); }
+    if(!user) { return res.status(404).send('Not Found'); }
+    Topic.findById(specialization.topic, function(err, topic){
+      if (err) { return handleError(res, err); }
+      var topicExists = _.find(user.specialization, {'topic': specialization.topic});
+      if(topicExists === undefined){
+        if(topic){
+          user.specialization.push(specialization);
+          user.save(function(err){
+            if(err) { return handleError(res, err); }
+            return res.status(200).json(user);
+          });
+        }else{
+          var newTopic = {
+            topicName: specialization.topicName,
+            addedByID: userId,
+            active: false,
+          }
+          Topic.create(newTopic, function(err, topic) {
+            if(err) { return handleError(res, err); }
+            specialization.topic = topic._id;
+            user.specialization.push(specialization);
+            user.save(function(err, data){
+              if(err) { return handleError(res, err); }
+              return res.status(200).json(user);
+            });
+          });
+        }
+      }else{
+        return res.status(409).send('Specializtion already exists');
+      }
+    });
+  })
+};
+/**
+ * Delete Specializtion
+ */
+exports.deleteSpecialization = function (req, res, next) {
+  var userId = req.user._id;
+  if(req.body._id) { delete req.body._id; }
+  User.findById(userId, function (err, user) {
+    if (err) { return handleError(res, err); }
+    if(!user) { return res.status(404).send('Not Found'); }
+    if(!user.specialization.id(req.params.id)){ return res.status(404).send('Not Found'); }
+    user.specialization.id(req.params.id).remove();
+    user.save(function (err) {
+      if (err) { return handleError(res, err); }
+      return res.status(200).json(user);
+    });
   });
 };
 

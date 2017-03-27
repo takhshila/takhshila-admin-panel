@@ -16,6 +16,9 @@ router.put('/profilephoto', auth.isAuthenticated(), controller.updateProfilePhot
 router.put('/rateperhour', auth.isAuthenticated(), controller.updateRatePerHour);
 router.put('/password/:id', auth.isAuthenticated(), controller.changePassword);
 
+router.post('/specialization', auth.isAuthenticated(), controller.addSpecialization);
+router.delete('/specialization/:id', auth.isAuthenticated(), controller.deleteSpecialization);
+
 router.post('/education', auth.isAuthenticated(), controller.addEducation);
 router.put('/education/:id', auth.isAuthenticated(), controller.updateEducation);
 router.delete('/education/:id', auth.isAuthenticated(), controller.deleteEducation);

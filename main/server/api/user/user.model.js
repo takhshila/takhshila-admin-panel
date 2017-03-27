@@ -26,6 +26,11 @@ var UserSchema = new Schema({
   },
   basicInfo: String,
   status: String,
+  specialization: [{
+    topic: {type: String, ref: 'Topic', required: true},
+    level: {type: String, enum : ["Basic", "Intermediate", "Advanced", "Expert"], required: true},
+    addedOn: {type: Date, default: Date.now}
+  }],
   education: [{
     degree: {type: String, required: true},
     school: {type: String, required: true},
@@ -119,6 +124,7 @@ UserSchema
       'profilePhoto': this.profilePhoto,
       'ratePerHour': this.ratePerHour,
       'basicInfo': this.basicInfo,
+      'specialization': this.specialization,
       'education': this.education,
       'experience': this.experience
     };

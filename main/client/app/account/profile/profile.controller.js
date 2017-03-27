@@ -15,6 +15,11 @@ angular.module('takhshilaApp')
         editing: false,
         progress: false,
         data: null,
+      },
+      specialization: {
+        editing: false,
+        progress: false,
+        data: null,
       }
     }
 
@@ -194,6 +199,32 @@ angular.module('takhshilaApp')
     $scope.cancelEditBasicInfo = function(){
       $scope.edit.basicInfo.editing = false;
       $scope.edit.basicInfo.data = null;
+    }
+
+    $scope.editSpecialization = function(evt){
+      angular.element(evt.currentTarget).addClass('ng-hide');
+      $scope.edit.specialization.editing = true;
+      $scope.edit.specialization.data = $scope.currentUser.specialization;
+    }
+    $scope.saveSpecialization = function(){
+      if($scope.edit.basicInfo.data !== $scope.currentUser.basicInfo && $scope.edit.basicInfo.data !== null){
+        $scope.edit.basicInfo.progress = true;
+        userFactory.updateBasicInfo({basicInfo: $scope.edit.basicInfo.data})
+        .success(function(response){
+          $scope.edit.basicInfo.progress = false;
+          $scope.currentUser.basicInfo = response.basicInfo;
+          console.log(response);
+          $scope.edit.basicInfo.editing = false;
+        })
+        .error(function(err){
+          $scope.edit.basicInfo.progress = false;
+          console.log(err);
+        });
+      }
+    }
+    $scope.cancelEditSpecialization = function(){
+      $scope.edit.specialization.editing = false;
+      $scope.edit.specialization.data = null;
     }
 
   });
