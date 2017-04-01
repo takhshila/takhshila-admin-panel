@@ -204,7 +204,12 @@ angular.module('takhshilaApp')
     $scope.editSpecialization = function(evt){
       angular.element(evt.currentTarget).addClass('ng-hide');
       $scope.edit.specialization.editing = true;
-      $scope.edit.specialization.data = $scope.currentUser.specialization;
+      console.log($scope.edit);
+      $scope.edit.specialization.data = [{
+        topic: '',
+        topicName: '',
+        level: ''
+      }];
     }
     $scope.saveSpecialization = function(){
       if($scope.edit.basicInfo.data !== $scope.currentUser.basicInfo && $scope.edit.basicInfo.data !== null){
@@ -225,6 +230,16 @@ angular.module('takhshilaApp')
     $scope.cancelEditSpecialization = function(){
       $scope.edit.specialization.editing = false;
       $scope.edit.specialization.data = null;
+    }
+    $scope.addSpecialization = function(){
+      $scope.edit.specialization.data.push({
+        topic: '',
+        topicName: '',
+        level: ''
+      });
+    }
+    $scope.removeSpecialization = function(){
+      $scope.edit.specialization.data.pop();
     }
 
   });

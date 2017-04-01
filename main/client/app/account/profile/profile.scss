@@ -72,4 +72,53 @@
   .fc-widget-content {
       cursor: url(/assets/icons/img-cursor.a1dc679e.png),auto!important;
   }
+  #addSpecializationContainer{
+    margin-bottom: 10px;
+    &.ui{
+      border: 0px;
+      input{
+        border-right: 0px;
+        border-radius: 0px;
+        width: 100%;
+        &:focus{
+          outline: none;
+          border: 1px solid #ccc;
+        }
+      }
+    }
+    .ui{
+      &.search{
+        border: 0px;
+        width: 100%;
+        .results{
+          width: 100%;
+          top: 80%;
+          border-radius: 0px;
+          border-top: 0px;
+          box-shadow: none;
+        }
+      }
+      &.dropdown{
+        width: 150px;
+        font-size: 1.12em;
+        i{
+          &.icon{
+            position: absolute;
+            right: 5px;
+            line-height: 1.12em;
+          }
+        }
+      }
+      &.button{
+        padding: 10px;
+        margin: 0px 5px;
+        &.hidden-visibility{
+          visibility: hidden;
+        }
+        i{
+          margin: 0px;
+        }
+      }
+    }
+  }
 }

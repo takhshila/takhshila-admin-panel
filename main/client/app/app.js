@@ -14,7 +14,13 @@ angular.module('takhshilaApp', [
   'ui.calendar',
   'ui.bootstrap'
 ])
-  .config(function($mdIconProvider) {
+  .config(function($mdThemingProvider, $mdIconProvider) {
+    $mdThemingProvider
+      .theme('default')
+      .primaryPalette('teal')
+      .accentPalette('green')
+      .warnPalette('red')
+      .backgroundPalette('grey');
     $mdIconProvider
       .iconSet('action', '../assets/iconsets/action-icons.svg', 24)
       .iconSet('alert', '../assets/iconsets/alert-icons.svg', 24)

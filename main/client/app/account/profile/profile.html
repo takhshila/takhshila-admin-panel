@@ -93,7 +93,86 @@
             
           </p>
           <div ng-show="edit.specialization.editing">
-            
+
+
+<!--     <div class="autocompletedemoFloatingLabel" layout="column" ng-cloak="">
+        <form name="searchForm" ng-submit="$event.preventDefault()">
+            <div layout-gt-sm="row">
+            <md-autocomplete md-floating-label="Academic Topic" 
+                            md-item-text="item.Title"
+                            md-items="item in ctrl.data" 
+                            md-search-text-change="ctrl.querySearch(ctrl.searchText)"
+                            md-search-text="ctrl.searchText" 
+                            md-selected-item="ctrl.selectedItem" 
+                            md-no-cache="ctrl.noCache" 
+                            md-input-maxlength="30" 
+                            md-input-minlength="2" 
+                            md-input-name="autocompleteField" 
+                            required=""
+                            class="md-block"
+                            flex-gt-sm="55">
+              <md-item-template>
+                <span md-highlight-text="ctrl.searchText">{{item.Title}}</span>
+              </md-item-template>
+              <div ng-messages="searchForm.autocompleteField.$error" ng-if="searchForm.autocompleteField.$touched">
+                <div ng-message="required">Please enter a topic you want to teach.</div>
+                <div ng-message="minlength">Your topic is not long enough.</div>
+                <div ng-message="maxlength">Your topic is too long.</div>
+              </div>
+            </md-autocomplete>
+
+          <md-input-container class="md-block" flex-gt-sm="30">
+            <label>Level</label>
+            <md-select ng-model="user.state">
+              <md-option value="Basic">Basic</md-option>
+              <md-option value="Intermediate">Intermediate</md-option>
+              <md-option value="Advanced">Advanced</md-option>
+              <md-option value="Expert">Expert</md-option>
+            </md-select>
+          </md-input-container>
+
+          <md-input-container class="md-block" flex-gt-sm="15">
+            <md-button type="button" class="md-raised md-primary"><i class="plus icon"></i></md-button>
+            <md-button type="button" class="md-raised md-warn"><i class="minus icon"></i></md-button>
+          </md-input-container>
+
+          </div>
+        </form>
+    </div> -->
+
+
+            <div ng-repeat="specialization in edit.specialization.data" class="ui fluid input" id="addSpecializationContainer">
+            <div class="ui search">
+              <div class="results transition visible" style="display: block !important;">
+              <a class="result"><div class="content"><div class="title">United Arab Emirates</div></div></a><a class="result"><div class="content"><div class="title">United States</div></div></a><a class="result"><div class="content"><div class="title">Burundi</div></div></a><a class="result"><div class="content"><div class="title">Brunei</div></div></a><a class="result"><div class="content"><div class="title">European Union</div></div></a><a class="result"><div class="content"><div class="title">Guinea-Bissau</div></div></a><a class="result"><div class="content"><div class="title">Lithuania</div></div></a>
+              </div>
+              <input type="text" name="topic" placeholder="Enter topic you want to teach..." ng-model="specialization.topic">
+            </div>
+<!--               <select name="level" ng-model="specialization.level">
+                <option selected=selected>Basic</option>
+                <option>Intermediate</option>
+                <option>Advanced</option>
+                <option>Expert</option>
+              </select> -->
+              <div class="ui dropdown label">
+                <div class="text">Basic</div>
+                <i class="dropdown icon"></i>
+                <div class="menu" style="display:block;">
+                  <div class="item">Basic</div>
+                  <div class="item">Intermediate</div>
+                  <div class="item">Advanced</div>
+                  <div class="item">Expert</div>
+                </div>
+              </div>
+              <button class="ui green button" name="addSpecialization" ng-click="addSpecialization()" value="Add" ng-class="{'hidden-visibility': ($index + 1) !== edit.specialization.data.length}">
+                <i class="plus icon"></i>
+              </button>
+              <button class="ui red button" name="removeSpecialization" ng-click="removeSpecialization($index)" value="Remove" ng-class="{'hidden-visibility': $index === 0 || ($index + 1) !== edit.specialization.data.length}">
+                <i class="minus icon"></i>
+              </button>
+              <!-- <input type="button" name="addSpecialization" ng-click="addSpecialization()" value="Add" ng-if="($index + 1) === edit.specialization.data.length">
+              <input type="button" name="removeSpecialization" ng-click="removeSpecialization($index)" value="Remove" ng-if="$index !== 0 && ($index + 1) === edit.specialization.data.length"> -->
+            </div>
           </div>
         </div>
       </div>
