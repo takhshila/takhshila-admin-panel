@@ -25,13 +25,35 @@ exports.show = function(req, res) {
 
 // Creates a new topic in the DB.
 exports.create = function(req, res) {
-  req.body.addedByID = req.user._id;
-  Topic.create(req.body, function(err, topic) {
-    if(err) { return handleError(res, err); }
-    User.findById(req.user._id, function(err, user){
-      if(err) { return handleError(res, err); }
-      return res.status(201).json(user);
-    });
+  var userID = req.user._id;
+  var topicList = req.body;
+  var promises = topicList.map(function(topic, index){
+    return new Promise(function(resolve, reject){
+      Topic.findOne({
+        topicName: topic.topicName.toLowerCase(),
+        active: true
+      }, function(err, topic){
+        if(err){ reject(err); }
+        console.log(topic)
+        if(!topic){
+          topicList[index].addedByID = userID;
+          Topic.create(topicList[index], function(err, addedTopic){
+            if(err){ reject(err); }
+            resolve(addedTopic);
+          });
+        }else{
+          resolve(topic);
+        }
+      })
+    })
+  });
+
+  Promise.all(promises)
+  .then(function(data){
+    return res.status(201).json(data);
+  })
+  .catch(function(err){
+    return handleError(res, err);
   });
 };
 

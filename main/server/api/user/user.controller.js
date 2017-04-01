@@ -346,40 +346,95 @@ exports.me = function(req, res, next) {
 exports.addSpecialization = function (req, res, next) {
   var userId = req.user._id;
 
-  var specialization = req.body;
+  var specializationList = req.body;
   User.findById(userId, function (err, user){
     if (err) { return handleError(res, err); }
     if(!user) { return res.status(404).send('Not Found'); }
-    Topic.findById(specialization.topic, function(err, topic){
-      if (err) { return handleError(res, err); }
-      var topicExists = _.find(user.specialization, {'topic': specialization.topic});
-      if(topicExists === undefined){
-        if(topic){
-          user.specialization.push(specialization);
-          user.save(function(err){
-            if(err) { return handleError(res, err); }
-            return res.status(200).json(user);
+    var promiseOne = specializationList.map(function(specialization, index){
+      return new Promise(function(resolve, reject){
+        if(!specialization.topic){
+          Topic.findOne({
+            topicName: specialization.topicName.toLowerCase().trim()
+          }, function(err, topic){
+            if(err) { return reject(err); }
+            if(topic && (topic.active === true || (topic.active === false && topic.addedByID.toString() === userId.toString()))){
+              specializationList[index].topic = topic._id;
+              resolve(specialization);
+            }else{
+              var newTopic = {
+                topicName: specialization.topicName,
+                addedByID: userId,
+                active: false,
+              }
+              Topic.create(newTopic, function(err, topic){
+                if(err) { return reject(err); }
+                specializationList[index].topic = topic._id;
+                resolve(specialization);
+              });
+            }
           });
         }else{
-          var newTopic = {
-            topicName: specialization.topicName,
-            addedByID: userId,
-            active: false,
-          }
-          Topic.create(newTopic, function(err, topic) {
-            if(err) { return handleError(res, err); }
-            specialization.topic = topic._id;
-            user.specialization.push(specialization);
-            user.save(function(err, data){
-              if(err) { return handleError(res, err); }
-              return res.status(200).json(user);
-            });
-          });
+          resolve(specialization);
         }
-      }else{
-        return res.status(409).send('Specializtion already exists');
-      }
+      });
     });
+
+    Promise.all(promiseOne)
+    .then(function(data){
+      var promiseTwo = specializationList.map(function(specialization, index){
+        return new Promise(function(resolve, reject){
+          if(_.find(user.specialization, function(obj) { return obj.topic.toString() === specialization.topic.toString(); }) === undefined){
+            user.specialization.push(specializationList[index]);
+          }
+          resolve(specialization);
+        })
+      });
+      Promise.all(promiseTwo)
+      .then(function(data){
+        user.save(function(err){
+          if(err) { return handleError(res, err); }
+          return res.status(200).json(user);
+        });
+      })
+      .catch(function(err){
+        return handleError(res, err);
+      })
+    })
+    .catch(function(err){
+      return handleError(res, err);
+    });
+
+
+    // Topic.findById(specialization.topic, function(err, topic){
+    //   if (err) { return handleError(res, err); }
+    //   var topicExists = _.find(user.specialization, {'topic': specialization.topic});
+    //   if(topicExists === undefined){
+    //     if(topic){
+    //       user.specialization.push(specialization);
+    //       user.save(function(err){
+    //         if(err) { return handleError(res, err); }
+    //         return res.status(200).json(user);
+    //       });
+    //     }else{
+    //       var newTopic = {
+    //         topicName: specialization.topicName,
+    //         addedByID: userId,
+    //         active: false,
+    //       }
+    //       Topic.create(newTopic, function(err, topic) {
+    //         if(err) { return handleError(res, err); }
+    //         specialization.topic = topic._id;
+    //         user.specialization.push(specialization);
+    //         user.save(function(err, data){
+    //           if(err) { return handleError(res, err); }
+    //           return res.status(200).json(user);
+    //         });
+    //       });
+    //     }
+    //   }else{
+    //     return res.status(409).send('Specializtion already exists');
+    //   }
+    // });
   })
 };
 /**
