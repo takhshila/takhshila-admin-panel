@@ -143,10 +143,10 @@
 
             <div ng-repeat="specialization in edit.specialization.data" class="ui fluid input" id="addSpecializationContainer">
             <div class="ui search">
-              <div class="results transition visible" style="display: block !important;">
+              <div class="results" auto-close="specialization.status.searchResultsOpen" ng-show="specialization.status.searchResultsOpen" ng-click="specialization.status.searchResultsOpen = false">
               <a class="result"><div class="content"><div class="title">United Arab Emirates</div></div></a><a class="result"><div class="content"><div class="title">United States</div></div></a><a class="result"><div class="content"><div class="title">Burundi</div></div></a><a class="result"><div class="content"><div class="title">Brunei</div></div></a><a class="result"><div class="content"><div class="title">European Union</div></div></a><a class="result"><div class="content"><div class="title">Guinea-Bissau</div></div></a><a class="result"><div class="content"><div class="title">Lithuania</div></div></a>
               </div>
-              <input type="text" name="topic" placeholder="Enter topic you want to teach..." ng-model="specialization.topic">
+              <input type="text" name="topic" placeholder="Enter topic you want to teach..." ng-model="specialization.topic" ng-change="specialization.status.searchResultsOpen = true">
             </div>
 <!--               <select name="level" ng-model="specialization.level">
                 <option selected=selected>Basic</option>
@@ -154,10 +154,10 @@
                 <option>Advanced</option>
                 <option>Expert</option>
               </select> -->
-              <div class="ui dropdown label">
+              <div class="ui dropdown label" auto-close="specialization.status.levelOpen" ng-click="specialization.status.levelOpen = !specialization.status.levelOpen">
                 <div class="text">Basic</div>
                 <i class="dropdown icon"></i>
-                <div class="menu" style="display:block;">
+                <div class="menu" ng-show="specialization.status.levelOpen">
                   <div class="item">Basic</div>
                   <div class="item">Intermediate</div>
                   <div class="item">Advanced</div>

@@ -96,11 +96,15 @@
           border-radius: 0px;
           border-top: 0px;
           box-shadow: none;
+          display: block;
         }
       }
       &.dropdown{
         width: 150px;
         font-size: 1.12em;
+        .menu{
+          display: block;
+        }
         i{
           &.icon{
             position: absolute;

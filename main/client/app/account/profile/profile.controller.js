@@ -208,7 +208,11 @@ angular.module('takhshilaApp')
       $scope.edit.specialization.data = [{
         topic: '',
         topicName: '',
-        level: ''
+        level: '',
+        status: {
+          searchResultsOpen: true,
+          levelOpen: false
+        }
       }];
     }
     $scope.saveSpecialization = function(){
