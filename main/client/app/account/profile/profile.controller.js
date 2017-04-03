@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('takhshilaApp')
-  .controller('ProfileCtrl', function ($rootScope, $scope, $timeout, Cropper, uiCalendarConfig, Upload, Auth, userFactory) {
+  .controller('ProfileCtrl', function ($rootScope, $scope, $timeout, $http, Cropper, uiCalendarConfig, Upload, Auth, userFactory) {
     $rootScope.isLoading = false;
     if(Cropper.currentFile === undefined){
       Cropper.currentFile = null;
@@ -245,5 +245,14 @@ angular.module('takhshilaApp')
     $scope.removeSpecialization = function(){
       $scope.edit.specialization.data.pop();
     }
+
+  $scope.getLocation = function(val) {
+    return $http.get('/api/v1/topics/search/'+val).then(function(response){
+      console.log(response);
+      return response.data.map(function(item){
+        return item.topicName;
+      });
+    });
+  };
 
   });

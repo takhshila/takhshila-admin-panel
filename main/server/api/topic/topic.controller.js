@@ -22,6 +22,16 @@ exports.show = function(req, res) {
     return res.json(topic);
   });
 };
+// Get a single topic
+exports.search = function(req, res) {
+  Topic.find({
+    topicName: new RegExp(req.params.searchTerm, "i")
+  }, function (err, topic) {
+    if(err) { return handleError(res, err); }
+    if(!topic) { return res.status(404).send('Not Found'); }
+    return res.json(topic);
+  });
+};
 
 // Creates a new topic in the DB.
 exports.create = function(req, res) {
