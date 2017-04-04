@@ -208,25 +208,31 @@ angular.module('takhshilaApp')
       $scope.edit.specialization.data = [{
         topic: '',
         topicName: '',
-        level: '',
-        status: {
-          searchResultsOpen: true,
-          levelOpen: false
-        }
+        level: 'Basic',
+        loadingResults: false
       }];
     }
     $scope.saveSpecialization = function(){
-      if($scope.edit.basicInfo.data !== $scope.currentUser.basicInfo && $scope.edit.basicInfo.data !== null){
+      var error = false;
+      if(!error){
         $scope.edit.basicInfo.progress = true;
-        userFactory.updateBasicInfo({basicInfo: $scope.edit.basicInfo.data})
+        var specializationData  = $scope.edit.specialization.data.map(function(item){
+          return {
+            topicName: item.topicName,
+            level: item.level
+          }
+        })
+
+        console.log(specializationData);
+
+        userFactory.addSpecialization(specializationData)
         .success(function(response){
-          $scope.edit.basicInfo.progress = false;
-          $scope.currentUser.basicInfo = response.basicInfo;
+          $scope.edit.specialization.progress = false;
           console.log(response);
-          $scope.edit.basicInfo.editing = false;
+          $scope.edit.specialization.editing = false;
         })
         .error(function(err){
-          $scope.edit.basicInfo.progress = false;
+          $scope.edit.specialization.progress = false;
           console.log(err);
         });
       }
@@ -239,16 +245,21 @@ angular.module('takhshilaApp')
       $scope.edit.specialization.data.push({
         topic: '',
         topicName: '',
-        level: ''
+        level: 'Basic',
+        loadingResults: false
       });
     }
     $scope.removeSpecialization = function(){
       $scope.edit.specialization.data.pop();
     }
+    $scope.setLevel = function(index, level){
+      $scope.edit.specialization.data[index].level = level;
+    }
 
-  $scope.getLocation = function(val) {
-    return $http.get('/api/v1/topics/search/'+val).then(function(response){
-      console.log(response);
+  $scope.getLocation = function(index, searcTerm) {
+    $scope.edit.specialization.data[index].loadingResults = true;
+    return $http.get('/api/v1/topics/search/'+searcTerm).then(function(response){
+      $scope.edit.specialization.data[index].loadingResults = false;
       return response.data.map(function(item){
         return item.topicName;
       });

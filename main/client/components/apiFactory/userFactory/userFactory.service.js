@@ -18,6 +18,9 @@ angular.module('takhshilaApp')
       },
       updateBasicInfo: function(data){
         return api.put(subUrl, 'basicinfo', data);
+      },
+      addSpecialization: function(data){
+        return api.post(subUrl + 'specialization', data);
       }
     }
 

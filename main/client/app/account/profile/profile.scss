@@ -86,7 +86,42 @@
         }
       }
     }
+    .btn-group{
+      &.dropdown{
+        width: 18%;
+        a{
+          text-transform:capitalize;
+        }
+      }
+      .btn.btn-default.dropdown-toggle{
+        width: 100%;
+        text-align: left;
+        &:hover,
+        &:active,
+        &:focus{
+          background: #fff;
+          color: #333;
+        }
+        .caret{
+          position: absolute;
+          right: 5px;
+          top: 1em;
+        }
+      }
+    }
     .ui{
+      &.input{
+        &.topic{
+          border: 0px;
+          width: 100%;
+          [uib-typeahead-popup].dropdown-menu{
+            position: absolute;
+            width: 100%;
+            margin: 0px;
+            padding: 0;
+          }
+        }
+      }
       &.search{
         border: 0px;
         width: 100%;
@@ -114,7 +149,7 @@
         }
       }
       &.button{
-        padding: 10px;
+        padding: 8px;
         margin: 0px 5px;
         &.hidden-visibility{
           visibility: hidden;

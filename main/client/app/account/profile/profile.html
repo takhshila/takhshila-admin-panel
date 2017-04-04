@@ -161,11 +161,14 @@
                 </a>
               </div>
               <input type="text" name="topic" placeholder="Enter topic you want to teach..." ng-model="specialization.topic" ng-change="specialization.status.searchResultsOpen = true"> -->
-    <input type="text" ng-model="asyncSelected" placeholder="Locations loaded via $http" uib-typeahead="address for address in getLocation($viewValue)" typeahead-loading="loadingLocations" typeahead-no-results="noResults" class="form-control">
-    <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
-    <div ng-show="noResults">
+              <div class="ui icon input topic" ng-class="{'loading': specialization.loadingResults}">
+                <input type="text" ng-model="specialization.topicName" placeholder="Enter topic you want to teach..." uib-typeahead="topic for topic in getLocation($index, $viewValue)" typeahead-loading="loading" typeahead-no-results="noResults" class="form-control">
+                <i class="icon"></i>
+              </div>
+<!--     <i ng-show="specialization.loadingResults" class="glyphicon glyphicon-refresh"></i>
+    <div ng-show="true">
       <i class="glyphicon glyphicon-remove"></i> No Results Found
-    </div>
+    </div> -->
             </div>
 <!--               <select name="level" ng-model="specialization.level">
                 <option selected=selected>Basic</option>
@@ -173,7 +176,7 @@
                 <option>Advanced</option>
                 <option>Expert</option>
               </select> -->
-              <div class="ui dropdown label" auto-close="specialization.status.levelOpen" ng-click="specialization.status.levelOpen = !specialization.status.levelOpen">
+<!--               <div class="ui dropdown label" auto-close="specialization.status.levelOpen" ng-click="specialization.status.levelOpen = !specialization.status.levelOpen">
                 <div class="text">Basic</div>
                 <i class="dropdown icon"></i>
                 <div class="menu" ng-show="specialization.status.levelOpen">
@@ -182,6 +185,17 @@
                   <div class="item">Advanced</div>
                   <div class="item">Expert</div>
                 </div>
+              </div> -->
+              <div class="btn-group" uib-dropdown>
+                <button id="single-button" type="button" class="btn btn-default" uib-dropdown-toggle>
+                  {{specialization.level !== "" ? specialization.level : "Level" }} <i class="caret"></i>
+                </button>
+                <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                  <li role="menuitem"><a href="#" ng-click="setLevel($index, 'Basic')">Basic</a></li>
+                  <li role="menuitem"><a href="#" ng-click="setLevel($index, 'Intermediate')">Intermediate</a></li>
+                  <li role="menuitem"><a href="#" ng-click="setLevel($index, 'Advanced')">Advanced</a></li>
+                  <li role="menuitem"><a href="#" ng-click="setLevel($index, 'Expert')">Expert</a></li>
+                </ul>
               </div>
               <button class="ui green button" name="addSpecialization" ng-click="addSpecialization()" value="Add" ng-class="{'hidden-visibility': ($index + 1) !== edit.specialization.data.length}">
                 <i class="plus icon"></i>

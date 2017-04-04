@@ -347,7 +347,8 @@ exports.addSpecialization = function (req, res, next) {
   var userId = req.user._id;
 
   var specializationList = req.body;
-  User.findById(userId, function (err, user){
+  User.findById(userId)
+  .exec(function (err, user){
     if (err) { return handleError(res, err); }
     if(!user) { return res.status(404).send('Not Found'); }
     var promiseOne = specializationList.map(function(specialization, index){
@@ -393,7 +394,12 @@ exports.addSpecialization = function (req, res, next) {
       .then(function(data){
         user.save(function(err){
           if(err) { return handleError(res, err); }
-          return res.status(200).json(user);
+          User.findById(userId)
+          .populate('specialization.topic')
+          .exec(function(err, user){
+            if(err) { return handleError(res, err); }
+            return res.status(200).json(user.specialization);
+          })
         });
       })
       .catch(function(err){
