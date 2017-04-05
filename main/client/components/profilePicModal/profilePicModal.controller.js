@@ -1,9 +1,9 @@
 'use strict';
 
 angular.module('takhshilaApp')
-  .controller('ProfilePicModalCtrl', function ($mdDialog, $scope, $rootScope, $state, $timeout, Cropper, Auth) {
+  .controller('ProfilePicModalCtrl', function ($mdDialog, $scope, $rootScope, $state, $timeout, Cropper, Auth, userFactory) {
   	var file, data;
-
+  	$scope.uploading = false;
   	$scope.$watch(function(){
   		return Cropper.currentFile;
   	}, function(data){
@@ -65,15 +65,22 @@ angular.module('takhshilaApp')
 	  };
 
 	  $scope.scale = function(width) {
+	  	$scope.uploading = true;
 	    Cropper.crop(file, data)
 	      .then(function(blob) {
 	        return Cropper.scale(blob, {width: width});
 	      })
 	      .then(Cropper.encode).then(function(dataUrl) {
 		    ($scope.preview || ($scope.preview = {})).dataUrl = dataUrl;
-	        console.log(dataUrl);
-	        $rootScope.currentUser.profilePhoto.dataURI = dataUrl;
-	        $scope.closeDialog();
+	        userFactory.updateProfilePhoto({profilePhoto: dataUrl})
+	        .success(function(response){
+	        	$scope.uploading = false;
+		        $rootScope.currentUser.profilePhoto.dataURI = dataUrl;
+		        $scope.closeDialog();
+	        })
+	        .catch(function(err){
+	        	console.log(err);
+	        })
 	      });
 	  }
 

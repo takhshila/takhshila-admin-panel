@@ -204,7 +204,6 @@ angular.module('takhshilaApp')
     $scope.editSpecialization = function(evt){
       angular.element(evt.currentTarget).addClass('ng-hide');
       $scope.edit.specialization.editing = true;
-      console.log($scope.edit);
       $scope.edit.specialization.data = [{
         topic: '',
         topicName: '',
@@ -215,20 +214,17 @@ angular.module('takhshilaApp')
     $scope.saveSpecialization = function(){
       var error = false;
       if(!error){
-        $scope.edit.basicInfo.progress = true;
+        $scope.edit.specialization.progress = true;
         var specializationData  = $scope.edit.specialization.data.map(function(item){
           return {
             topicName: item.topicName,
             level: item.level
           }
-        })
-
-        console.log(specializationData);
-
+        });
         userFactory.addSpecialization(specializationData)
         .success(function(response){
           $scope.edit.specialization.progress = false;
-          console.log(response);
+          $scope.currentUser.specialization = response;
           $scope.edit.specialization.editing = false;
         })
         .error(function(err){
@@ -237,7 +233,8 @@ angular.module('takhshilaApp')
         });
       }
     }
-    $scope.cancelEditSpecialization = function(){
+    $scope.cancelEditSpecialization = function(evt){
+      angular.element('.specialization-container').find('a.topic-delete').addClass('ng-hide');
       $scope.edit.specialization.editing = false;
       $scope.edit.specialization.data = null;
     }
@@ -251,6 +248,21 @@ angular.module('takhshilaApp')
     }
     $scope.removeSpecialization = function(){
       $scope.edit.specialization.data.pop();
+    }
+    $scope.deleteSpecialization = function(evt, index, id){
+      angular.element(evt.currentTarget).find('i.remove').addClass('ng-hide');
+      $scope.currentUser.specialization[index].progress = true;
+      userFactory.deleteSpecialization(id)
+      .success(function(response){
+        $scope.currentUser.specialization[index].progress = false;
+        delete $scope.currentUser.specialization.splice(index, 1);
+        console.log(response);
+        console.log($scope.currentUser.specialization);
+      })
+      .error(function(err){
+        $scope.currentUser.specialization[index].progress = false;
+        console.log(err);
+      });
     }
     $scope.setLevel = function(index, level){
       $scope.edit.specialization.data[index].level = level;

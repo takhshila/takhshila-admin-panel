@@ -19,8 +19,14 @@ angular.module('takhshilaApp')
       updateBasicInfo: function(data){
         return api.put(subUrl, 'basicinfo', data);
       },
+      updateProfilePhoto: function(data){
+        return api.put(subUrl, 'profilephoto', data);
+      },
       addSpecialization: function(data){
         return api.post(subUrl + 'specialization', data);
+      },
+      deleteSpecialization: function(id){
+        return api.delete(subUrl + 'specialization/', id, {});
       }
     }
 

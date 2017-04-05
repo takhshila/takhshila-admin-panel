@@ -4,7 +4,8 @@
     <div class="col-md-3 col-sm-3 left">
       <div class="ui card">
         <div class="image">
-          <img ng-src="{{currentUser.profilePhoto.dataURI}}" ng-click = "uploadProfilePic()">
+          <img ng-if="currentUser.profilePhoto.dataURI" ng-src="{{currentUser.profilePhoto.dataURI}}" ng-click = "uploadProfilePic()">
+          <img ng-if="!currentUser.profilePhoto.dataURI" ng-src="https://semantic-ui.com/images/avatar/small/elliot.jpg" ng-click = "uploadProfilePic()">
           <form id = "uploadProfilePicForm">
             <input type="file" id = "uploadProfilePic" onchange="angular.element(this).scope().onFile(this.files[0])" style = "display:none;">
           </form>
@@ -83,15 +84,12 @@
               <div ng-show="edit.specialization.editing" class="ui buttons">
                 <button class="ui primary button" ng-class = "{'loading': edit.specialization.progress}" ng-disabled="edit.specialization.progress" ng-click="saveSpecialization()">Save</button>
                 <div class="or"></div>
-                <button class="ui button" ng-disabled="edit.specialization.progress" ng-click="cancelEditSpecialization()">Cancel</button>
+                <button class="ui button" ng-disabled="edit.specialization.progress" ng-click="cancelEditSpecialization($event)">Cancel</button>
               </div>
             </div>
           </div>
         </div>
         <div class="ui segment">
-          <p ng-show="!edit.specialization.editing">
-            
-          </p>
           <div ng-show="edit.specialization.editing">
 
 
@@ -207,6 +205,16 @@
               <input type="button" name="removeSpecialization" ng-click="removeSpecialization($index)" value="Remove" ng-if="$index !== 0 && ($index + 1) === edit.specialization.data.length"> -->
             </div>
           </div>
+          <ul class="specialization-container">
+            <li ng-repeat="topic in currentUser.specialization">
+              <a href="#" class="topic-name">{{topic.topic.topicName}}</a>
+              <a href="#" class="topic-level">{{topic.level}}</a>
+              <a href="#" class="topic-delete" ng-click="deleteSpecialization($event, $index, topic._id)" ng-show="edit.specialization.editing">
+                <i ng-show="!topic.progress" class="remove red icon"></i>
+                <i ng-show="topic.progress" class="ui mini active inline loader"></i>
+              </a>
+            </li>
+          </ul>
         </div>
       </div>
 

@@ -21,7 +21,7 @@
     <div class="ui buttons">
       <button class="ui button" ng-click = "closeDialog()">Cancel</button>
       <div class="or"></div>
-      <button class="ui primary button" ng-click = "scale(250)">Crop & Save</button>
+      <button class="ui primary button" ng-click = "scale(250)" ng-class="{'loading': uploading}" lx-ripple>Crop & Save</button>
     </div>
   </div>
 </modal>
