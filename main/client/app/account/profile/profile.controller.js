@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('takhshilaApp')
-  .controller('ProfileCtrl', function ($rootScope, $scope, $timeout, $http, Cropper, uiCalendarConfig, Upload, Auth, userFactory) {
+  .controller('ProfileCtrl', function ($rootScope, $scope, $timeout, $http, $mdDialog, Cropper, uiCalendarConfig, Upload, Auth, userFactory) {
     $rootScope.isLoading = false;
     if(Cropper.currentFile === undefined){
       Cropper.currentFile = null;
@@ -266,6 +266,22 @@ angular.module('takhshilaApp')
     }
     $scope.setLevel = function(index, level){
       $scope.edit.specialization.data[index].level = level;
+    }
+
+
+    $scope.showAddEducationModal = function($event){
+      var parentEl = angular.element(document.body);
+      $mdDialog.show({
+        templateUrl: 'components/addEducationModal/addEducationModal.html',
+        controller: 'AddEducationModalCtrl',
+        parent: parentEl,
+        targetEvent: $event,
+        disableParentScroll: true,
+        clickOutsideToClose: true,
+        locals: {
+          
+        }
+      });
     }
 
   $scope.getLocation = function(index, searcTerm) {
