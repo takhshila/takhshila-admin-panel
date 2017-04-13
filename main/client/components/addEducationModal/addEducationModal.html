@@ -1,8 +1,9 @@
-<modal id = "profile-pic-modal">
+<modal id = "add-education-modal">
   <div class = "modal-header">
     <div class = "title">Add Education</div>
     <i class="remove icon" ng-click = "closeDialog()"></i>
   </div>
+
   <div class = "modal-content">
 
         <div class="ui form">
@@ -15,7 +16,17 @@
 
             <div class="field" ng-class = "{'has-error': addEducationForm.degree.$invalid && addEducationForm.degree.$touched}">
               <lx-text-field label="Degree" error = "addEducationForm.degree.$invalid && addEducationForm.degree.$touched">
-                  <input name = "degree" type="text" ng-model="addEducationFormData.degree" uib-typeahead="topic for topic in getDegree($index, $viewValue)" typeahead-loading="loading" typeahead-no-results="noResults" required>
+                  <input
+                  name = "degree"
+                  type="text"
+                  ng-change="clearField('degreeId')"
+                  ng-model="addEducationFormData.degree"
+                  uib-typeahead="degree.degreeName for degree in getDegree($index, $viewValue)"
+                  typeahead-loading="loading"
+                  typeahead-on-select="addFieldValue($item, 'degreeId')"
+                  typeahead-no-results="noResults"
+                  required
+                  />
               </lx-text-field>
               <div class="help-block" ng-messages="addEducationForm.degree.$error" ng-if="addEducationForm.degree.$touched">
                   <p ng-message="required">This field is required.</p>
@@ -24,7 +35,17 @@
 
             <div class="field" ng-class = "{'has-error': addEducationForm.school.$invalid && addEducationForm.school.$touched}">
               <lx-text-field label="School" error = "addEducationForm.school.$invalid && addEducationForm.school.$touched">
-                  <input name = "school" type="text" ng-model="addEducationFormData.school" uib-typeahead="topic for topic in getSchools($index, $viewValue)" typeahead-loading="loading" typeahead-no-results="noResults" required>
+                  <input 
+                  	name = "school"
+                  	type="text"
+                  	ng-change="clearField('schoolId')"
+                  	ng-model="addEducationFormData.school"
+                  	uib-typeahead="topic.schoolName for topic in getSchools($index, $viewValue)"
+                  	typeahead-loading="loading"
+                  	typeahead-no-results="noResults"
+                  	typeahead-on-select="addFieldValue($item, 'schoolId')"
+                  	required
+                  	/>
               </lx-text-field>
               <div class="help-block" ng-messages="addEducationForm.school.$error" ng-if="addEducationForm.school.$touched">
                   <p ng-message="required">This field is required.</p>
@@ -76,7 +97,7 @@
     <div class="ui buttons">
       <button class="ui button" ng-click = "closeDialog()">Cancel</button>
       <div class="or"></div>
-      <button class="ui primary button" ng-click = "scale(250)" ng-class="{'loading': addEducationProgress}" lx-ripple>Add Education</button>
+      <button class="ui primary button" ng-click = "addEducation()" ng-class="{'loading': addEducationProgress}" lx-ripple>Add Education</button>
     </div>
   </div>
 </modal>

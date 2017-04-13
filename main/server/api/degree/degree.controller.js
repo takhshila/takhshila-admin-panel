@@ -26,9 +26,7 @@ exports.search = function(req, res) {
   
   if(req.query.degreeName === undefined){ return res.status(400).json("Invalid request"); }
 
-  if(req.query.degreeName !== undefined){
-    queryObject.degreeName = new RegExp(req.query.degreeName, "i")
-  }
+  queryObject.degreeName = new RegExp(req.query.degreeName, "i");
 
   Degree.find(queryObject, function(err, degreeList){
     if(err){ return handleError(res, err) }
