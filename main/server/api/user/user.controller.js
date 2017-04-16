@@ -5,6 +5,8 @@ var moment = require('moment');
 var User = require('./user.model');
 var Userclass = require('../userclass/userclass.model');
 var Topic = require('../topic/topic.model');
+var School = require('../school/school.model');
+var Degree = require('../degree/degree.model');
 var passport = require('passport');
 var config = require('../../config/environment');
 var jwt = require('jsonwebtoken');
@@ -474,11 +476,79 @@ exports.addEducation = function (req, res, next) {
   User.findById(userId, function (err, user) {
     if (err) { return handleError(res, err); }
     if(!user) { return res.status(404).send('Not Found'); }
-    user.education.push(education);
-    user.save(function (err) {
-      if (err) { return handleError(res, err); }
-      return res.status(200).json(user);
+    var checkSchoolPromise = new Promise(function(resolve, reject){
+      if(!education.schoolId){
+        School.findOne({
+          schoolName: education.schoolName
+        })
+        .exec(function(err, school){
+          if(err) { return reject(err); }
+          if(school && (school.active === true || (school.active === false && school.addedByID.toString() === userId.toString()))){
+            education.schoolId = school._id;
+            resolve(school);
+          }else{
+            School.create({
+              schoolName: education.schoolName,
+              addedByID: userId,
+              active: false
+            }, function(err, school){
+              if(err) { return reject(err); }
+              education.schoolId = school._id;
+              resolve(school);
+            })
+          }
+        })
+      }else{
+        School.findById(education.schoolId, function(err, school){
+          if(err) { return reject(err); }
+          if(!school) { return reject("Invalid school"); }
+          resolve(school)
+        })
+      }
     });
+
+    var checkDegreePromise = new Promise(function(resolve, reject){
+      if(!education.degreeId){
+        Degree.findOne({
+          degreeName: education.degreeName
+        })
+        .exec(function(err, degree){
+          if(err) { return reject(err); }
+          if(degree && (degree.active === true || (degree.active === false && degree.addedByID.toString() === userId.toString()))){
+            education.degreeId = degree._id;
+            resolve(degree);
+          }else{
+            Degree.create({
+              degreeName: education.degreeName,
+              addedByID: userId,
+              active: false
+            }, function(err, degree){
+              if(err) { return reject(err); }
+              education.degreeId = degree._id;
+              resolve(degree);
+            })
+          }
+        })
+      }else{
+        Degree.findById(education.degreeId, function(err, degree){
+          if(err) { return reject(err); }
+          if(!degree) { return reject("Invalid degree"); }
+          resolve(degree)
+        })
+      }
+    });
+
+    Promise.all([checkSchoolPromise, checkDegreePromise])
+    .then(function(data){
+      user.education.push(education);
+      user.save(function (err) {
+        if (err) { return handleError(res, err); }
+        return res.status(200).json(user.education);
+      });
+    })
+    .catch(function(err){
+      return handleError(res, err);
+    })
   });
 };
 /**

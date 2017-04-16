@@ -237,13 +237,28 @@
       <div class="row">
         <div class="ui attached message">
           <div class="header">
-            Education
+            <span class = "title">Education</span>
+            <div class="action-container">
+              <a class="edit-action" ng-click="showAddEducationModal($event)">
+                <i class="plus icon"></i>
+              </a>
+            </div>
           </div>
         </div>
         <div class="ui segment">
-          <p ng-click="showAddEducationModal()">
-            This is the details
-          </p>
+          <div class="education-container">
+            <div ng-repeat="education in currentUser.education" class="education-item">
+              <span class="education-icon"><i class="student icon"></i></span>
+              <span class="education-details">
+                <p class="school-name">{{education.schoolName}}</p>
+                <p class="degree-name">{{education.degreeName}}, {{education.field}}</p>
+                <p class="period"></p>
+              </span>
+              <span class="education-action">
+                <i class="write icon"></i>
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 

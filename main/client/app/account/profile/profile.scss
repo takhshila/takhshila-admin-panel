@@ -22,6 +22,11 @@
   .right{
     .row{
       margin-bottom: 10px;
+      .ui{
+        &.message{
+          padding: 1em 1em;
+        }
+      }
       .header{
           .title{
             display: inline-block;
@@ -156,6 +161,45 @@
         }
         i{
           margin: 0px;
+        }
+      }
+    }
+  }
+  .education-container{
+    .education-item{
+      margin-bottom: 20px;
+      display: table;
+      span{
+        display: table-cell;
+        vertical-align: middle;
+        &.education-icon{
+          width: 10%;
+          padding: 5px;
+          i{
+            font-size: 35px;
+            color: #00B5AD;
+            line-height: 1;
+          }
+        }
+        &.education-details{
+          width: 100%;
+          p{
+            margin: 0px;
+            text-transform: capitalize;
+            &.degree-name{
+              color: #5D5D5D;
+              font-size: 14px;
+            }
+          }
+        }
+        &.education-action{
+          width: 10%;
+          padding-right: 7px;
+          i{
+            color: #00B5AD;
+            cursor: pointer;
+            font-size: 18px;
+          }
         }
       }
     }

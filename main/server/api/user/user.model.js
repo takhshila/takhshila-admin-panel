@@ -32,8 +32,10 @@ var UserSchema = new Schema({
     addedOn: {type: Date, default: Date.now}
   }],
   education: [{
-    degree: {type: String, required: true},
-    school: {type: String, required: true},
+    degreeId: {type: String, ref: 'Degree', required: true},
+    degreeName: {type: String, required: true},
+    schoolId: {type: String, ref: 'School', required: true},
+    schoolName: {type: String, required: true},
     field: String,
     start: Date,
     end: Date

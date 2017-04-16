@@ -27,6 +27,15 @@ angular.module('takhshilaApp')
       },
       deleteSpecialization: function(id){
         return api.delete(subUrl + 'specialization/', id, {});
+      },
+      addEducation: function(data){
+        return api.post(subUrl + 'education', data);
+      },
+      updateEducation: function(id, data){
+        return api.putData(subUrl + 'education/', id, data);
+      },
+      deleteEducation: function(id){
+        return api.delete(subUrl + 'education/', id, {});
       }
     }
 

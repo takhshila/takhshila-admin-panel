@@ -1,14 +1,14 @@
 'use strict';
 
 angular.module('takhshilaApp')
-  .controller('AddEducationModalCtrl', function ($scope, $mdDialog, $http) {
+  .controller('AddEducationModalCtrl', function ($scope, $mdDialog, $http, userFactory) {
   	$scope.addEducationFormData = {
-  		degree: null,
+  		degreeName: null,
   		degreeId: null,
-  		school: null,
+  		schoolName: null,
   		schoolId: null,
   		field: null,
-  		starr: null,
+  		start: null,
   		end: null
   	}
   	$scope.startYear = [];
@@ -58,7 +58,14 @@ angular.module('takhshilaApp')
 	};
 
 	$scope.addEducation = function(){
-		console.log($scope.addEducationFormData);
+		$scope.addEducationProgress = true;
+		userFactory.addEducation($scope.addEducationFormData)
+		.success(function(response){
+			console.log(response);
+		})
+		.error(function(err){
+			console.log(err);
+		})
 	}
 
     $scope.populateStartYear();

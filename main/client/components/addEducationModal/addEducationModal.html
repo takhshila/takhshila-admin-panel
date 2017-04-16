@@ -20,7 +20,7 @@
                   name = "degree"
                   type="text"
                   ng-change="clearField('degreeId')"
-                  ng-model="addEducationFormData.degree"
+                  ng-model="addEducationFormData.degreeName"
                   uib-typeahead="degree.degreeName for degree in getDegree($index, $viewValue)"
                   typeahead-loading="loading"
                   typeahead-on-select="addFieldValue($item, 'degreeId')"
@@ -39,7 +39,7 @@
                   	name = "school"
                   	type="text"
                   	ng-change="clearField('schoolId')"
-                  	ng-model="addEducationFormData.school"
+                  	ng-model="addEducationFormData.schoolName"
                   	uib-typeahead="topic.schoolName for topic in getSchools($index, $viewValue)"
                   	typeahead-loading="loading"
                   	typeahead-no-results="noResults"
@@ -61,8 +61,8 @@
               </div>
             </div>
 
-            <div class="field" ng-class = "{'has-error': addEducationForm.start.$invalid && addEducationForm.start.$touched}">
-		      <md-input-container style="margin-right: 10px;width:45%;">
+            <div class="field" style="margin-right: 2%;width:48%;float:left;" ng-class = "{'has-error': addEducationForm.start.$invalid && addEducationForm.start.$touched}">
+		      <md-input-container style="width:100%;">
 		        <label>Select start year</label>
 		        <md-select ng-model="addEducationFormData.start" ng-change="populateEndYear()">
 		          <md-option ng-repeat="year in startYear" value="{{year.value}}">
@@ -75,8 +75,8 @@
               </div>
             </div>
 
-            <div class="field" ng-class = "{'has-error': addEducationForm.end.$invalid && addEducationForm.end.$touched}">
-		      <md-input-container style="margin-right: 10px;width:45%;">
+            <div class="field" style="margin-left: 2%;width:48%;float:left;" ng-class = "{'has-error': addEducationForm.end.$invalid && addEducationForm.end.$touched}">
+		      <md-input-container style="width:100%;">
 		        <label>Select end year</label>
 		        <md-select ng-model="addEducationFormData.end" ng-change="populateEndYear()" ng-disabled="!addEducationFormData.start">
 		          <md-option ng-repeat="year in endYear track by $index" value="{{year.value}}">
