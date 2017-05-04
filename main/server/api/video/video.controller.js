@@ -40,14 +40,30 @@ exports.create = function(req, res) {
   var newFileName = req.user._id + currentTimestamp;
   var thumbDestination = 'uploads/thumbnails/';
   var videoDestination = 'uploads/videos/';
-  mv(videoSource, videoDestination+newFileName+'.'+fileExtension, function(err) {
-    if (err) { return handleError(res, err); }
-    ffmpeg(videoDestination+newFileName+'.'+fileExtension)
-    .takeScreenshots({
-      count: 1,
-      filename: newFileName + '.png',
-      folder: thumbDestination,
+  var promise = new Promise(function(resolve, reject){
+    mv(videoSource, videoDestination+newFileName+'.'+fileExtension, function(err) {
+      if (err) { return handleError(res, err); }
+      ffmpeg(videoDestination+newFileName+'.'+fileExtension)
+      .takeScreenshots({
+        count: 1,
+        filename: newFileName + '.png',
+        folder: thumbDestination,
+      })
+      .on('start', function(cmd) {
+        console.log('Started ' + cmd);
+      })
+      .on('end', function(res) {
+        console.log('Finished encoding');
+        console.log(res);
+        resolve(newFileName + '.png');
+      })
+      .on('error', function(err) {
+        console.log('an error happened: ' + err.message);
+        reject(err.message);
+      });
     });
+  });
+  promise.then(function(data){
     var videoEntry = {
       videoFile: newFileName+'.'+fileExtension,
       thumbnailFile: newFileName + '.png',
@@ -57,7 +73,7 @@ exports.create = function(req, res) {
       if (err) { return handleError(res, err); }
       return res.status(201).json({success: true, video: video});
     });
-  });
+  })
   // return res.status(201).json({success: true});
 };
 

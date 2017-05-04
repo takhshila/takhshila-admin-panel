@@ -5,7 +5,7 @@ angular.module('takhshilaApp')
   	console.log(Upload);
 
 	Upload.upload({
-	  url: 'api/videos',
+	  url: 'api/v1/videos',
 	  method: 'POST',
 	  file: Upload.currentVideo
 	}).then(function(data){

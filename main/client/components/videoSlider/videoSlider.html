@@ -1,0 +1,19 @@
+<div id="demoVideosContainer">
+	<div class="slider-item-container">
+		<div class="ui cards slider" id="video-slides-container">
+		  <a ng-repeat="video in slides" class="red card" ng-click="showVideoModal()">
+		    <div class="image">
+		      <span style="background-image: url('thumbnails/{{video.thumbnailFile}}');"></span>
+		    </div>
+		  </a>
+		</div>
+	</div>
+
+	<a href="#" id="prev" class="arrow" ng-click="prev($event)">
+		<i class="angle left icon"></i>
+	</a>
+
+	<a href="#" id="next" class="arrow" ng-click="next($event)">
+		<i class="angle right icon"></i>
+	</a>
+</div>

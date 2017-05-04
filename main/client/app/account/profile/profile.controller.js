@@ -1,8 +1,9 @@
 'use strict';
 
 angular.module('takhshilaApp')
-  .controller('ProfileCtrl', function ($rootScope, $scope, $timeout, $http, $mdDialog, Cropper, uiCalendarConfig, Upload, Auth, userFactory) {
+  .controller('ProfileCtrl', function ($rootScope, $scope, $timeout, $http, $mdDialog, Cropper, uiCalendarConfig, Upload, Auth, userFactory, videoFactory) {
     $rootScope.isLoading = false;
+    $scope.demoVideos = [];
     if(Cropper.currentFile === undefined){
       Cropper.currentFile = null;
     }
@@ -35,6 +36,15 @@ angular.module('takhshilaApp')
       saturday: []
     }
 
+    $scope.gerUserVideos = function(){
+      videoFactory.getUserVideos($rootScope.currentUser._id)
+      .success(function(response){
+        $scope.demoVideos = response;
+      })
+      .error(function(err){
+        console.log(err);
+      })
+    }
 
     $scope.getEvents = function(start, end, callback){
       userFactory.getCurrentUserAvailability()
@@ -284,14 +294,20 @@ angular.module('takhshilaApp')
       });
     }
 
-  $scope.getLocation = function(index, searcTerm) {
-    $scope.edit.specialization.data[index].loadingResults = true;
-    return $http.get('/api/v1/topics/search/'+searcTerm).then(function(response){
-      $scope.edit.specialization.data[index].loadingResults = false;
-      return response.data.map(function(item){
-        return item.topicName;
+    $scope.getLocation = function(index, searcTerm) {
+      $scope.edit.specialization.data[index].loadingResults = true;
+      return $http.get('/api/v1/topics/search/'+searcTerm).then(function(response){
+        $scope.edit.specialization.data[index].loadingResults = false;
+        return response.data.map(function(item){
+          return item.topicName;
+        });
       });
+    };
+
+    $rootScope.$watch('loggedIn', function(status){
+      if(status === true){
+        $scope.gerUserVideos();
+      }
     });
-  };
 
   });

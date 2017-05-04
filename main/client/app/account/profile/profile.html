@@ -221,17 +221,22 @@
       <div class="row" ng-if = "currentUser.isTeacher">
         <div class="ui attached message">
           <div class="header">
-            Demo Videos
+            <span class = "title">Demo Videos</span>
+            <div class="action-container">
+              <a class="edit-action" ng-click="uploadVideo()">
+                <i class="plus icon"></i>
+              </a>
+            </div>
           </div>
         </div>
-        <div class="ui segment">
-          <p ng-click = "uploadVideo()">
-            This is the details
-          <form id = "uploadVideoForm">
-            <input type="file" id = "uploadVideo" onchange="angular.element(this).scope().onVideoSelect(this.files)" style = "display:none;">
-          </form>
-          </p>
+        <div class="ui segment" ng-if="demoVideos.length > 0">
+          <video-slider slides="demoVideos"></video-slider>
         </div>
+        
+        <form id = "uploadVideoForm">
+          <input type="file" id = "uploadVideo" onchange="angular.element(this).scope().onVideoSelect(this.files)" style = "display:none;">
+        </form>
+
       </div>
 
       <div class="row">

@@ -12,7 +12,8 @@ angular.module('takhshilaApp', [
   'ngCropper',
   'ngFileUpload',
   'ui.calendar',
-  'ui.bootstrap'
+  'ui.bootstrap',
+  'ui.carousel'
 ])
   .config(function($mdThemingProvider, $mdIconProvider) {
     $mdThemingProvider
