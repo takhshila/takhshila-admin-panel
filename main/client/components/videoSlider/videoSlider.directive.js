@@ -7,7 +7,8 @@ angular.module('takhshilaApp')
       restrict: 'E',
       replace: true,
       scope: {
-      	slides: '='
+      	slides: '=',
+      	clickHandle: '&clickHandle'
       },
       link: function (scope, element, attrs) {
       	var calculateEndSlide = function(startItem){
@@ -24,6 +25,9 @@ angular.module('takhshilaApp')
 
       	$('#video-slides-container').css('left', '0px');
 
+      	scope.onVideoClick = function(index){
+      		scope.clickHandle({index: index});
+      	}
       	scope.next = function(){
       		if(totalSlides > endSlide){
       			currentSlide++;

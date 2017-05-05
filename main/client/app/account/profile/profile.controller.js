@@ -46,6 +46,21 @@ angular.module('takhshilaApp')
       })
     }
 
+    $scope.showVideoModal = function(index){
+      console.log("videoClicked", index);
+      var parentEl = angular.element(document.body);
+      $mdDialog.show({
+        templateUrl: 'components/videoPlayerModal/videoPlayerModal.html',
+        controller: 'VideoPlayerModalCtrl',
+        parent: parentEl,
+        disableParentScroll: true,
+        clickOutsideToClose: true,
+        locals: {
+          
+        }
+      });
+    }
+
     $scope.getEvents = function(start, end, callback){
       userFactory.getCurrentUserAvailability()
       .success(function(response){
