@@ -20,7 +20,7 @@
                     <span class="date">Joined in 2013</span>
                   </div>
                   <div class="description">
-                    Kristy is an art director living in New York.
+                    {{user.basicInfo}}
                   </div>
                 </div>
               </div>
@@ -37,9 +37,16 @@
           </div>
         </div>
         <div class="ui segment">
-          <p>
-            This is the details
-          </p>
+          <ul class="specialization-container">
+            <li ng-repeat="topic in currentUser.specialization">
+              <a href="#" class="topic-name">{{topic.topic.topicName}}</a>
+              <a href="#" class="topic-level">{{topic.level}}</a>
+              <a href="#" class="topic-delete" ng-click="deleteSpecialization($event, $index, topic._id)" ng-show="edit.specialization.editing">
+                <i ng-show="!topic.progress" class="remove red icon"></i>
+                <i ng-show="topic.progress" class="ui mini active inline loader"></i>
+              </a>
+            </li>
+          </ul>
         </div>
       </div>
 
@@ -49,14 +56,9 @@
             Demo Videos
           </div>
         </div>
-        <div class="ui segment">
-          <p ng-click = "uploadVideo()">
-            This is the details
-          <form id = "uploadVideoForm">
-            <input type="file" id = "uploadVideo" onchange="angular.element(this).scope().onVideoSelect(this.files)" style = "display:none;">
-          </form>
-          </p>
-        </div>
+          <div class="ui segment" ng-if="demoVideos.length > 0">
+            <video-slider slides="demoVideos" click-handle="showVideoModal(index)"></video-slider>
+          </div>
       </div>
 
       <div class="row">
@@ -66,9 +68,16 @@
           </div>
         </div>
         <div class="ui segment">
-          <p>
-            This is the details
-          </p>
+          <div class="education-container">
+            <div ng-repeat="education in currentUser.education" class="education-item">
+              <span class="education-icon"><i class="student icon"></i></span>
+              <span class="education-details">
+                <p class="school-name">{{education.schoolName}}</p>
+                <p class="degree-name">{{education.degreeName}}, {{education.field}}</p>
+                <p class="period"></p>
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 

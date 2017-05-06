@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('takhshilaApp')
-.controller('UserCtrl', function ($rootScope, $scope, $stateParams, $timeout, $compile, uiCalendarConfig, userFactory, userClassFactory) {
+.controller('UserCtrl', function ($rootScope, $scope, $stateParams, $timeout, $compile, $mdDialog, uiCalendarConfig, userFactory, userClassFactory, videoFactory) {
   $rootScope.isLoading = true;
 
   // var weekDays = ['sunday', 'monday', 'tuesday', 'wednessday', 'thursday', 'friday', 'saturday'];
@@ -15,6 +15,32 @@ angular.module('takhshilaApp')
   //   friday: [],
   //   saturday: []
   // }
+
+  $scope.gerUserVideos = function(){
+    videoFactory.getUserVideos($stateParams.ID)
+    .success(function(response){
+      $scope.demoVideos = response;
+    })
+    .error(function(err){
+      console.log(err);
+    })
+  }
+
+    $scope.showVideoModal = function(index){
+      console.log("videoClicked", index);
+      var parentEl = angular.element(document.body);
+      $mdDialog.show({
+        templateUrl: 'components/videoPlayerModal/videoPlayerModal.html',
+        controller: 'VideoPlayerModalCtrl',
+        parent: parentEl,
+        disableParentScroll: true,
+        clickOutsideToClose: true,
+        locals: {
+          index: index,
+          videos: $scope.demoVideos
+        }
+      });
+    }
 
   $scope.bookClass = function(){
     if($scope.selectedSessions.length){
@@ -308,6 +334,7 @@ angular.module('takhshilaApp')
   .success(function(response){
     $rootScope.isLoading = false;
     $scope.user = response;
+    $scope.gerUserVideos();
     $(function () {
       setTimeout(function(){
         $('#availabilityCalendar').fullCalendar({
