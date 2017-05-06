@@ -56,7 +56,8 @@ angular.module('takhshilaApp')
         disableParentScroll: true,
         clickOutsideToClose: true,
         locals: {
-          
+          index: index,
+          videos: $scope.demoVideos
         }
       });
     }

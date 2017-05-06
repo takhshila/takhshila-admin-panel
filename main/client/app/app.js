@@ -12,7 +12,10 @@ angular.module('takhshilaApp', [
   'ngCropper',
   'ngFileUpload',
   'ui.calendar',
-  'ui.bootstrap'
+  'ui.bootstrap',
+  'com.2fdevs.videogular',
+  'com.2fdevs.videogular.plugins.controls',
+  'com.2fdevs.videogular.plugins.overlayplay'
 ])
   .config(function($mdThemingProvider, $mdIconProvider) {
     $mdThemingProvider

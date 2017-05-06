@@ -1,27 +1,32 @@
-<modal id = "profile-pic-modal">
+<modal id = "video-player-modal">
   <div class = "modal-header">
     <div class = "title">Watch Demo Video</div>
     <i class="remove icon" ng-click = "closeDialog()"></i>
   </div>
   <div class = "modal-content">
-    <div ng-if="dataUrl" class="img-container">
-      <img ng-if="dataUrl" ng-src="{{dataUrl}}" width="500"
-           ng-cropper
-           ng-cropper-proxy="cropperProxy"
-           ng-cropper-show="showEvent"
-           ng-cropper-hide="hideEvent"
-           ng-cropper-options="options">
-    </div>
+	<videogular vg-player-ready="onPlayerReady($API)" vg-auto-play="true">
+		<vg-media vg-src="config.sources">
+		</vg-media>
 
-    <div class="preview-container">
-      <img ng-src="{{preview.dataUrl}}">
-    </div>
+		<vg-controls>
+			<vg-play-pause-button></vg-play-pause-button>
+			<vg-time-display>{{ currentTime | date:'mm:ss':'UTC' }}</vg-time-display>
+			<vg-scrub-bar>
+				<vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+			</vg-scrub-bar>
+			<vg-time-display>{{ timeLeft | date:'mm:ss':'UTC' }}</vg-time-display>
+			<vg-volume>
+				<vg-mute-button></vg-mute-button>
+				<vg-volume-bar></vg-volume-bar>
+			</vg-volume>
+			<vg-fullscreen-button></vg-fullscreen-button>
+		</vg-controls>
+
+		<vg-overlay-play></vg-overlay-play>
+		<vg-poster vg-url='controller.config.plugins.poster'></vg-poster>
+	</videogular>
   </div>
   <div class = "modal-footer">
-    <div class="ui buttons">
-      <button class="ui button" ng-click = "closeDialog()">Cancel</button>
-      <div class="or"></div>
-      <button class="ui primary button" ng-click = "scale(250)">Crop & Save</button>
-    </div>
+
   </div>
 </modal>
