@@ -224,7 +224,7 @@ exports.getAvailability = function(req, res, next) {
     var _dayOfWeek = _weekDays.indexOf(moment().format('dddd').toLowerCase());
     var _currentTime = moment().valueOf();
     var _weekStartDate = moment(req.body.start);
-    console.log(moment(_currentTime).format('MMM DD, YYYY'));
+    
     Userclass.find({
       'teacherID': userId,
       'requestedTime.start': {$gte: _currentTime}
@@ -254,8 +254,6 @@ exports.getAvailability = function(req, res, next) {
           };
         }
       }
-
-      console.log(user.availability);
 
       for(var day = 0; day < _weekDays.length; day++){
         // if(day < _dayOfWeek){
