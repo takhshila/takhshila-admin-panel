@@ -6,18 +6,34 @@ var User = require('../user/user.model');
 
 // Get list of searchs
 exports.searchTeacher = function(req, res) {
-  console.log(req.query);
+  var levelMap = ['basic', 'intermediate', 'advanced', 'expert'];
   User
   .find({ isTeacher: true })
+  .select('-hashedPassword -salt')
   .populate('specialization.topic')
   .exec(function(err, users){
     if(err) { return handleError(res, err); }
-    return res.status(200).json(users);
-  })
-  // Search.find(function (err, searchs) {
-  //   if(err) { return handleError(res, err); }
-  //   return res.status(200).json(searchs);
-  // });
+    var promiseList = [], selectedUsers = [];
+
+    if(req.query.topic){
+      // var selectedUsers = users.map(function(user, index){
+      //   return new Promise(function(resolve, reject){
+
+      //   })
+      // })
+      users.map(function(user, index){
+        var found = _.find(user.specialization, function(obj){
+          if(obj.topic.topicName.toLowerCase() === req.query.topic.toLowerCase() && (levelMap.indexOf(obj.level.toLowerCase()) >= levelMap.indexOf(req.query.level.toLowerCase()))){
+            return true;
+          }
+        });
+        if(found){
+          selectedUsers.push(user);
+        }
+      })
+    }
+    return res.status(200).json(selectedUsers);
+  });
 };
 
 // Get a single search
