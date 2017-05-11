@@ -1,0 +1,32 @@
+#searchResults{
+	.right{
+		.row{
+			.ui{
+				&.card{
+					width: 100%;
+					padding: 10px;
+				}
+			}
+		}
+	}
+	.left{
+		#filtersContainer{
+			position: fixed;
+			width: 19%;
+			.row{
+				margin-bottom: 10px;
+				.ui{
+					width: 98%;
+				    margin: 0px;
+				    border-radius: 0px;
+				    box-shadow: none;
+				    border: 1px solid rgba(34, 36, 38, 0.15);
+				    &.segment{
+					    border-top: 0px;
+					    padding: 1em 1.5em;
+				    }
+				}
+			}
+		}
+	}
+}

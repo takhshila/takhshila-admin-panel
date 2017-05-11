@@ -15,6 +15,10 @@
 .body-margin-top{
   margin-top: 44px;
 }
+body.md-default-theme, body, html.md-default-theme, html {
+    color: rgba(0,0,0,0.87);
+    background-color: transparent;
+}
 h1 { font-size: 58px; font-weight: 300; display: block; }
 h2 { font-size: 47px; font-weight: 300; display: block; }
 h3 { font-size: 34px; font-weight: 300; display: block; }
@@ -58,6 +62,7 @@ hr { width: 100%; border-top: 1px solid #E9E9E9; display: inline-block; }
 @import 'admin/admin.scss';
 @import 'liveclass/liveclass.scss';
 @import 'main/main.scss';
+@import 'search/search.scss';
 @import 'teach/teach.scss';
 @import 'user/user.scss';
 @import 'addEducationModal/addEducationModal.scss';
