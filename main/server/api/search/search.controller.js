@@ -3,6 +3,7 @@
 var _ = require('lodash');
 var Search = require('./search.model');
 var User = require('../user/user.model');
+var Video = require('../video/video.model');
 
 // Get list of searchs
 exports.searchTeacher = function(req, res) {
@@ -16,23 +17,36 @@ exports.searchTeacher = function(req, res) {
     var promiseList = [], selectedUsers = [];
 
     if(req.query.topic){
-      // var selectedUsers = users.map(function(user, index){
-      //   return new Promise(function(resolve, reject){
-
-      //   })
-      // })
-      users.map(function(user, index){
-        var found = _.find(user.specialization, function(obj){
-          if(obj.topic.topicName.toLowerCase() === req.query.topic.toLowerCase() && (levelMap.indexOf(obj.level.toLowerCase()) >= levelMap.indexOf(req.query.level.toLowerCase()))){
-            return true;
+      var promiseList = users.map(function(user, index){
+        return new Promise(function(resolve, reject){
+          var found = _.find(user.specialization, function(obj){
+            if(obj.topic.topicName.toLowerCase() === req.query.topic.toLowerCase() && (levelMap.indexOf(obj.level.toLowerCase()) >= levelMap.indexOf(req.query.level.toLowerCase()))){
+              return true;
+            }
+          });
+          if(found){
+            getUserVideos(user._id)
+            .then(function(response){
+              selectedUsers.push({userDetails: user, videos: response});
+              resolve(selectedUsers);
+            })
+            .catch(function(err){
+              selectedUsers.push({userDetails: user, videos: response});
+              resolve(selectedUsers);
+            })
           }
-        });
-        if(found){
-          selectedUsers.push(user);
-        }
+        })
       })
     }
-    return res.status(200).json(selectedUsers);
+
+    Promise.all(promiseList)
+    .then(function(data){
+      console.log(selectedUsers[0].videos);
+      return res.status(200).json(selectedUsers);
+    })
+    .catch(function(err){
+      return res.status(200).json(selectedUsers);
+    })
   });
 };
 
@@ -81,4 +95,15 @@ exports.destroy = function(req, res) {
 
 function handleError(res, err) {
   return res.status(500).send(err);
+}
+
+function getUserVideos(userId) {
+  return new Promise(function(resolve, reject){
+    Video
+    .find({ userId: userId })
+    .exec(function (err, videos) {
+      if(err) { reject("No Videos Found"); }
+      resolve(videos);
+    });
+  });
 }

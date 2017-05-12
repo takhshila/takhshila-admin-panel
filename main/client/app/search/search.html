@@ -57,10 +57,48 @@
     	</div>
     </div>
     <div class="col-md-9 col-sm-9 right">
-      <div class="row">
-      	<div class="ui card">
-      		<p>This is user</p>
-      	</div>
+      <div class="row user-container" ng-repeat="user in searchResults">
+          <div class="ui segment">
+            <div class="imageContainer">
+              <div class="ui card">
+                <div class="image">
+                  <img ng-src="{{user.userDetails.profilePhoto.dataURI}}">
+                </div>
+              </div>
+              <p style="text-align:center;">$10 - $12 per hour</p>
+            </div>
+            <div class="aboutContainer">
+              <div class="ui card">
+                <div class="content">
+                	<div class="header">
+						<div class="title">
+							{{user.userDetails.name.firstName}}&nbsp;{{user.userDetails.name.lastName}}
+						</div>
+						<div class="meta">
+				          <div class="ui star rating">
+				            <i class="icon active"></i>
+				            <i class="icon active"></i>
+				            <i class="icon active"></i>
+				            <i class="icon active"></i>
+				            <i class="icon "></i>
+				          </div>
+						</div>
+						<div class="action">
+							<button ng-click="showLoginModal($event)" class = "ui button primary">Book Class Now</button>
+						</div>
+						<div class="clear"></div>
+                	</div>
+                  <div class="description">
+                    {{user.userDetails.basicInfo}}
+                  </div>
+		          <div class="ui segment" ng-if="user.videos.length > 0">
+		            <video-slider slides="user.videos" width="140" click-handle="showVideoModal($parent.$index, index)"></video-slider>
+		          </div>
+                </div>
+              </div>
+            </div>
+            <div class = "clear"></div>
+          </div>
       </div>
 
     </div>

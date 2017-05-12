@@ -8,16 +8,21 @@ angular.module('takhshilaApp')
       replace: true,
       scope: {
       	slides: '=',
+            width: '=',
       	clickHandle: '&clickHandle'
       },
       link: function (scope, element, attrs) {
       	var calculateEndSlide = function(startItem){
       		return Math.min(currentSlide + slidesPerPage, totalSlides);
       	}
-      	var slideWidth = 220;
+            if(!scope.width){
+                  scope.slideWidth = 220;
+            }else{
+                  scope.slideWidth = scope.width;
+            }
       	var videoSliderContaierWidth = element.innerWidth() - 45;
       	var totalSlides = scope.slides.length;
-      	var slidesPerPage = parseInt(videoSliderContaierWidth / slideWidth);
+      	var slidesPerPage = parseInt(videoSliderContaierWidth / scope.slideWidth);
 
       	var startSlide = 0;
       	var currentSlide = 0;
@@ -32,8 +37,7 @@ angular.module('takhshilaApp')
       		if(totalSlides > endSlide){
       			currentSlide++;
       			endSlide = calculateEndSlide(currentSlide);
-      			var left = -(currentSlide * slideWidth) + 'px';
-      			console.log(left);
+      			var left = -(currentSlide * (scope.slideWidth+5)) + 'px';
       			$('#video-slides-container').css('left', left);
       		}
       	}
@@ -41,7 +45,7 @@ angular.module('takhshilaApp')
       		if(currentSlide !== 0){
       			currentSlide--;
       			endSlide = calculateEndSlide(currentSlide);
-      			var left = -(currentSlide * slideWidth) + 'px';
+      			var left = -(currentSlide * (scope.slideWidth +5)) + 'px';
       			$('#video-slides-container').css('left', left);
       		}
       	}

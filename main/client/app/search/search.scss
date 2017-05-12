@@ -1,6 +1,76 @@
 #searchResults{
 	.right{
 		.row{
+			&.user-container{
+				.ui{
+					border-radius: 0px;
+					&.segment{
+						border: 0px;
+						box-shadow: none;
+						padding: 0px;
+						.imageContainer{
+							width: 20%;
+							float: left;
+							max-width: 160px;
+							padding: 0px;
+							.ui{
+								&.card{
+									padding: 0px;
+								}
+							}
+						}
+						.aboutContainer{
+							width: 80%;
+							float: right;
+							.ui{
+								&.card{
+									box-shadow: none;
+									padding: 0px;
+									.content{
+										.header{
+											div{
+												float: left;
+												&.title{
+													max-width: 40%;
+												}
+												&.meta{
+													width: 20%;
+													padding: 5px 10px;
+												}
+												&.action{
+													width: 40%;
+													float: right;
+													text-align: right;
+												}
+												&.clear{
+													clear: both;
+												}
+											}
+										}
+										.description{
+											padding: 15px 0px;
+											overflow: hidden;
+											text-overflow: ellipsis;
+											line-height: 20px;
+											max-height: 80px;
+											-webkit-line-clamp: 3;
+											-webkit-box-orient: vertical;
+										}
+										#demoVideosContainer{
+											#prev{
+												left: -10px;
+											}
+											#next{
+												right: -10px;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 			.ui{
 				&.card{
 					width: 100%;
