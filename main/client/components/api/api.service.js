@@ -8,7 +8,7 @@ angular.module('takhshilaApp')
 
     function getRequest(url, id, params) {
         url = url + id + '/';
-        return $http.get(base_url+url, params);
+        return $http.get(base_url+url, {params: params});
     }
     function getListRequest(url, params) {
         return $http.get(base_url+url, params);
