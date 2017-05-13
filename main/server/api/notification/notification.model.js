@@ -4,10 +4,11 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 var NotificationSchema = new Schema({
-  userID: {type: String, ref: 'User', required: true},
-  fromUserID: {type: String, ref: 'User', required: true},
+  forUser: {type: String, ref: 'User', required: true},
+  fromUser: {type: String, ref: 'User', required: true},
   notificationType: {type: String, required: true},
   notificationStatus: {type: String, required: true},
+  notificationMessage: {type: String, required: true},
   referenceClass: {type: String, ref: 'Userclass', required: true}
 });
 

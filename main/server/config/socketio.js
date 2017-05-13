@@ -23,7 +23,7 @@ function onConnect(socket) {
   require('../api/school/school.socket').register(socket);
   require('../api/notification/notification.socket').register(socket);
   require('../api/userclass/userclass.socket').register(socket);
-  require('../api/class/class.socket').register(socket);
+  // require('../api/class/class.socket').register(socket);
   require('../api/video/video.socket').register(socket);
   require('../api/topic/topic.socket').register(socket);
   require('../api/thing/thing.socket').register(socket);
@@ -55,11 +55,11 @@ module.exports = function (socketio) {
     // Call onDisconnect.
     socket.on('disconnect', function () {
       onDisconnect(socket);
-      console.info('[%s] DISCONNECTED', socket.address);
+      console.info('[%s] DISCONNECTED', socket.handshake.address);
     });
 
     // Call onConnect.
     onConnect(socket);
-    console.info('[%s] CONNECTED', socket.address);
+    console.info('[%s] CONNECTED', socket.handshake.address);
   });
 };
