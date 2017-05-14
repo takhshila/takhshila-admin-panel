@@ -45,15 +45,20 @@ exports.create = function(req, res) {
     if(err) { return handleError(res, err); }
     for(var i = 0; i < userclass.length; i++){
       var _notificationData = {
-        userID: req.user._id,
-        fromUserID: req.body.teacherID,
-        notificationType: 'newclass',
+        forUser: req.user._id,
+        fromUser: req.body.teacherID,
+        notificationType: 'classRequest',
         notificationStatus: 'unread',
+        notificationMessage: 'Test Message',
         referenceClass: userclass[i]._id
       }
-      Notification.create(_notificationData, function(err, notification){});
+      Notification.create(_notificationData, function(err, notification){
+        console.log(err);
+        console.log(notification);
+        return res.status(201).json(userclass);
+      });
     }
-    return res.status(201).json(userclass);
+    
   });
 };
 

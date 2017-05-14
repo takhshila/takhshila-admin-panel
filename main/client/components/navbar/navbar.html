@@ -15,6 +15,9 @@
     <div id="navbarCollapse" class="collapse navbar-collapse">
         <ul class="nav navbar-nav navbar-right">
           <li ng-if = "!loggedIn" class="featured"><a href="#" ng-click = "showLoginModal($event)">Login / SignUp</a></li>
+          <li ng-if = "loggedIn">
+            <notification-counter></notification-counter>
+          </li>
           <li ng-if = "loggedIn" class="dropdown">
               <a data-toggle="dropdown" class="ui label dropdown-toggle" href="#">
                 <img class="ui right spaced avatar image" src="http://semantic-ui.com/images/avatar/small/elliot.jpg">

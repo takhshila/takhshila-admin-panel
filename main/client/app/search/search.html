@@ -57,7 +57,7 @@
     	</div>
     </div>
     <div class="col-md-9 col-sm-9 right">
-      <div class="row user-container" ng-repeat="user in searchResults">
+      <div class="row user-container" ng-repeat="user in searchResults" ui-sref="user({ID:user.userDetails._id})">
           <div class="ui segment">
             <div class="imageContainer">
               <div class="ui card">

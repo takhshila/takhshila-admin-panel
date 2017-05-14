@@ -1,0 +1,22 @@
+a{
+	&.notification-counter{
+		padding: 8px 0px !important;
+		i{
+		    font-size: 1.6em;
+		    margin-top: 4px;
+		    span{
+			    position: absolute;
+			    top: 5px;
+			    font-size: 12px;
+			    font-weight: bold;
+			    background: red;
+			    border-radius: 50%;
+			    width: 18px;
+			    height: 18px;
+			    line-height: 15px;
+			    letter-spacing: 0px;
+			    padding: 2px 0px;
+		    }
+		}
+	}
+}
