@@ -10,7 +10,7 @@ var UserclassSchema = new Schema({
     start: {type: String, required: true},
     end: {type: String, required: true},
     dateFormated: {type: String, required: true},
-    endFormated: {type: String, required: true},
+    startFormated: {type: String, required: true},
     endFormated: {type: String, required: true}
   },
   requestedOn: {type: Date, default: Date.now},

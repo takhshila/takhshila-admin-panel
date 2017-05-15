@@ -5,7 +5,12 @@ var Notification = require('./notification.model');
 
 // Get list of notifications
 exports.index = function(req, res) {
-  Notification.find(function (err, notifications) {
+  var userID = req.user._id;
+  Notification
+  .find({ forUser: userID })
+  .populate('fromUser', '-hashedPassword -salt')
+  .populate('referenceClass')
+  .exec(function (err, notifications) {
     if(err) { return handleError(res, err); }
     return res.status(200).json(notifications);
   });

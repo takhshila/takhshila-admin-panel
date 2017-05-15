@@ -11,8 +11,10 @@ angular.module('takhshilaApp')
       },
       link: function (scope, element, attrs) {
       	scope.notificationCount = 0;
+      	scope.notifications = 0;
       	notificationFactory.getNotification()
       	.success(function(response){
+      		scope.notifications = response;
       		for(var i = 0; i < response.length; i++){
       			if(response[i].notificationStatus === "unread"){
       				scope.notificationCount++;

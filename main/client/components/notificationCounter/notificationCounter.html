@@ -1,5 +1,37 @@
-<a href="#" class="notification-counter">
-	<i class="alarm outline icon">
-		<span ng-if="notificationCount > 0">{{notificationCount}}</span>
-	</i>
-</a>
+<div class="notification-container dropdown">
+	<a href="#" class="notification-counter" data-toggle="dropdown">
+		<i class="alarm outline icon">
+			<span ng-if="notificationCount > 0">{{notificationCount}}</span>
+		</i>
+	</a>
+	<div class="notification-dropdown">
+		<i class="caret up icon"></i>
+		<div class="notification" ng-repeat="notification in notifications" ng-class="{'unread': notification.notificationStatus !== 'unread'}">
+			<div class="notification-image-container">
+				<div class="image" style="background-image: url('{{notification.fromUser.profilePhoto.dataURI}}');">
+				</div>
+			</div>
+			<div class="notification-content-container">
+				<div class="notification-title">
+					<span ng-if="notification.notificationType === 'classRequest'">
+						<strong>{{notification.fromUser.name.firstName}} {{notification.fromUser.name.lastName}}</strong> requested a class.
+					</span>
+				</div>
+				<div class="notification-content">
+					<span class="class-date">
+						<strong>on</strong> {{notification.referenceClass.requestedTime.start | amDateFormat:'dddd, MMMM Do \'YY'}} <strong> from </strong> {{notification.referenceClass.requestedTime.start | amDateFormat:'h:mm a'}} <strong> to </strong>{{notification.referenceClass.requestedTime.end | amDateFormat:'h:mm a'}}
+					</span>
+				</div>
+				<div class="notification-actions">
+					<button class="ui primary button">
+					  Accept
+					</button>
+					<button class="ui red button">
+					  Cancel
+					</button>
+				</div>
+			</div>
+			<div class="clear"></div>
+		</div>
+	</div>
+</div>
