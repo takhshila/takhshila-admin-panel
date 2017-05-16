@@ -24,7 +24,7 @@ exports.searchTeacher = function(req, res) {
               return true;
             }
           });
-          if(found){
+          if(found && user.ratePerHour.value){
             getUserVideos(user._id)
             .then(function(response){
               selectedUsers.push({userDetails: user, videos: response});

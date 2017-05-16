@@ -17,7 +17,36 @@
             <span class="date">Joined in 2013</span>
           </div>
           <div class="description">
-            Kristy is an art director living in New York.
+            <div class="price-container">
+              <div ng-if="!edit.ratePerHour.editing">
+                <strong>Price:</strong>{{currentUser.ratePerHour.value || "Not set"}}
+                <a class="edit-action" ng-click="editratePerHour($event)">
+                  <i class="write icon"></i>
+                </a>
+              </div>
+              <div ng-if="edit.ratePerHour.editing" class="edit-price-container">
+                <div class="ui right labeled input">
+                  <input type="text" class="price-value" placeholder="Enter price per hour">
+                  <div class="ui dropdown label">
+                    <span uib-dropdown on-toggle="toggled(open)">
+                      <div class="text" uib-dropdown-toggle>
+                        INR
+                        <i class="dropdown icon"></i>
+                      </div>
+                      <ul class="dropdown-menu" uib-dropdown-menu>
+                        <li>INR</li>
+                        <li>USD</li>
+                      </ul>
+                    </span>
+                  </div>
+                </div>
+                <div class="ui buttons">
+                  <button class="ui primary button" ng-class = "{'loading': edit.ratePerHour.progress}" ng-disabled="edit.ratePerHour.progress" ng-click="saveSpecialization()">Save</button>
+                  <div class="or"></div>
+                  <button class="ui button" ng-disabled="edit.ratePerHour.progress" ng-click="cancelEditSpecialization($event)">Cancel</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="extra">

@@ -38,7 +38,7 @@
         </div>
         <div class="ui segment">
           <ul class="specialization-container">
-            <li ng-repeat="topic in currentUser.specialization">
+            <li ng-repeat="topic in user.specialization">
               <a href="#" class="topic-name">{{topic.topic.topicName}}</a>
               <a href="#" class="topic-level">{{topic.level}}</a>
               <a href="#" class="topic-delete" ng-click="deleteSpecialization($event, $index, topic._id)" ng-show="edit.specialization.editing">
@@ -69,7 +69,7 @@
         </div>
         <div class="ui segment">
           <div class="education-container">
-            <div ng-repeat="education in currentUser.education" class="education-item">
+            <div ng-repeat="education in user.education" class="education-item">
               <span class="education-icon"><i class="student icon"></i></span>
               <span class="education-details">
                 <p class="school-name">{{education.schoolName}}</p>
@@ -138,8 +138,7 @@
                 </div>
               </div>
               <span class = "bookClassButtonContainer">
-                <button ng-if = "loggedIn" ng-click = "bookClass($event)" class = "ui button primary">Book Class Now</button>
-                <button ng-if = "!loggedIn" ng-click = "showLoginModal($event)" class = "ui button primary">Book Class Now</button>
+                <button ng-click = "loggedIn ? bookClass($event) : showLoginModal($event)" class = "ui button primary">Book Class Now</button>
                 <button class = "ui primary basic button">Talk to Teacher</button>
               </span>
             </div>

@@ -13,7 +13,7 @@
 			</div>
 			<div class="notification-content-container">
 				<div class="notification-title">
-					<span ng-if="notification.notificationType === 'classRequest'">
+					<span>
 						<strong>{{notification.fromUser.name.firstName}} {{notification.fromUser.name.lastName}}</strong> requested a class.
 					</span>
 				</div>
@@ -24,10 +24,10 @@
 				</div>
 				<div class="notification-actions">
 					<button class="ui primary button">
-					  Accept
+					  Confirm
 					</button>
 					<button class="ui red button">
-					  Cancel
+					  Deny
 					</button>
 				</div>
 			</div>

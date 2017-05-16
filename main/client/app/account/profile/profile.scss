@@ -19,6 +19,52 @@
     padding: 0.35em 0em;
     font-size: 2em;
   }
+  .left{
+    .ui{
+      &.card{
+        .content{
+          .description{
+            .price-container{
+              a{
+                position: absolute;
+                right: 15px;
+              }
+              .edit-price-container{
+                .labeled{
+                  border: 0px;
+                  input{
+                    &.price-value{
+                      width: 65% !important;
+                    }
+                  }
+                  .dropdown{
+                    .dropdown-menu{
+                      top: 10px;
+                      left: -12px;
+                      min-width: 0px;
+                      li{
+                        padding: 5px 24px;
+                        &:hover{
+                          background: #f5f5f5;
+                        }
+                      }
+                    }
+                  }
+                }
+                .ui{
+                  &.buttons{
+                    width: 100%;
+                    border: 0px;
+                    margin-top: 5px;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
   .right{
     .row{
       margin-bottom: 10px;

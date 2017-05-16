@@ -36,6 +36,8 @@ angular.module('takhshilaApp')
     });
 
     $rootScope.showLoginModal = function($event){
+      $event.preventDefault();
+      $event.stopPropagation();
       var parentEl = angular.element(document.body);
       $mdDialog.show({
         templateUrl: 'components/loginModal/loginModal.html',

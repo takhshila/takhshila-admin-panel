@@ -30,10 +30,14 @@ angular.module('takhshilaApp')
 
       	$('#video-slides-container').css('left', '0px');
 
-      	scope.onVideoClick = function(index){
+      	scope.onVideoClick = function(evt, index){
+                  evt.preventDefault();
+                  evt.stopPropagation();
       		scope.clickHandle({index: index});
       	}
-      	scope.next = function(){
+      	scope.next = function(evt){
+                  evt.preventDefault();
+                  evt.stopPropagation();
       		if(totalSlides > endSlide){
       			currentSlide++;
       			endSlide = calculateEndSlide(currentSlide);
@@ -41,7 +45,9 @@ angular.module('takhshilaApp')
       			$('#video-slides-container').css('left', left);
       		}
       	}
-      	scope.prev = function(){
+      	scope.prev = function(evt){
+                  evt.preventDefault();
+                  evt.stopPropagation();
       		if(currentSlide !== 0){
       			currentSlide--;
       			endSlide = calculateEndSlide(currentSlide);
