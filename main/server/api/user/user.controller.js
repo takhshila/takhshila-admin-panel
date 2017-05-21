@@ -151,7 +151,7 @@ exports.updateRatePerHour = function(req, res, next) {
   var userId = req.user._id;
   var ratePerHour = req.body.ratePerHour;
   if(typeof ratePerHour !== 'object'){ return res.status(400).send('Invalid Rate per Hour');}
-  if(isNaN(ratePerHour.value)){ return res.status(400).send('Invalid Rate');}
+  if(isNaN(ratePerHour.value) || (ratePerHour.value <= 0)){ return res.status(400).send('Invalid Rate');}
 
   User.findById(userId, function (err, user) {
     if (err) { return handleError(res, err); }

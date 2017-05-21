@@ -11,6 +11,7 @@ var UserSchema = new Schema({
     lastName: { type: String, required: true }
   },
   email: { type: String, lowercase: true, required: true },
+  phone: { type: Number },
   isTeacher: { type: Boolean, default: false },
   profileSetup: { type: Boolean, default: false },
   role: { type: String, default: 'user' },

@@ -21,6 +21,11 @@ angular.module('takhshilaApp')
         editing: false,
         progress: false,
         data: null,
+      },
+      ratePerHour: {
+        editing: false,
+        progress: false,
+        data: null
       }
     }
 
@@ -225,6 +230,37 @@ angular.module('takhshilaApp')
     $scope.cancelEditBasicInfo = function(){
       $scope.edit.basicInfo.editing = false;
       $scope.edit.basicInfo.data = null;
+    }
+
+    $scope.editRatePerHour = function(evt){
+      angular.element(evt.currentTarget).addClass('ng-hide');
+      $scope.edit.ratePerHour.editing = true;
+      $scope.edit.ratePerHour.data = {
+        currency: $scope.currentUser.ratePerHour.currency,
+        value: $scope.currentUser.ratePerHour.value
+      };
+    }
+    $scope.saveRatePerHour = function(){
+      if(($scope.edit.ratePerHour.data.value === $scope.currentUser.ratePerHour.value && $scope.edit.ratePerHour.data.currency === $scope.currentUser.ratePerHour.currency) || !isNaN($scope.edit.ratePerHour.data.value)){
+        $scope.edit.ratePerHour.progress = true;
+        userFactory.updateRatePerHour({ratePerHour: $scope.edit.ratePerHour.data})
+        .success(function(response){
+          $scope.edit.ratePerHour.progress = false;
+          $scope.currentUser.ratePerHour = response.ratePerHour;
+          console.log(response);
+          $scope.edit.ratePerHour.editing = false;
+        })
+        .error(function(err){
+          $scope.edit.ratePerHour.progress = false;
+          console.log(err);
+        });
+      }else{
+        console.log("Inavlid value", $scope.edit.ratePerHour);
+      }
+    }
+    $scope.cancelEditRatePerHour = function(){
+      $scope.edit.ratePerHour.editing = false;
+      $scope.edit.ratePerHour.data = null;
     }
 
     $scope.editSpecialization = function(evt){

@@ -1,0 +1,63 @@
+<navbar></navbar>
+<div class="container" id = "userProfile">
+  <div class="row">
+    <div class="col-md-8 col-sm-8 left">
+
+      <div class="row" ng-if = "user.isTeacher">
+        <div class="ui attached message">
+          <div class="header">
+            Payment Details
+          </div>
+        </div>
+        <div class="ui segment">
+          <ul class="specialization-container">
+            <li ng-repeat="topic in user.specialization">
+              <a href="#" class="topic-name">{{topic.topic.topicName}}</a>
+              <a href="#" class="topic-level">{{topic.level}}</a>
+              <a href="#" class="topic-delete" ng-click="deleteSpecialization($event, $index, topic._id)" ng-show="edit.specialization.editing">
+                <i ng-show="!topic.progress" class="remove red icon"></i>
+                <i ng-show="topic.progress" class="ui mini active inline loader"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="col-md-4 col-sm-4 right">
+      <div class="row selectedSessionContainer">
+        <div class="fixed">
+          <div class="ui attached message">
+            <div class="header">
+              Selected Session
+            </div>
+          </div>
+          <div class="ui segment">
+
+          	<form ext-submit action="https://test.payu.in/_payment" method="POST" name="paymentRedirect">
+          		<div ng-repeat="(key, val) in paymentData">
+          			<input type="hidden" name="{{ key }}" value="{{ val }}" />
+          		</div>
+          		<!-- <input type="submit" id="paymentRedirect" value = "Pay Now"> -->
+          	</form>
+            <div ng-if = "cartData.classData.length">
+              <div ng-repeat = "session in cartData.classData">
+                <div class="selectedSession">
+                  <span class = "sessionDateTime">{{session.dateFormated}} {{session.startTimeFormated}} to {{session.endTimeFormated}}</span>
+                  <span class = "sessionCost">{{session.currency}}&nbsp;{{session.cost}}</span>
+                  <div class = "clear"></div>
+                </div>
+              </div>
+              <span class = "bookClassButtonContainer">
+                <button ng-click = "checkout($event)" class = "ui button primary">Pay Now</button>
+              </span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class = "clear"></div>
+  </div>
+</div>

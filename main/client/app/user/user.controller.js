@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('takhshilaApp')
-.controller('UserCtrl', function ($rootScope, $scope, $stateParams, $timeout, $compile, $mdDialog, uiCalendarConfig, userFactory, userClassFactory, videoFactory) {
+.controller('UserCtrl', function ($rootScope, $scope, $state, $stateParams, $timeout, $compile, $mdDialog, uiCalendarConfig, userFactory, userClassFactory, videoFactory, cart) {
   $rootScope.isLoading = true;
 
   // var weekDays = ['sunday', 'monday', 'tuesday', 'wednessday', 'thursday', 'friday', 'saturday'];
@@ -44,23 +44,30 @@ angular.module('takhshilaApp')
 
   $scope.bookClass = function(){
     if($scope.selectedSessions.length){
-      for(var i = 0; i < $scope.selectedSessions.length; i++){
-        $scope.selectedSessions[i].start = moment($scope.selectedSessions[i].start, 'MMM DD, YYYY HH:mm').format();
-        $scope.selectedSessions[i].end = moment($scope.selectedSessions[i].end, 'MMM DD, YYYY HH:mm').format();
-      }
-      var _classData = {
+      var cartData = {
         teacherID: $stateParams.ID,
+        currency: $scope.user.ratePerHour.currency,
         classData: $scope.selectedSessions
       }
-      console.log(_classData);
-      userClassFactory.requestClass('', _classData)
-      .success(function(response){
-        console.log(response);
-        $('#availabilityCalendar').fullCalendar('refetchEvents')
-      })
-      .error(function(err){
-        console.log(err);
-      });
+      cart.addToCart(cartData);
+      $state.go('checkout');
+      // for(var i = 0; i < $scope.selectedSessions.length; i++){
+      //   $scope.selectedSessions[i].start = moment($scope.selectedSessions[i].start, 'MMM DD, YYYY HH:mm').format();
+      //   $scope.selectedSessions[i].end = moment($scope.selectedSessions[i].end, 'MMM DD, YYYY HH:mm').format();
+      // }
+      // var _classData = {
+      //   teacherID: $stateParams.ID,
+      //   classData: $scope.selectedSessions
+      // }
+      // console.log(_classData);
+      // userClassFactory.requestClass('', _classData)
+      // .success(function(response){
+      //   console.log(response);
+      //   $('#availabilityCalendar').fullCalendar('refetchEvents')
+      // })
+      // .error(function(err){
+      //   console.log(err);
+      // });
     }
   }
 

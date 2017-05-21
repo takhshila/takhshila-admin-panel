@@ -36,7 +36,10 @@ angular.module('takhshilaApp')
       },
       deleteEducation: function(id){
         return api.delete(subUrl + 'education/', id, {});
-      }
+      },
+      updateRatePerHour: function(data){
+        return api.putData(subUrl, 'rateperhour', data);
+      },
     }
 
     return userFactory;
