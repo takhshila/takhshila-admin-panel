@@ -10,6 +10,7 @@ exports.index = function(req, res) {
   .find({ forUser: userID })
   .populate('fromUser', '-hashedPassword -salt')
   .populate('referenceClass')
+  .sort({'createdOn': 'desc'})
   .exec(function (err, notifications) {
     if(err) { return handleError(res, err); }
     return res.status(200).json(notifications);

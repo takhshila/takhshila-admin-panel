@@ -5,6 +5,8 @@ var _ = require('lodash'),
     moment = require('moment'),
     Transaction = require('./transaction.model'),
     User = require('../user/user.model'),
+    Userclass = require('../userclass/userclass.model'),
+    Notification = require('../notification/notification.model'),
     hashSequence = "key|txnid|amount|productinfo|firstname|email|udf1|udf2|udf3|udf4|udf5|udf6|udf7|udf8|udf9|udf10",
     merchantID = 5804204,
     key = 'gtKFFx',
@@ -12,7 +14,7 @@ var _ = require('lodash'),
 
 
 // Initiate transactions
-exports.initiateTransaction = function(req, res) {
+exports.initiatePayment = function(req, res) {
   if(req.body._id) { delete req.body._id; }
   if(!req.body.classData.length){return handleError(res, 'Invalid class data');}
   
@@ -37,6 +39,9 @@ exports.initiateTransaction = function(req, res) {
     classData.push(_data);
     totalAmount += req.body.classData[i].cost;
   }
+  Userclass.create(classData, function(err, userclass){
+    console.log(userclass);
+  });
   User.findById(req.user._id, function (err, user){
     if(err) { return handleError(res, err); }
     var transactionData = {
@@ -61,8 +66,6 @@ exports.initiateTransaction = function(req, res) {
         'email': user.email
       });
 
-      console.log("key >>> " + key);
-
       var generatedresponse = {
         'key': key,
         'txnid': transaction._id,
@@ -72,8 +75,8 @@ exports.initiateTransaction = function(req, res) {
         'phone': '7777777777',
         'productinfo': 'Class request',
         'amount': totalAmount,
-        'surl': 'http://localhost:9000/success',
-        'furl': 'http://localhost:9000/failure',
+        'surl': 'http://localhost:9000/api/v1/transactions/payment/update',
+        'furl': 'http://localhost:9000/api/v1/transactions/payment/update',
         'hash': generatedHash,
         'service_provider': '',
         'address1': '',
@@ -123,17 +126,44 @@ exports.create = function(req, res) {
 };
 
 // Updates an existing transaction in the DB.
-exports.update = function(req, res) {
+exports.updatePayment = function(req, res) {
   if(req.body._id) { delete req.body._id; }
-  Transaction.findById(req.params.id, function (err, transaction) {
-    if (err) { return handleError(res, err); }
-    if(!transaction) { return res.status(404).send('Not Found'); }
-    var updated = _.merge(transaction, req.body);
-    updated.save(function (err) {
+  
+  console.log(req.body);
+
+  var generatedHash = hashAfterTransaction(req.body, req.body.status);
+
+  if(generatedHash === req.body.hash){
+    var transactionId = req.body.txnid;
+    Transaction.findById(transactionId, function (err, transaction) {
       if (err) { return handleError(res, err); }
-      return res.status(200).json(transaction);
+      if(!transaction) { return res.status(404).send('Not Found'); }
+
+      var _classData = transaction.classInfo;
+      
+      Userclass.create(_classData, function(err, userclass) {
+        if(err) { return handleError(res, err); }
+        for(var i = 0; i < userclass.length; i++){
+          var _notificationData = {
+            forUser: userclass[i].teacherID,
+            fromUser: userclass[i].studentID,
+            notificationType: 'classRequest',
+            notificationStatus: 'unread',
+            notificationMessage: 'Test Message',
+            referenceClass: userclass[i]._id
+          }
+          Notification.create(_notificationData, function(err, notification){
+            console.log(err);
+            return res.redirect('/payment/success/');
+            // return res.status(201).json(userclass);
+          });
+        }
+      });
     });
-  });
+  }else{
+    return res.redirect('/payment/failure/');
+  }
+  
 };
 
 // Deletes a transaction from the DB.
@@ -163,9 +193,33 @@ function hashBeforeTransaction(data) {
     if(data[k] !== undefined){
       string += data[k] + '|';
     }else{
-          string += '|';
+      string += '|';
     }
   }
   string += salt;
+  return crypto.createHash('sha512', salt).update(string).digest('hex');
+}
+
+function hashAfterTransaction(data, transactionStatus) {
+  var k = "",
+      string = "";
+
+  var sequence = hashSequence.split('|').reverse();
+  if (!(data && salt && transactionStatus)){
+    return false;
+  }
+
+  string += salt + '|' + transactionStatus + '|';
+  for (var i = 0; i < sequence.length; i++) {
+    k = sequence[i];
+    if(data[k] !== undefined){
+      string += data[k] + '|';
+    }else{
+      string += '|';
+    }
+  }
+
+  string = string.substr(0, string.length - 1);
+
   return crypto.createHash('sha512', salt).update(string).digest('hex');
 }

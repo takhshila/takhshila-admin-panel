@@ -54,7 +54,6 @@ exports.create = function(req, res) {
       }
       Notification.create(_notificationData, function(err, notification){
         console.log(err);
-        console.log(notification);
         return res.status(201).json(userclass);
       });
     }

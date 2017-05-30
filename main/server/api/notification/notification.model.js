@@ -9,7 +9,8 @@ var NotificationSchema = new Schema({
   notificationType: {type: String, required: true},
   notificationStatus: {type: String, required: true},
   notificationMessage: {type: String, required: true},
-  referenceClass: {type: String, ref: 'Userclass', required: true}
+  referenceClass: {type: String, ref: 'Userclass', required: true},
+  createdOn: {type: Date, default: Date.now}
 });
 
 module.exports = mongoose.model('Notification', NotificationSchema);

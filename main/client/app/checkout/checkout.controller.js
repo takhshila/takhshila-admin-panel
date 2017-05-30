@@ -9,12 +9,17 @@ angular.module('takhshilaApp')
     console.log($scope.cartData);
 
     $scope.checkout = function(){
+
+        for(var i = 0; i < $scope.cartData.classData.length; i++){
+            $scope.cartData.classData[i].start = moment($scope.cartData.classData[i].start, 'MMM DD, YYYY HH:mm').format();
+            $scope.cartData.classData[i].end = moment($scope.cartData.classData[i].end, 'MMM DD, YYYY HH:mm').format();
+        }
     	var transactionData = {
     		currency: $scope.cartData.currency,
     		teacherID: $scope.cartData.teacherID,
     		classData: $scope.cartData.classData
     	}
-    	transactionFactory.initiate(transactionData)
+    	transactionFactory.initiatePayment(transactionData)
     	.success(function(response){
     		console.log("Success");
     		console.log(response);

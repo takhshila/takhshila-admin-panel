@@ -30,7 +30,9 @@ module.exports = function(app) {
 
   app.route('/success')
     .post(function(req, res) {
-      res.sendFile(path.resolve(app.get('appPath') + '/index.html'));
+      console.log(req.body);
+      res.redirect('/success');
+      // res.sendFile(path.resolve(app.get('appPath') + '/index.html'));
     });
 
   // All other routes should redirect to the index.html
