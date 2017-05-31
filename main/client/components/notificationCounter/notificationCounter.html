@@ -23,9 +23,17 @@
 					</span>
 				</div>
 				<div class="notification-actions">
-					<button ng-disabled="notification.processing" ng-click="confirmClass($event, $index)" ng-class = "{'loading': notification.processingConfirm}" class="ui button primary" lx-ripple>Confirm</button>
-					
-					<button ng-disabled="notification.processing" ng-click="denyClass($event, $index)" ng-class = "{'loading': notification.processingDeny}" class="ui button red" lx-ripple>Deny</button>
+					<div ng-if="notification.referenceClass.status=='requested'">
+						<button ng-disabled="notification.processing" ng-click="confirmClass($event, $index)" ng-class = "{'loading': notification.processingConfirm}" class="ui button primary" lx-ripple>Confirm</button>
+						
+						<button ng-disabled="notification.processing" ng-click="denyClass($event, $index)" ng-class = "{'loading': notification.processingDeny}" class="ui button red" lx-ripple>Deny</button>
+					</div>
+					<div ng-if="notification.referenceClass.status=='confirmed'">
+						<p>You confirmed this class.</p>
+					</div>
+					<div ng-if="notification.referenceClass.status=='denied'">
+						<p>You denied this class.</p>
+					</div>
 				</div>
 			</div>
 			<div class="clear"></div>

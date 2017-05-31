@@ -16,7 +16,7 @@
         <ul class="nav navbar-nav navbar-right">
           <li ng-if = "!loggedIn" class="featured"><a href="#" ng-click = "showLoginModal($event)">Login / SignUp</a></li>
           <li ng-if = "loggedIn">
-            <notification-counter></notification-counter>
+            <notification-counter notification-count="notificationCount" notifications="notifications" update-notification = "updateNotification" confirm-class="confirmClass" deny-class="denyClass"></notification-counter>
           </li>
           <li ng-if = "loggedIn" class="dropdown">
               <a data-toggle="dropdown" class="ui label dropdown-toggle" href="#">

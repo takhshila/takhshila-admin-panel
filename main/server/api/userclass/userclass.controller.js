@@ -69,7 +69,7 @@ exports.confirmClassRequest = function(req, res) {
     if(!userclass) { return res.status(404).send('Not Found'); }
     if(userclass.status == "requested"){
       userclass.status = "confirmed";
-      updated.save(function (err) {
+      userclass.save(function (err) {
         if (err) { return handleError(res, err); }
         var _notificationData = {
           forUser: userclass.studentID,
@@ -98,7 +98,7 @@ exports.denyClassRequest = function(req, res) {
     if(!userclass) { return res.status(404).send('Not Found'); }
     if(userclass.status == "requested"){
       userclass.status = "denied";
-      updated.save(function (err) {
+      userclass.save(function (err) {
         if (err) { return handleError(res, err); }
         var _notificationData = {
           forUser: userclass.studentID,

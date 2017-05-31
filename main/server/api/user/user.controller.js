@@ -227,7 +227,8 @@ exports.getAvailability = function(req, res, next) {
     
     Userclass.find({
       'teacherID': userId,
-      'requestedTime.start': {$gte: _currentTime}
+      'requestedTime.start': {$gte: _currentTime},
+      'status': {$in: ['requested', 'confirmed']}
     }, function(err, userclass){
       var _bookedClasses = {};
       for(var a = 0; a < userclass.length; a++){

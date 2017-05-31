@@ -164,7 +164,8 @@
         opacity: 0.75;
       }
     }
-    &.requested{
+    &.requested,
+    &.confirmed{
       background-color: #E7E7E7;
       background-image: repeating-linear-gradient(45deg,transparent,transparent 10px,#fff 0,#fff 15px);
       opacity: 1;

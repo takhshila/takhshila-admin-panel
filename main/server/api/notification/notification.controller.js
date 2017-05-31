@@ -49,7 +49,7 @@ exports.update = function(req, res) {
         newNotification.save();
       })
     });
-    // return res.status(204).send('No Content');
+    return res.status(204).send('No Content');
   });
 };
 
