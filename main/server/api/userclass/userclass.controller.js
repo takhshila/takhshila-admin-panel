@@ -61,6 +61,64 @@ exports.create = function(req, res) {
   });
 };
 
+// Confirm an existing userclass in the DB.
+exports.confirmClassRequest = function(req, res) {
+  if(req.body._id) { delete req.body._id; }
+  Userclass.findById(req.params.id, function (err, userclass) {
+    if (err) { return handleError(res, err); }
+    if(!userclass) { return res.status(404).send('Not Found'); }
+    if(userclass.status == "requested"){
+      userclass.status = "confirmed";
+      updated.save(function (err) {
+        if (err) { return handleError(res, err); }
+        var _notificationData = {
+          forUser: userclass.studentID,
+          fromUser: userclass.teacherID,
+          notificationType: 'requestConfirmed',
+          notificationStatus: 'unread',
+          notificationMessage: 'Test Message',
+          referenceClass: userclass._id
+        }
+        Notification.create(_notificationData, function(err, notification){
+          console.log(err);
+          return res.status(201).json(userclass);
+        });
+      });
+    }else{
+      return res.status(400).send("Invalid request type");
+    }
+  });
+};
+// Deny an existing userclass in the DB.
+
+exports.denyClassRequest = function(req, res) {
+  if(req.body._id) { delete req.body._id; }
+  Userclass.findById(req.params.id, function (err, userclass) {
+    if (err) { return handleError(res, err); }
+    if(!userclass) { return res.status(404).send('Not Found'); }
+    if(userclass.status == "requested"){
+      userclass.status = "denied";
+      updated.save(function (err) {
+        if (err) { return handleError(res, err); }
+        var _notificationData = {
+          forUser: userclass.studentID,
+          fromUser: userclass.teacherID,
+          notificationType: 'requestDenied',
+          notificationStatus: 'unread',
+          notificationMessage: req.body.message,
+          referenceClass: userclass._id
+        }
+        Notification.create(_notificationData, function(err, notification){
+          console.log(err);
+          return res.status(201).json(userclass);
+        });
+      });
+    }else{
+      return res.status(400).send("Invalid request type");
+    }
+  });
+};
+
 // Updates an existing userclass in the DB.
 exports.update = function(req, res) {
   if(req.body._id) { delete req.body._id; }

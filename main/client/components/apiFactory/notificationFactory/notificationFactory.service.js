@@ -5,7 +5,11 @@ angular.module('takhshilaApp')
   	var subUrl = 'notifications/'
   	var notificationFactory = {
       getNotification: function(){
-          return api.get(subUrl, '', '');
+        return api.get(subUrl, '', '');
+      },
+
+      updateNotification: function(){
+      	return api.put(subUrl, '', '');
       }
   	}
 

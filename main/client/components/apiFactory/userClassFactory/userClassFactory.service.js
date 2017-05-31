@@ -10,8 +10,11 @@ angular.module('takhshilaApp')
       requestClass: function(id, params){
         return api.post(subUrl + id, params);
       },
-      updateClass: function(data){
-        return api.put(subUrl, 'availability', data);
+      confirmClass: function(data){
+        return api.put(subUrl + 'confirm', id, '');
+      },
+      denyClass: function(data){
+        return api.put(subUrl + 'deny', id, '');
       }
     }
 

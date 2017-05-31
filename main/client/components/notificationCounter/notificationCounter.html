@@ -1,4 +1,4 @@
-<div class="notification-container dropdown">
+<div class="notification-container dropdown" ng-click="updateNotification()">
 	<a href="#" class="notification-counter" data-toggle="dropdown">
 		<i class="alarm outline icon">
 			<span ng-if="notificationCount > 0">{{notificationCount}}</span>
@@ -6,7 +6,7 @@
 	</a>
 	<div class="notification-dropdown">
 		<i class="caret up icon"></i>
-		<div class="notification" ng-repeat="notification in notifications" ng-class="{'unread': notification.notificationStatus !== 'unread'}">
+		<div class="notification" ng-repeat="notification in notifications" ng-class="{'unread': notification.notificationStatus === 'unread'}">
 			<div class="notification-image-container">
 				<div class="image" style="background-image: url('{{notification.fromUser.profilePhoto.dataURI}}');">
 				</div>
@@ -23,12 +23,9 @@
 					</span>
 				</div>
 				<div class="notification-actions">
-					<button class="ui primary button">
-					  Confirm
-					</button>
-					<button class="ui red button">
-					  Deny
-					</button>
+					<button ng-disabled="notification.processing" ng-click="confirmClass($event, $index)" ng-class = "{'loading': notification.processingConfirm}" class="ui button primary" lx-ripple>Confirm</button>
+					
+					<button ng-disabled="notification.processing" ng-click="denyClass($event, $index)" ng-class = "{'loading': notification.processingDeny}" class="ui button red" lx-ripple>Deny</button>
 				</div>
 			</div>
 			<div class="clear"></div>

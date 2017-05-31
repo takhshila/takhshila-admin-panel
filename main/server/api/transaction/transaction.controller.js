@@ -154,7 +154,7 @@ exports.updatePayment = function(req, res) {
           }
           Notification.create(_notificationData, function(err, notification){
             console.log(err);
-            return res.redirect('/payment/success/');
+            return res.redirect('/profile');
             // return res.status(201).json(userclass);
           });
         }

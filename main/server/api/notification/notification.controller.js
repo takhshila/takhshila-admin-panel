@@ -37,34 +37,20 @@ exports.create = function(req, res) {
 
 // Updates an existing notification in the DB.
 exports.update = function(req, res) {
-  var notificationList = req.body.notificationList;
-  if(notificationList.length > 0){
-    var promiseList = notificationList.map(function(notificationId){
-      return new Promise(function(resolve, reject){
-        Notification
-        .findById(notificationId, function(err, notification){
-          if (!err) {
-            notification.notificationStatus = "read";
-            notification.save(function(err){
-              resolve("Notification Updated");
-            })
-          }else{
-            resolve("Notification not found. Proceed with next notification");
-          }
-        })
-      });
-    })
-  }else{
-    return res.status(400).send('Invalid List');
-  }
-
-  Promise.all(promiseList)
-  .then(function(data){
-    return res.status(204).send('No Content');
-  })
-  .catch(function(err){
+  // var notificationList = req.body.notificationList;
+  var userID = req.user._id;
+  Notification
+  .find({ forUser: userID, notificationStatus: 'unread' })
+  .exec(function (err, notifications) {
     if(err) { return handleError(res, err); }
-  })
+    notifications.forEach(function(notification){
+      Notification.findById(notification._id, function(err, newNotification){
+        newNotification.notificationStatus = "read";
+        newNotification.save();
+      })
+    });
+    // return res.status(204).send('No Content');
+  });
 };
 
 // Deletes a notification from the DB.
