@@ -6,6 +6,7 @@ angular.module('takhshilaApp')
       .state('liveclass', {
         url: '/liveclass',
         templateUrl: 'app/liveclass/liveclass.html',
-        controller: 'LiveclassCtrl'
+        controller: 'LiveclassCtrl',
+        authenticate: true
       });
   });
