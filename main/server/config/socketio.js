@@ -6,8 +6,16 @@
 
 var config = require('./environment');
 
+var liveClassList = [];
+var userSockets = [];
+var onlineUsers = [];
+
 // When the user disconnects.. perform this
 function onDisconnect(socket) {
+  if(onlineUsers[socket.decoded_token._id] !== undefined && onlineUsers[socket.decoded_token._id].id === socket.id){
+    console.log("User Left Live Class");
+    delete onlineUsers[socket.decoded_token._id];
+  }
 }
 
 // When the user connects.. perform this
@@ -28,6 +36,25 @@ function onConnect(socket) {
   require('../api/video/video.socket').register(socket);
   require('../api/topic/topic.socket').register(socket);
   require('../api/thing/thing.socket').register(socket);
+
+  socket.on('joinClass', function(data,  callback){
+    var output = {
+      success : false
+    }
+    if(onlineUsers[socket.decoded_token._id] === undefined){
+      onlineUsers[socket.decoded_token._id] = socket;
+      output.success = true
+    }else{
+      onlineUsers[socket.decoded_token._id].emit('alreadyLoggedIn', {});
+      output.success = false;
+      output.error = {
+        type: 'alreaday_logged_in',
+        description: "You are already logged in from a different browser or tab"
+      };
+    }
+    callback(output);
+  })
+  
 }
 
 module.exports = function (socketio) {
@@ -41,10 +68,10 @@ module.exports = function (socketio) {
   // 1. You will need to send the token in `client/components/socket/socket.service.js`
   //
   // 2. Require authentication here:
-  // socketio.use(require('socketio-jwt').authorize({
-  //   secret: config.secrets.session,
-  //   handshake: true
-  // }));
+  socketio.use(require('socketio-jwt').authorize({
+    secret: config.secrets.session,
+    handshake: true
+  }));
 
   socketio.on('connection', function (socket) {
     socket.address = socket.handshake.address !== null ?
