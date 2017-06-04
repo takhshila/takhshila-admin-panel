@@ -5,16 +5,32 @@
 'use strict';
 
 var config = require('./environment');
+var User = require('../api/user/user.model');
+var Userclass = require('../api/userclass/userclass.model');
 
 var liveClassList = [];
-var userSockets = [];
+// var userSockets = [];
 var onlineUsers = [];
 
 // When the user disconnects.. perform this
 function onDisconnect(socket) {
   if(onlineUsers[socket.decoded_token._id] !== undefined && onlineUsers[socket.decoded_token._id].id === socket.id){
     console.log("User Left Live Class");
-    delete onlineUsers[socket.decoded_token._id];
+
+    var userID = socket.decoded_token._id;
+    var userClassID = onlineUsers[userID].classID;
+    var liveClassUserIndex = liveClassList[userClassID].connectedUser.indexOf(userID);
+    
+    if(liveClassList[userClassID] !== undefined){
+      for(var i = 0; i < liveClassList[userClassID].connectedUser.length; i++){
+        if(liveClassList[userClassID].connectedUser[i] !== userID){
+          onlineUsers[liveClassList[userClassID].connectedUser[i]].emit('userLeftClass', {});
+        }
+      }
+    }
+    
+    delete onlineUsers[userID];
+    delete liveClassList[userClassID].connectedUser.splice(liveClassUserIndex, 1);
   }
 }
 
@@ -39,22 +55,69 @@ function onConnect(socket) {
 
   socket.on('joinClass', function(data,  callback){
     var output = {
-      success : false
-    }
-    if(onlineUsers[socket.decoded_token._id] === undefined){
-      onlineUsers[socket.decoded_token._id] = socket;
-      output.success = true
+          success : false
+        },
+        classID = data.classID,
+        peerID = data.peerID,
+        userID = socket.decoded_token._id;
+
+    if(onlineUsers[userID] === undefined){
+      Userclass.findById(classID, function (err, userclass) {
+        //if(err || !userclass) { 
+        if(false) { 
+          output.success = false;
+          output.error = {
+            type: 'invalid_class',
+            description: "This class doesnot exists"
+          };
+        }else{
+          onlineUsers[userID] = socket;
+          onlineUsers[userID].classID = classID;
+          onlineUsers[userID].peerID = peerID;
+          if(liveClassList[classID] === undefined){
+            liveClassList[classID] = {
+              classDetails: null,
+              connectedUser: [userID]
+            }
+          }else{
+            liveClassList[classID].connectedUser.push(userID);
+          }
+          output.success = true
+        }
+        callback(output);
+        startLiveClass(classID);
+      });
     }else{
-      onlineUsers[socket.decoded_token._id].emit('alreadyLoggedIn', {});
+      // onlineUsers[userID].emit('alreadyLoggedIn', {});
       output.success = false;
       output.error = {
         type: 'alreaday_logged_in',
         description: "You are already logged in from a different browser or tab"
       };
+      callback(output);
     }
-    callback(output);
   })
   
+}
+
+function startLiveClass(classID){
+  if(liveClassList[classID] !== undefined){
+    if(liveClassList[classID].connectedUser.length === 2){
+      console.log("Requesting start class");
+      for(var i = 0; i < liveClassList[classID].connectedUser.length; i++){
+        onlineUsers[liveClassList[classID].connectedUser[i]].emit('startClass', {
+          'caller'    : {
+            userID: liveClassList[classID].connectedUser[0],
+            peerID: onlineUsers[liveClassList[classID].connectedUser[0]].peerID
+          },
+          'receiver'  : {
+            userID: liveClassList[classID].connectedUser[1],
+            peerID: onlineUsers[liveClassList[classID].connectedUser[1]].peerID
+          }
+        });
+      }
+    }
+  }
 }
 
 module.exports = function (socketio) {
