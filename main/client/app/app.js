@@ -1,19 +1,20 @@
 'use strict';
 
 angular.module('takhshilaApp', [
+  'rzModule',
+  'ngAnimate',
   'ngCookies',
+  'ui.router',
+  'ngCropper',
   'ngResource',
   'ngSanitize',
-  'ngAnimate',
   'ngMessages',
-  'btford.socket-io',
-  'ui.router',
   'ngMaterial',
-  'ngCropper',
-  'ngFileUpload',
   'ui.calendar',
+  'ngFileUpload',
   'ui.bootstrap',
   'angularMoment',
+  'btford.socket-io',
   'com.2fdevs.videogular',
   'com.2fdevs.videogular.plugins.controls',
   'com.2fdevs.videogular.plugins.overlayplay'

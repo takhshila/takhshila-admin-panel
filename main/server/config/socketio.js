@@ -42,6 +42,9 @@ function onConnect(socket) {
   });
 
   // Insert sockets below
+  require('../api/countries/countries.socket').register(socket);
+  require('../api/transactionhistory/transactionhistory.socket').register(socket);
+  require('../api/wallet/wallet.socket').register(socket);
   require('../api/transaction/transaction.socket').register(socket);
   require('../api/search/search.socket').register(socket);
   require('../api/degree/degree.socket').register(socket);

@@ -5,17 +5,21 @@
     <span class = "home-navbar-gradient"></span>
     <div id="searchFormContainer">
     	<div class="search-form-container">
-			<div class="col-md-8 col-md-offset-2 ui action input search-form">
-			  <input type="text" placeholder="Enter topic or subject....">
-			  <select class="ui compact selection dropdown">
-			    <option value="all">All</option>
-			    <option selected="" value="articles">Articles</option>
-			    <option value="products">Products</option>
+			<form action="/search" method="get" class="col-md-8 col-md-offset-2 ui action input search-form" ng-submit="processSearch($event)">
+			  <!-- <input type="text" name="topic" ng-model="search.topic" placeholder="Enter topic or subject...."> -->
+        <div class="search-text-input" ng-class="{'loading': specialization.loadingResults}">
+          <input type="text" ng-model="search.topic" placeholder="Enter topic or subject..." uib-typeahead="topic for topic in getTopicList($viewValue)" typeahead-loading="loading" typeahead-no-results="noResults">
+        </div>
+			  <select class="ui compact selection dropdown" name="level" ng-model="search.level">
+			    <option value="basic" ng-selected="true">Basic</option>
+			    <option value="intermediate">Intermediate</option>
+          <option value="advanced">Advanced</option>
+			    <option value="expert">Expert</option>
 			  </select>
-			  <div type="submit" class="ui green button">
+			  <div type="submit" class="ui green button" ng-click="processSearch($event)">
 			  	<i class="search icon"></i> Search
 			  </div>
-			</div>
+			</form>
     	</div>
     </div>
     <div id="stepsContainer">

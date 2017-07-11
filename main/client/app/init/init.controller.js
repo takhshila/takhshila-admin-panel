@@ -1,7 +1,9 @@
 'use strict';
 
 angular.module('takhshilaApp')
-  .controller('InitCtrl', function ($rootScope, $scope, $state, $mdDialog, Auth) {
+  .controller('InitCtrl', function ($rootScope, $scope, $state, $mdDialog, $q, $http, Auth) {
+    $rootScope.countries = [];
+
     $scope.$watch(function(){
       return $state.current.name;
     }, function(stateName){
@@ -70,6 +72,19 @@ angular.module('takhshilaApp')
         disableParentScroll: true,
         clickOutsideToClose: true
       });
+    }
+
+    $rootScope.populateCountries = function(){
+      var deferred = $q.defer();
+      if(!$rootScope.countries.length){
+        return $http.get('/api/v1/countries').then(function(response){
+          $rootScope.countries = response.data;
+          deferred.resolve();
+        }, function(err){
+          deferred.resolve();
+        });
+      }
+      return deferred.promise;
     }
 
     $rootScope.logout = function(){

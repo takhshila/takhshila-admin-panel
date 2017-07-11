@@ -4,8 +4,6 @@ angular.module('takhshilaApp')
   .directive('notificationCounter', function ($timeout, userClassFactory, notificationFactory) {
     
     var NotificationCounterCtrl = function($scope){
-      console.log($scope);
-
       $scope.notificationCount = 0;
       $scope.notifications = 0;
 

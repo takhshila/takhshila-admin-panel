@@ -3,16 +3,19 @@
   <div class="row">
     <div class="col-md-3 col-sm-3 left">
     	<div id="filtersContainer">
+
 	      <div class="row">
 	        <div class="ui attached message">
 	          <div class="header" id = "availabilitySelector">
-	            Availability
+	            Price
 	          </div>
 	        </div>
 	        <div class="ui segment">
-	          <p>
-	            Filter
-	          </p>
+		        <rzslider 
+		        	rz-slider-model="slider_draggable_range.minValue" 
+		        	rz-slider-high="slider_draggable_range.maxValue" 
+		        	rz-slider-options="slider_draggable_range.options">
+		        </rzslider>
 	        </div>
 	      </div>
 
@@ -32,26 +35,22 @@
 	      <div class="row">
 	        <div class="ui attached message">
 	          <div class="header" id = "availabilitySelector">
-	            Price
+	            From
 	          </div>
 	        </div>
 	        <div class="ui segment">
-	          <p>
-	            Filter
-	          </p>
-	        </div>
-	      </div>
-
-	      <div class="row">
-	        <div class="ui attached message">
-	          <div class="header" id = "availabilitySelector">
-	            Location From
-	          </div>
-	        </div>
-	        <div class="ui segment">
-	          <p>
-	            Filter
-	          </p>
+	        	<div class="scroll-filter-container">
+					<div class="ui input">
+					  <input type="text" placeholder="Search...">
+					</div>
+					<ul id="notebook_ul">
+					<li ng-repeat="country in countries | filter:query | orderBy: 'name'">
+						<md-checkbox md-no-ink class="md-primary">
+						{{country.name}}
+						</md-checkbox>
+					</li>
+					</ul>
+	        	</div>
 	        </div>
 	      </div>
     	</div>

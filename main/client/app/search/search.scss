@@ -82,8 +82,6 @@
 	}
 	.left{
 		#filtersContainer{
-			position: fixed;
-			width: 19%;
 			.row{
 				margin-bottom: 10px;
 				.ui{
@@ -95,6 +93,32 @@
 				    &.segment{
 					    border-top: 0px;
 					    padding: 1em 1.5em;
+					    .rzslider .rz-selection{
+					    	background-image: linear-gradient(116deg,#0699cd,#3bb85c);
+					    }
+					    .scroll-filter-container{
+					    	max-height: 200px;
+					    	overflow: hidden;
+					    	overflow-y: scroll;
+					    	.ui{
+					    		&.input{
+					    			margin-bottom: 10px;
+					    			input{
+					    				border: 0px;
+					    				border-radius: 0px;
+					    			}
+					    		}
+					    	}
+					    	ul{
+					    		margin: 0px;
+					    		padding: 0px;
+					    		li{
+					    			margin: 0px;
+					    			padding: 0px;
+					    			list-style: none;
+					    		}
+					    	}
+					    }
 				    }
 				}
 			}

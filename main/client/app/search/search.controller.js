@@ -9,6 +9,26 @@ angular.module('takhshilaApp')
 
     $scope.searchResults = null;
 
+    $scope.slider_draggable_range = {
+        minValue: 0,
+        maxValue: 1000,
+        options: {
+            ceil: 1000,
+            floor: 0,
+            minRange: 50,
+            draggableRange: true,
+            translate: function (value) {
+                return '' + value;
+            }
+        }
+    };
+    
+    $scope.searchTerm;
+
+    $scope.clearSearchTerm = function() {
+        $scope.searchTerm = '';
+    };
+
     $scope.showVideoModal = function(userIndex, videoIndex){
 		var parentEl = angular.element(document.body);
 		$mdDialog.show({
@@ -37,5 +57,8 @@ angular.module('takhshilaApp')
     })
     .error(function(err){
     	console.log(err);
-    })
+    });
+
+    $rootScope.populateCountries();
+
   });
