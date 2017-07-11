@@ -10,6 +10,7 @@ var path = require('path');
 module.exports = function(app) {
 
   // Insert routes below
+  app.use('/api/languages', require('./api/language'));
   app.use('/api/v1/countries', require('./api/countries'));
   app.use('/api/v1/transactionhistory', require('./api/transactionhistory'));
   app.use('/api/v1/wallets', require('./api/wallet'));

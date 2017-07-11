@@ -5,6 +5,7 @@ var mongoose = require('mongoose'),
 
 var VideoSchema = new Schema({
   title: {type: String, default: 'Untitled'},
+  description: {type: String, default: ''},
   videoFile: {type: String, required: true},
   videoURI: {type: String, default: null},
   thumbnailFile: {type: String, required: true},

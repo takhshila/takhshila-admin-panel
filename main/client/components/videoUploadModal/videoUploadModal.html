@@ -1,27 +1,76 @@
-<modal id = "profile-pic-modal">
+<modal id = "upload-video-modal">
   <div class = "modal-header">
-    <div class = "title">Upload Video</div>
+    <div class = "title">Upload Demo Video</div>
     <i class="remove icon" ng-click = "closeDialog()"></i>
   </div>
+
   <div class = "modal-content">
-    <div ng-if="dataUrl" class="img-container">
-      <img ng-if="dataUrl" ng-src="{{dataUrl}}" width="500"
-           ng-cropper
-           ng-cropper-proxy="cropperProxy"
-           ng-cropper-show="showEvent"
-           ng-cropper-hide="hideEvent"
-           ng-cropper-options="options">
+    <div class="row">
+      <div class="col-md-12 col-sm-12">
+          <div class="ui indicating active progress" data-percent="{{percentCompleted}}">
+            <div class="bar" style="transition-duration: 300ms; width: {{percentCompleted}}%;"></div>
+            <div ng-if="!videoUploaded" class="label">Uploading {{percentCompleted}}%</div>
+            <div ng-if="videoUploaded" class="label">Uploaded</div>
+          </div>
+      </div>
+      <div class="col-md-3 col-sm-3">
+      </div>
+      <div class="col-md-9 col-sm-9">
+        <div class="ui form">
+          <form class="" name = "updateVideoForm" novalidate>
+            <div class="field form-error" ng-class = "{'has-error': loginError}">
+              <div class="help-block">
+                  <p>{{errorMessage}}</p>
+              </div>
+            </div>
+
+            <div class="field" ng-class = "{'has-error': updateVideoForm.title.$invalid && updateVideoForm.title.$touched}">
+              <lx-text-field label="Title" error = "updateVideoForm.title.$invalid && updateVideoForm.title.$touched">
+                  <input name = "title" type="text" ng-model="updateVideoFormData.title" required>
+              </lx-text-field>
+              <div class="help-block" ng-messages="updateVideoForm.title.$error" ng-if="updateVideoForm.title.$touched">
+                  <p ng-message="required">This field is required.</p>
+              </div>
+            </div>
+
+            <div class="field">
+              <lx-text-field label="Description">
+                  <textarea name = "description" ng-model="updateVideoFormData.description" required></textarea>
+              </lx-text-field>
+            </div>
+            <ul class="selected-topic-list">
+              <li ng-repeat="topic in selectedTopics">
+                {{topic.topicName}}
+                <span class="remove-topic" ng-click="removeTopic($index)">
+                  <i class="remove icon"></i>
+                </span>
+              </li>
+            </ul>
+            <div class="field">
+              <lx-text-field label="Topics">
+                  <input
+                  name = "topics"
+                  type="text"
+                  ng-change="clearField()"
+                  ng-model="updateVideoForm.topic"
+                  uib-typeahead="topic.topicName for topic in getTopics($index, $viewValue)"
+                  typeahead-loading="loading"
+                  typeahead-on-select="addFieldValue($item)"
+                  typeahead-no-results="noResults"
+                  required
+                  />
+              </lx-text-field>
+            </div>
+
+          </form>
+        </div>
+      </div>
     </div>
 
-    <div class="preview-container">
-      <img ng-src="{{preview.dataUrl}}">
-    </div>
   </div>
   <div class = "modal-footer">
     <div class="ui buttons">
-      <button class="ui button" ng-click = "closeDialog()">Cancel</button>
-      <div class="or"></div>
-      <button class="ui primary button" ng-click = "scale(250)">Crop & Save</button>
+      <button class="ui primary button" ng-click = "updateVideoData()" ng-class="{'loading': updateVideoDataProgress}" lx-ripple>Save</button>
     </div>
   </div>
 </modal>

@@ -1,0 +1,60 @@
+#upload-video-modal{
+  height: 500px;
+  width: 750px;
+  background: #fff;
+  .form-error p{
+    text-align: center;
+    margin-top: 10px;
+  }
+  .modal-header{
+    width: 100%;
+    text-align: center;
+    background: #00918b;
+    padding: 15px;
+    .title{
+      font-size: 18px;
+      color: #fff;
+    }
+    i{
+      float: left;
+      margin-right: 10px;
+      font-size: 30px;
+      font-weight: 100;
+      line-height: 18px;
+      margin-left: -10px;
+      &.remove{
+        position: absolute;
+        right: 0px;
+        top: 15px;
+        z-index: 999;
+        font-size: 20px;
+        cursor: pointer;
+        color: #fff;
+      }
+    }
+  }
+  .modal-content{
+    padding: 0px 15px 0px 15px;
+    width: 100%;
+    .row{
+      .progress{
+        margin-top: 0.5em;
+        overflow: visible;
+      }
+    }
+  }
+  .modal-footer{
+    position: absolute;
+    bottom: 30px;
+    text-align: center;
+    width: 100%;
+  }
+  p{
+    font-size: 13px;
+    text-align: left;
+    font-weight: 100;
+  }
+  .dropdown-menu{
+    width: 100%;
+  }
+}

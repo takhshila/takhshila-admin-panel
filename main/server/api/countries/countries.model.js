@@ -5,8 +5,8 @@ var mongoose = require('mongoose'),
 
 var CountriesSchema = new Schema({
   name: {type: String, required: true, dropDups: true, lowercase: true, trim: true},
-  dial_code: {type: Number},
   code: {type: String},
+  dialCode: {type: Number},
   active: {type: Boolean, default: true}
 });
 

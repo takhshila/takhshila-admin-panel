@@ -81,13 +81,32 @@ exports.create = function(req, res) {
 exports.update = function(req, res) {
   if(req.body._id) { delete req.body._id; }
   if(req.body.userId) { delete req.body.userId; }
-  if(req.body.videoFile) { delete req.body.videoFile; }
-  if(req.body.thumbnailFile) { delete req.body.thumbnailFile; }
+  // if(req.body.videoFile) { delete req.body.videoFile; }
+  // if(req.body.thumbnailFile) { delete req.body.thumbnailFile; }
+
+  var userId = req.user._id;
 
   Video.findById(req.params.id, function (err, video) {
     if (err) { return handleError(res, err); }
     if(!video) { return res.status(404).send('Not Found'); }
-    var updated = _.merge(video, req.body);
+    if(video.userId !== userId){ return res.status(403).send('You are not authorized to update this video'); }
+    var videoData = {}
+    if(req.body.title){
+      videoData.title = req.body.title;
+    }
+    if(req.body.description){
+      videoData.description = req.body.description;
+    }
+    if(req.body.topics && req.body.topics.length > 0){
+      videoData.topics = video.topics;
+      for(var i = 0; i < req.body.topics.length; i++){
+        if(typeof req.body.topics[i] === "String"){
+          video.topics.push(req.body.topics[i]);
+        }
+      }
+    }
+
+    var updated = _.merge(video, videoData);
     updated.save(function (err) {
       if (err) { return handleError(res, err); }
       return res.status(200).json(video);

@@ -3,11 +3,11 @@
 var _ = require('lodash');
 var Countries = require('./countries.model');
 
-// Get list of countriess
+// Get list of countries
 exports.index = function(req, res) {
-  Countries.find(function (err, countriess) {
+  Countries.find(function (err, countryList) {
     if(err) { return handleError(res, err); }
-    return res.status(200).json(countriess);
+    return res.status(200).json(countryList);
   });
 };
 

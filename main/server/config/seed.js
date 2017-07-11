@@ -6,7 +6,12 @@
 'use strict';
 
 var Countries = require('../api/countries/countries.model');
-var jsonList = require('./countries.json');
+var Language = require('../api/countries/language.model');
+var School = require('../api/countries/school.model');
+
+var countryList = require('./countries.json');
+var languageList = require('./languages.json');
+var schoolList = require('./universityDomain.json');
 // var User = require('../api/user/user.model');
 
 // Thing.find({}).remove(function() {
@@ -32,9 +37,45 @@ var jsonList = require('./countries.json');
 // });
 
 Countries.find({}).remove(function() {
-  Countries.collection.insertMany(jsonList, function(err) {
-      console.log("Error is: ", err);
-      console.log('finished populating countries');
-    }
-  );
+	for(var i = 0; i < countryList.length; i++){
+		var countryData = {
+			name: countryList[i].name,
+			code: countryList[i].code,
+			dialCode: countryList[i].dial_code
+		}
+		Countries.create(countryData, function(err, addedCountry){
+			if(err) { console.log("Error is: ", err); }
+		})
+	}
+	// Countries.collection.insertMany(jsonList, function(err) {
+	//   console.log("Error is: ", err);
+	//   console.log('finished populating countries');
+	// });
+});
+
+Language.find({}).remove(function() {
+	for(var i = 0; i < languageList.length; i++){
+		var languageData = {
+			code: languageList[i].code,
+			name: languageList[i].name,
+			nativeName: languageList[i].nativeName
+		}
+		Language.create(languageData, function(err, addedLanguage){
+			if(err) { console.log("Error is: ", err); }
+		})
+	}
+});
+
+School.find({}).remove(function() {
+	for(var i = 0; i < languageList.length; i++){
+		var schoolData = {
+			schoolName: languageList[i].name,
+			countryCode: languageList[i].alpha_two_code,
+			countryName: languageList[i].country,
+			website: languageList[i].web_page
+		}
+		School.create(languageData, function(err, addedSchool){
+			if(err) { console.log("Error is: ", err); }
+		})
+	}
 });

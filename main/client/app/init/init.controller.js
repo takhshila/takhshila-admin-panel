@@ -70,7 +70,7 @@ angular.module('takhshilaApp')
         parent: parentEl,
         targetEvent: $event,
         disableParentScroll: true,
-        clickOutsideToClose: true
+        clickOutsideToClose: false
       });
     }
 
