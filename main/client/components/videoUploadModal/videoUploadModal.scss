@@ -37,6 +37,33 @@
     padding: 0px 15px 0px 15px;
     width: 100%;
     .row{
+      .thumbnailContainer{
+        height: 200px;
+        padding: 0px;
+        .thumbnail{
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          background-size: cover;
+          background-position: center;
+        }
+      }
+      ul{
+        &.selected-topic-list{
+          padding: 0px;
+          margin-top: 10px;
+          li{
+            display: inline-block;
+            margin: 0px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            padding: 5px 10px;
+            list-style: none;
+            background: #336699;
+            border-radius: 10px;
+          }
+        }
+      }
       .progress{
         margin-top: 0.5em;
         overflow: visible;

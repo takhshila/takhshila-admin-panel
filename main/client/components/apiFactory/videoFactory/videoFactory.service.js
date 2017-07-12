@@ -6,6 +6,9 @@ angular.module('takhshilaApp')
     var videoFactory = {
       getUserVideos: function( id ){
           return api.get(subUrl + 'user/', id);
+      },
+      updateVideo: function( id, data ){
+          return api.putData(subUrl, id, data, {});
       }
       // getAvailability: function(id, params){
       //   return api.post(subUrl + 'availability/' + id, params);

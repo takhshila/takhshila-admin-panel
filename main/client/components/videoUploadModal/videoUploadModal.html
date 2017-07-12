@@ -14,6 +14,13 @@
           </div>
       </div>
       <div class="col-md-3 col-sm-3">
+        <div class="ui segment thumbnailContainer">
+          <div ng-if="videoUploaded" class="thumbnail" style="background-image: url('{{videoThumbnail}}');"></div>
+          <div class="ui active inverted dimmer" ng-if="!videoUploaded">
+            <div class="ui text loader">Loading</div>
+          </div>
+          <p></p>
+        </div>
       </div>
       <div class="col-md-9 col-sm-9">
         <div class="ui form">
@@ -52,11 +59,12 @@
                   name = "topics"
                   type="text"
                   ng-change="clearField()"
-                  ng-model="updateVideoForm.topic"
+                  ng-model="updateVideoFormData.topic"
                   uib-typeahead="topic.topicName for topic in getTopics($index, $viewValue)"
                   typeahead-loading="loading"
                   typeahead-on-select="addFieldValue($item)"
                   typeahead-no-results="noResults"
+                  ng-disabled="selectedTopics.length > 4"
                   required
                   />
               </lx-text-field>
@@ -70,7 +78,7 @@
   </div>
   <div class = "modal-footer">
     <div class="ui buttons">
-      <button class="ui primary button" ng-click = "updateVideoData()" ng-class="{'loading': updateVideoDataProgress}" lx-ripple>Save</button>
+      <button class="ui primary button" ng-disabled="!videoUploaded || updateVideoDataProgress" ng-click = "updateVideoData()" ng-class="{'loading': updateVideoDataProgress}" lx-ripple>Save</button>
     </div>
   </div>
 </modal>

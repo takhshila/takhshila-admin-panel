@@ -1,17 +1,20 @@
 'use strict';
 
 angular.module('takhshilaApp')
-  .controller('VideoUploadModalCtrl', function ($rootScope, $scope, $timeout, $mdDialog, $http, Upload, Auth) {
+  .controller('VideoUploadModalCtrl', function ($rootScope, $scope, $timeout, $mdDialog, $http, Upload, Auth, videoFactory) {
   	console.log(Upload);
     $scope.percentCompleted = 0;
     $scope.videoUploaded = false;
-    $scope.updateVideoForm = {
+    $scope.videoThumbnail = null;
+    $scope.updateVideoFormData = {
       title: "Untitled",
       description: '',
       topic: null
     }
+    $scope.videoData = null;
     $scope.selectedTopics = [];
     $scope.topicField = null;
+
     Upload.upload({
       url: 'api/v1/videos',
       method: 'POST',
@@ -20,6 +23,8 @@ angular.module('takhshilaApp')
     .then(function(data){
       console.log("Success: ",data);
       $scope.videoUploaded = true;
+      $scope.videoThumbnail = 'thumbnails/' + data.data.video.thumbnailFile;
+      $scope.videoData = data.data.video;
     }, function(err){
       console.log("Error: ",err);
     }, function(progress){
@@ -33,7 +38,7 @@ angular.module('takhshilaApp')
 
     $scope.addFieldValue = function(item){
       $scope.selectedTopics.push(item);
-      $scope.updateVideoForm.topic = null;
+      $scope.updateVideoFormData.topic = null;
     }
 
     $scope.getTopics = function(index, searcTerm) {
@@ -47,8 +52,28 @@ angular.module('takhshilaApp')
     };
 
     $scope.closeDialog = function() {
-    $mdDialog.hide();
-    angular.element('#uploadVideoForm')[0].reset();
-    Upload.currentVideo = null;
+      $mdDialog.hide();
+      angular.element('#uploadVideoForm')[0].reset();
+      Upload.currentVideo = null;
     };
+
+    $scope.updateVideoData = function(){
+      $scope.updateVideoDataProgress = true;
+      var videoData = {
+        title: $scope.updateVideoFormData.title,
+        description: $scope.updateVideoFormData.description,
+        topics: []
+      }
+      for(var i = 0; i < $scope.selectedTopics.length; i++){
+        videoData.topics.push($scope.selectedTopics[i]._id);
+      }
+      videoFactory.updateVideo($scope.videoData._id, videoData)
+      .then(function(response){
+        $scope.updateVideoDataProgress = false;
+        console.log(response);
+      }, function(err){
+        $scope.updateVideoDataProgress = false;
+        console.log(err);
+      })
+    }
 });
