@@ -1,9 +1,9 @@
 'use strict';
 
 angular.module('takhshilaApp')
-  .controller('VideoUploadModalCtrl', function ($rootScope, $scope, $timeout, $mdDialog, $http, Upload, Auth, videoFactory) {
-  	console.log(Upload);
+  .controller('VideoUploadModalCtrl', function ($rootScope, $scope, $timeout, $mdDialog, $http, Upload, Auth, videoFactory, videoData) {
     $scope.percentCompleted = 0;
+    $scope.showProgress = false;
     $scope.videoUploaded = false;
     $scope.videoThumbnail = null;
     $scope.updateVideoFormData = {
@@ -15,23 +15,6 @@ angular.module('takhshilaApp')
     $scope.selectedTopics = [];
     $scope.topicField = null;
 
-    Upload.upload({
-      url: 'api/v1/videos',
-      method: 'POST',
-      file: Upload.currentVideo
-    })
-    .then(function(data){
-      console.log("Success: ",data);
-      $scope.videoUploaded = true;
-      $scope.videoThumbnail = 'thumbnails/' + data.data.video.thumbnailFile;
-      $scope.videoData = data.data.video;
-    }, function(err){
-      console.log("Error: ",err);
-    }, function(progress){
-      console.log("Progress: ",progress);
-      $scope.percentCompleted = parseInt(progress.loaded / progress.total) * 100;
-    });
-
     $scope.clearField = function(fieldName){
       // $scope.updateVideoForm.topic = null;
     }
@@ -41,10 +24,14 @@ angular.module('takhshilaApp')
       $scope.updateVideoFormData.topic = null;
     }
 
+    $scope.removeFieldValue = function(index){
+      $scope.selectedTopics.splice(index, 1); 
+      $scope.updateVideoFormData.topic = null;
+    }
+
     $scope.getTopics = function(index, searcTerm) {
       return $http.get('/api/v1/topics/search/'+searcTerm)
         .then(function(response){
-          console.log(response);
           return response.data.map(function(item){
             return item;
           });
@@ -70,10 +57,36 @@ angular.module('takhshilaApp')
       videoFactory.updateVideo($scope.videoData._id, videoData)
       .then(function(response){
         $scope.updateVideoDataProgress = false;
-        console.log(response);
+        $rootScope.$broadcast('videoDataSaved', {});
       }, function(err){
         $scope.updateVideoDataProgress = false;
         console.log(err);
       })
+    }
+
+    if(Upload.currentVideo !== null && videoData === null){
+      $scope.showProgress = true;
+      Upload.upload({
+        url: 'api/v1/videos',
+        method: 'POST',
+        file: Upload.currentVideo
+      })
+      .then(function(data){
+        $scope.videoUploaded = true;
+        $scope.videoThumbnail = 'thumbnails/' + data.data.video.thumbnailFile;
+        $scope.videoData = data.data.video;
+      }, function(err){
+        console.log("Error: ",err);
+      }, function(progress){
+        $scope.percentCompleted = parseInt(progress.loaded / progress.total) * 100;
+      });
+    }else{
+      $scope.videoData = videoData;
+      $scope.updateVideoFormData.title = videoData.title;
+      $scope.updateVideoFormData.description = videoData.description;
+      $scope.videoThumbnail = 'thumbnails/' + videoData.thumbnailFile;
+      for(var i = 0; i < videoData.topics.length; i++){
+        $scope.addFieldValue(videoData.topics[i]);
+      }
     }
 });

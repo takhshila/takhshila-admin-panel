@@ -1,13 +1,23 @@
 <div id="demoVideosContainer">
 	<div class="slider-item-container">
 		<div class="ui cards slider" id="video-slides-container">
-		  <a ng-repeat="video in slides" class="red card video" ng-click="onVideoClick($event, $index)" style="width:{{slideWidth}}px;">
+		  <a ng-repeat="video in slides" class="red card video" style="width:{{slideWidth}}px;">
 		    <div class="image">
 		      <span style="background-image: url('thumbnails/{{video.thumbnailFile}}');width: {{slideWidth}}px;height: {{slideWidth}}px;"></span>
 		    </div>
 		    <div class="video-slider-overlay-container">
 		    	<div class="video-slider-overlay">
-		    		<i class="play-icon"></i>
+
+          <div class="dropdown" ng-if="canDelete || canEdit">
+              <div data-toggle="dropdown" class="ui label dropdown-toggle">
+                <i class="ellipsis vertical icon"></i>
+              </div>
+              <ul role="menu" class="dropdown-menu">
+                  <li ng-if="canEdit" ng-click="onVideoEdit($event, $index)">Edit</li>
+                  <li ng-if="canDelete" ng-click="onVideoDelete($event, $index)">Delete</li>
+              </ul>
+          </div>
+		    		<i ng-click="onVideoClick($event, $index)" class="play-icon"></i>
 		    	</div>
 		    </div>
 		  </a>

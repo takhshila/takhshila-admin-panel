@@ -99,11 +99,9 @@ exports.update = function(req, res) {
       videoData.description = req.body.description;
     }
     if(req.body.topics && req.body.topics.length > 0){
-      videoData.topics = video.topics;
+      video.topics = [];
       for(var i = 0; i < req.body.topics.length; i++){
-        console.log(typeof req.body.topics[i]);
         if(typeof req.body.topics[i].toLowerCase() === "string"){
-          console.log(req.body.topics[i]);
           video.topics.push(req.body.topics[i]);
         }
       }

@@ -59,8 +59,14 @@
             margin-bottom: 5px;
             padding: 5px 10px;
             list-style: none;
-            background: #336699;
+            background: #00B5AD;
+            color: #fff;
             border-radius: 10px;
+            span{
+              &.remove-topic{
+                cursor: pointer;
+              }
+            }
           }
         }
       }

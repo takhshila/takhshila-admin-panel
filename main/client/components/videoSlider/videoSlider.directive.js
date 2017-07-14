@@ -9,7 +9,11 @@ angular.module('takhshilaApp')
       scope: {
       	slides: '=',
             width: '=',
-      	clickHandle: '&clickHandle'
+            canEdit: '=',
+            canDelete: '=',
+            clickHandle: '&clickHandle',
+            editHandle: '&editHandle',
+      	deleteHandle: '&deleteHandle',
       },
       link: function (scope, element, attrs) {
       	var calculateEndSlide = function(startItem){
@@ -30,10 +34,20 @@ angular.module('takhshilaApp')
 
       	$('#video-slides-container').css('left', '0px');
 
-      	scope.onVideoClick = function(evt, index){
+            scope.onVideoClick = function(evt, index){
                   evt.preventDefault();
                   evt.stopPropagation();
-      		scope.clickHandle({index: index});
+                  scope.clickHandle({index: index});
+            }
+            scope.onVideoEdit = function(evt, index){
+                  evt.preventDefault();
+                  evt.stopPropagation();
+                  scope.editHandle({index: index});
+            }
+      	scope.onVideoDelete = function(evt, index){
+                  evt.preventDefault();
+                  evt.stopPropagation();
+      		scope.deleteHandle({index: index});
       	}
       	scope.next = function(evt){
                   evt.preventDefault();

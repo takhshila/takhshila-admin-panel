@@ -259,7 +259,7 @@
           </div>
         </div>
         <div class="ui segment" ng-if="demoVideos.length > 0">
-          <video-slider slides="demoVideos" click-handle="showVideoModal(index)"></video-slider>
+          <video-slider slides="demoVideos" can-edit="true" can-delete="true" edit-handle="editVideo(index)" delete-handle="deleteVideo(index)" click-handle="showVideoModal(index)"></video-slider>
         </div>
         
         <form id = "uploadVideoForm">

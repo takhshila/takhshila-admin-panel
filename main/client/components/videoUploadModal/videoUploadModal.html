@@ -6,7 +6,7 @@
 
   <div class = "modal-content">
     <div class="row">
-      <div class="col-md-12 col-sm-12">
+      <div ng-if="showProgress" class="col-md-12 col-sm-12">
           <div class="ui indicating active progress" data-percent="{{percentCompleted}}">
             <div class="bar" style="transition-duration: 300ms; width: {{percentCompleted}}%;"></div>
             <div ng-if="!videoUploaded" class="label">Uploading {{percentCompleted}}%</div>
@@ -15,8 +15,8 @@
       </div>
       <div class="col-md-3 col-sm-3">
         <div class="ui segment thumbnailContainer">
-          <div ng-if="videoUploaded" class="thumbnail" style="background-image: url('{{videoThumbnail}}');"></div>
-          <div class="ui active inverted dimmer" ng-if="!videoUploaded">
+          <div ng-if="videoUploaded || !showProgress" class="thumbnail" style="background-image: url('{{videoThumbnail}}');"></div>
+          <div class="ui active inverted dimmer" ng-if="!videoUploaded && showProgress">
             <div class="ui text loader">Loading</div>
           </div>
           <p></p>
@@ -48,7 +48,7 @@
             <ul class="selected-topic-list">
               <li ng-repeat="topic in selectedTopics">
                 {{topic.topicName}}
-                <span class="remove-topic" ng-click="removeTopic($index)">
+                <span class="remove-topic" ng-click="removeFieldValue($index)">
                   <i class="remove icon"></i>
                 </span>
               </li>
@@ -78,7 +78,7 @@
   </div>
   <div class = "modal-footer">
     <div class="ui buttons">
-      <button class="ui primary button" ng-disabled="!videoUploaded || updateVideoDataProgress" ng-click = "updateVideoData()" ng-class="{'loading': updateVideoDataProgress}" lx-ripple>Save</button>
+      <button class="ui primary button" ng-disabled="(!videoUploaded || updateVideoDataProgress) && showProgress" ng-click = "updateVideoData()" ng-class="{'loading': updateVideoDataProgress}" lx-ripple>Save</button>
     </div>
   </div>
 </modal>

@@ -201,9 +201,12 @@ angular.module('takhshilaApp')
       Cropper.currentFile = blob;
       $rootScope.showProfilePicModal();
     }
-  	$scope.onVideoSelect = function(videoFile) {
+    $scope.onVideoSelect = function(videoFile) {
       Upload.currentVideo = videoFile;
-  		$rootScope.showVideoUploadModal();
+      $rootScope.showVideoUploadModal();
+    }
+  	$scope.editVideo = function(index) {
+  		$rootScope.showVideoUploadModal('', $scope.demoVideos[index]);
   	}
 
     $scope.editBasicInfo = function(evt){
@@ -355,6 +358,10 @@ angular.module('takhshilaApp')
         });
       });
     };
+
+    $rootScope.$on('videoDataSaved', function(data){
+      $scope.gerUserVideos();
+    });
 
     $rootScope.$watch('loggedIn', function(status){
       if(status === true){
