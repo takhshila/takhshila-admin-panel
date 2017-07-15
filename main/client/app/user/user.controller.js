@@ -286,6 +286,14 @@ angular.module('takhshilaApp')
     //   _allowedToBook = true;
     // }
 
+    if($scope.events[_index].status == "booked" || $scope.events[_index].status == "requested" || $scope.events[_index].status == "confirmed"){
+      return false;
+    }else if($scope.events[_index].status == "available"){
+      $scope.events[_index].status = "selected";
+    }else {
+      $scope.events[_index].status = "available";
+    }
+
     if($(this).hasClass('active')){
       $(this).removeClass('active');
       $(this).addClass('available');
@@ -294,13 +302,6 @@ angular.module('takhshilaApp')
       $(this).removeClass('available');
     }
 
-    if($scope.events[_index].status == "booked"){
-      return;
-    }else if($scope.events[_index].status == "available"){
-      $scope.events[_index].status = "selected";
-    }else {
-      $scope.events[_index].status = "available";
-    }
     updateEventStatus();
   }
 
