@@ -17,11 +17,18 @@
 					<div ng-if="modalOptions.modalType === 'deleteEducation'" class="education-icon">
 						<i class="student icon"></i>
 					</div>
+					<div ng-if="modalOptions.modalType === 'deleteExperience'" class="education-icon">
+						<i class="travel icon"></i>
+					</div>
 			        <div ng-if="modalOptions.modalType === 'deleteVideo'" class="ui segment thumbnailContainer">
 			          <div class="thumbnail" style="background-image: url('thumbnails/{{modalData.thumbnailFile}}');"></div>
 			        </div>
 				</div>
-				<div class="data-details" ng-class="{'data-middle' : modalOptions.modalType === 'deleteEducation'}">
+				<div class="data-details" ng-class="{'data-middle' : (modalOptions.modalType === 'deleteEducation' || modalOptions.modalType === 'deleteExperience')}">
+					<div ng-if="modalOptions.modalType === 'deleteExperience'">
+						<p class="data-title">{{modalData.designation}}</p>
+						<p class="data-description">{{modalData.companyName}}</p>
+					</div>
 					<div ng-if="modalOptions.modalType === 'deleteEducation'">
 						<p class="data-title">{{modalData.schoolName}}</p>
 						<p class="data-description">{{modalData.degreeName}}, {{modalData.field}}</p>

@@ -6,6 +6,7 @@ var User = require('./user.model');
 var Userclass = require('../userclass/userclass.model');
 var Topic = require('../topic/topic.model');
 var School = require('../school/school.model');
+var Company = require('../company/company.model');
 var Degree = require('../degree/degree.model');
 var passport = require('passport');
 var config = require('../../config/environment');
@@ -104,7 +105,7 @@ exports.updateBasicInfo = function(req, res, next) {
     user.basicInfo = String(basicInfo);
     user.save(function (err) {
       if (err) { return handleError(res, err); }
-      return res.status(200).json(user);
+      return res.status(200).json(user.profile);
     });
   });
 };
@@ -122,7 +123,7 @@ exports.updateStatus = function(req, res, next) {
     user.status = String(status);
     user.save(function (err) {
       if (err) { return handleError(res, err); }
-      return res.status(200).json(user);
+      return res.status(200).json(user.profile);
     });
   });
 };
@@ -140,7 +141,7 @@ exports.updateProfilePhoto = function(req, res, next) {
     user.profilePhoto.dataURI = profilePhoto;
     user.save(function (err) {
       if (err) { return handleError(res, err); }
-      return res.status(200).json(user);
+      return res.status(200).json(user.profile);
     });
   });
 };
@@ -160,7 +161,7 @@ exports.updateRatePerHour = function(req, res, next) {
     user.ratePerHour = ratePerHour;
     user.save(function (err) {
       if (err) { return handleError(res, err); }
-      return res.status(200).json(user);
+      return res.status(200).json(user.profile);
     });
   });
 };
@@ -203,7 +204,7 @@ exports.updateAvailability = function(req, res, next) {
     user.availability = _availability;
     user.save(function (err) {
       if (err) { return handleError(res, err); }
-      return res.status(200).json(user);
+      return res.status(200).json(user.profile);
     });
   });
 };
@@ -459,7 +460,7 @@ exports.deleteSpecialization = function (req, res, next) {
     user.specialization.id(req.params.id).remove();
     user.save(function (err) {
       if (err) { return handleError(res, err); }
-      return res.status(200).json(user);
+      return res.status(200).json(user.profile);
     });
   });
 };
@@ -563,7 +564,7 @@ exports.updateEducation = function(req, res, next) {
     _.merge(user.education.id(req.params.id), req.body);
     user.save(function (err) {
       if (err) { return handleError(res, err); }
-      return res.status(200).json(user);
+      return res.status(200).json(user.profile);
     });
   });
 };
@@ -580,7 +581,7 @@ exports.deleteEducation = function (req, res, next) {
     user.education.id(req.params.id).remove();
     user.save(function (err) {
       if (err) { return handleError(res, err); }
-      return res.status(200).json(user);
+      return res.status(200).json(user.profile);
     });
   });
 };
@@ -591,16 +592,56 @@ exports.deleteEducation = function (req, res, next) {
 exports.addExperience = function (req, res, next) {
   var userId = req.user._id;
   var experience = req.body;
-  if(experience === undefined || experience === null) { return res.status(400).send('Invalid Education Details'); }
+  console.log(experience);
+  if(experience === undefined || experience === null) { return res.status(400).send('Invalid Experience Details'); }
 
   User.findById(userId, function (err, user) {
     if (err) { return handleError(res, err); }
     if(!user) { return res.status(404).send('Not Found'); }
-    user.experience.push(experience);
-    user.save(function (err) {
-      if (err) { return handleError(res, err); }
-      return res.status(200).json(user);
+
+    var promise = new Promise(function(resolve, reject){
+      if(!experience.companyId){
+        Company.findOne({
+          companyName: experience.companyName
+        })
+        .exec(function(err, company){
+          if(err) { return reject(err); }
+          if(company && (company.active === true || (company.active === false && company.addedByID.toString() === userId.toString()))){
+            experience.companyId = company._id;
+            resolve(company);
+          }else{
+            Company.create({
+              companyName: experience.companyName,
+              addedByID: userId,
+              active: false
+            }, function(err, company){
+              if(err) { return reject(err); }
+              experience.companyId = company._id;
+              resolve(company);
+            })
+          }
+        })
+      }else{
+        Company.findById(experience.companyId, function(err, company){
+          if(err) { return reject(err); }
+          if(!company) { return reject("Invalid company"); }
+          resolve(company)
+        })
+      }
     });
+    
+    promise.then(function(data){
+      console.log(experience);
+      user.experience.push(experience);
+      user.save(function (err) {
+        if (err) { return handleError(res, err); }
+        return res.status(200).json(user.profile);
+      });
+    })
+    .catch(function(err){
+      return handleError(res, err);
+    })
+
   });
 };
 /**
@@ -616,7 +657,7 @@ exports.updateExperience = function(req, res, next) {
     _.merge(user.experience.id(req.params.id), req.body);
     user.save(function (err) {
       if (err) { return handleError(res, err); }
-      return res.status(200).json(user);
+      return res.status(200).json(user.profile);
     });
   });
 };
@@ -633,7 +674,7 @@ exports.deleteExperience = function (req, res, next) {
     user.experience.id(req.params.id).remove();
     user.save(function (err) {
       if (err) { return handleError(res, err); }
-      return res.status(200).json(user);
+      return res.status(200).json(user.profile);
     });
   });
 };

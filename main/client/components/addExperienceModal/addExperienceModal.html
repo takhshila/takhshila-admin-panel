@@ -1,0 +1,93 @@
+<modal id = "add-experience-modal">
+  <div class = "modal-header">
+    <div class = "title">{{modalTitle}}</div>
+    <i class="remove icon" ng-click = "closeDialog()"></i>
+  </div>
+
+  <div class = "modal-content">
+
+        <div class="ui form">
+          <form class="" name = "addExperienceForm" novalidate>
+            <div class="field form-error" ng-class = "{'has-error': loginError}">
+              <div class="help-block">
+                  <p>{{errorMessage}}</p>
+              </div>
+            </div>
+
+            <div class="field" ng-class = "{'has-error': addExperienceForm.designation.$invalid && addExperienceForm.designation.$touched}">
+              <lx-text-field label="Designation" error = "addExperienceForm.designation.$invalid && addExperienceForm.field.$touched">
+                  <input name = "designation" type="text" ng-model="addExperienceFormData.designation" required>
+              </lx-text-field>
+              <div class="help-block" ng-messages="addExperienceForm.designation.$error" ng-if="addExperienceForm.designation.$touched">
+                  <p ng-message="required">This field is required.</p>
+              </div>
+            </div>
+
+            <div class="field" ng-class = "{'has-error': addExperienceForm.company.$invalid && addExperienceForm.company.$touched}">
+              <lx-text-field label="Company" error = "addExperienceForm.company.$invalid && addExperienceForm.company.$touched">
+                  <input 
+                  	name = "company"
+                  	type="text"
+                  	ng-change="clearField('companyId')"
+                  	ng-model="addExperienceFormData.companyName"
+                  	uib-typeahead="topic.companyName for company in getCompany($index, $viewValue)"
+                  	typeahead-loading="loading"
+                  	typeahead-no-results="noResults"
+                  	typeahead-on-select="addFieldValue($item, 'companyId')"
+                  	required
+                  	/>
+              </lx-text-field>
+              <div class="help-block" ng-messages="addExperienceForm.company.$error" ng-if="addExperienceForm.company.$touched">
+                  <p ng-message="required">This field is required.</p>
+              </div>
+            </div>
+
+            <div class="field" style="margin-right: 2%;width:48%;float:left;" ng-class = "{'has-error': addExperienceForm.start.$invalid && addExperienceForm.start.$touched}">
+		      <md-input-container style="width:100%;">
+		        <label>Select start year</label>
+		        <md-select ng-model="selectedStartYear" ng-change="populateEndYear()">
+		          <md-option ng-repeat="year in startYear track by year.id" ng-value="{{year.value}}" ng-selected="{{(year.value === addExperienceFormData.start && addExperienceFormData.start !== null)}}">
+		          	{{year.value}}
+		          </md-option>
+		        </md-select>
+		      </md-input-container>
+              <div class="help-block" ng-messages="addExperienceForm.start.$error" ng-if="addExperienceForm.start.$touched">
+                  <p ng-message="required">This field is required.</p>
+              </div>
+            </div>
+
+            <div class="field" style="margin-left: 2%;width:48%;float:left;" ng-class = "{'has-error': addExperienceForm.end.$invalid && addExperienceForm.end.$touched}">
+		      <md-input-container style="width:100%;">
+		        <label>Select end year</label>
+		        <md-select ng-model="selectedEndYear" ng-disabled="!selectedStartYear">
+		          <md-option ng-repeat="year in endYear track by year.id" value="{{year.value}}" ng-selected="{{(year.value === addExperienceFormData.end && addExperienceFormData.end !== null)}}">
+		          	{{year.value}}
+		          </md-option>
+		        </md-select>
+		      </md-input-container>
+              <div class="help-block" ng-messages="addExperienceForm.end.$error" ng-if="addExperienceForm.end.$touched">
+                  <p ng-message="required">This field is required.</p>
+              </div>
+            </div>
+
+          </form>
+        </div>
+
+  </div>
+  <div class = "modal-footer">
+    <div class="ui buttons">
+      <button class="ui button" ng-click = "closeDialog()">Cancel</button>
+      <div class="or"></div>
+      <button ng-disabled="addExperienceProgress" ng-if="isUpdate" class="ui primary button" ng-click = "updateExperience()" ng-class="{'loading': addExperienceProgress}" lx-ripple>Update</button>
+      <button ng-disabled="addExperienceProgress" ng-if="!isUpdate" class="ui primary button" ng-click = "addExperience()" ng-class="{'loading': addExperienceProgress}" lx-ripple>Add Experience</button>
+    </div>
+<!--     <div ng-if="updateExperience" class="delete-button-container">
+      <div class="ui horizontal divider">
+        Or
+      </div>
+      <div class="ui buttons">
+        <button class="ui button red" ng-click = "confirmDeleteExperience()" ng-class="{'loading': deleteExperienceProgress}" lx-ripple>Delete this experience</button>
+      </div>
+    </div> -->
+  </div>
+</modal>

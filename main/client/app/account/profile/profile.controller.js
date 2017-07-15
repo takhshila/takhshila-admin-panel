@@ -368,6 +368,26 @@ angular.module('takhshilaApp')
       $scope.edit.specialization.data[index].level = level;
     }
 
+
+
+    $scope.showAddEducationModal = function($event, educationData){
+      if(educationData === undefined){
+        educationData = null;
+      }
+      var parentEl = angular.element(document.body);
+      $mdDialog.show({
+        templateUrl: 'components/addEducationModal/addEducationModal.html',
+        controller: 'AddEducationModalCtrl',
+        parent: parentEl,
+        targetEvent: $event,
+        disableParentScroll: true,
+        clickOutsideToClose: true,
+        locals: {
+          educationData: educationData
+        }
+      });
+    }
+
     $scope.editEducation = function(index){
       var edducationData = $rootScope.currentUser.education[index];
       console.log(edducationData);
@@ -411,23 +431,71 @@ angular.module('takhshilaApp')
     }
 
 
-    $scope.showAddEducationModal = function($event, educationData){
-      if(educationData === undefined){
-        educationData = null;
+
+
+
+
+    $scope.showAddExperienceModal = function($event, experienceData){
+      if(experienceData === undefined){
+        experienceData = null;
       }
       var parentEl = angular.element(document.body);
       $mdDialog.show({
-        templateUrl: 'components/addEducationModal/addEducationModal.html',
-        controller: 'AddEducationModalCtrl',
+        templateUrl: 'components/addExperienceModal/addExperienceModal.html',
+        controller: 'AddExperienceModalCtrl',
         parent: parentEl,
         targetEvent: $event,
         disableParentScroll: true,
         clickOutsideToClose: true,
         locals: {
-          educationData: educationData
+          experienceData: experienceData
         }
       });
     }
+
+    $scope.editExperience = function(index){
+      var experienceData = $rootScope.currentUser.experience[index];
+      $scope.showAddExperienceModal('', experienceData);
+    }
+
+    $scope.deleteExperience = function(index){
+      return userFactory.deleteExperience($rootScope.currentUser.experience[index]._id)
+    }
+
+    $scope.confirmDeleteExperience = function($event, index){
+      var parentEl = angular.element(document.body);
+      var experienceData = $rootScope.currentUser.experience[index];
+      experienceData.index = index;
+      $mdDialog.show({
+        templateUrl: 'components/confirmModal/confirmModal.html',
+        controller: 'ConfirmModalCtrl',
+        parent: parentEl,
+        targetEvent: $event,
+        disableParentScroll: true,
+        clickOutsideToClose: false,
+        locals: {          
+          modalData: experienceData,
+          modalOptions: {
+            headerText: 'Confirm Delete',
+            contentTitle: 'Are you sure you want to remove this experience?',
+            modalType: 'deleteExperience',
+            confirmText: 'Delete',
+            confirmClass: 'red',
+            cancelClass: '',
+            cancelText: 'Cancel',
+            processConfirm: $scope.deleteExperience
+          }
+        }
+      })
+      .then(function() {
+        console.log('You confirmed delete');
+      }, function() {
+        console.log('You cancelled delete');
+      });
+    }
+
+
+
 
     $scope.getLocation = function(index, searcTerm) {
       $scope.edit.specialization.data[index].loadingResults = true;

@@ -42,10 +42,10 @@ var UserSchema = new Schema({
     end: Number
   }],
   experience: [{
-    company: {type: String, required: true},
+    companyName: {type: String, required: true},
     designation: {type: String, required: true},
-    start: Date,
-    end: Date
+    start: Number,
+    end: Number
   }],
   availability: {
     sunday: [{

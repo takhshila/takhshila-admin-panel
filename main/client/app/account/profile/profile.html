@@ -301,18 +301,42 @@
         </div>
       </div>
 
+
       <div class="row">
         <div class="ui attached message">
           <div class="header">
-            Experiences
+            <span class = "title">Experiences</span>
+            <div class="action-container">
+              <a class="edit-action" ng-click="showAddExperienceModal($event)">
+                <i class="plus icon"></i>
+              </a>
+            </div>
           </div>
         </div>
         <div class="ui segment">
-          <p>
-            This is the details
-          </p>
+          <div class="education-container">
+            <div ng-repeat="experience in currentUser.experience" class="education-item">
+              <span class="education-icon">
+                <i class="travel icon"></i>
+              </span>
+              <span class="education-details">
+                <p class="school-name">{{experience.designation}}</p>
+                <p class="degree-name">{{experience.companyName}}</p>
+                <p class="period"></p>
+              </span>
+              <div class="education-action-container">
+                <span class="education-action" ng-click="editExperience($index)">
+                  <i class="write icon"></i>
+                </span>
+                <span class="education-action" ng-click="confirmDeleteExperience($event, $index)">
+                  <i class="remove icon red"></i>
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+
 
       <div class="row" ng-if = "currentUser.isTeacher">
         <div class="ui attached message">

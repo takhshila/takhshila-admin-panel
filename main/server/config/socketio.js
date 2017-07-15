@@ -42,6 +42,7 @@ function onConnect(socket) {
   });
 
   // Insert sockets below
+  require('../api/company/company.socket').register(socket);
   require('../api/language/language.socket').register(socket);
   require('../api/countries/countries.socket').register(socket);
   require('../api/transactionhistory/transactionhistory.socket').register(socket);

@@ -6,8 +6,6 @@ angular.module('takhshilaApp')
   	$scope.modalData = modalData;
   	$scope.className = modalOptions.modalType;
   	$scope.confirmProcessing = false;
-
-    console.log(modalData);
     
     $scope.closeDialog = function() {
       $mdDialog.cancel();
@@ -19,6 +17,9 @@ angular.module('takhshilaApp')
     	.then(function(response){
         if(modalOptions.modalType === "deleteEducation"){
           $rootScope.currentUser.education.splice(modalData.index, 1);
+        }
+        if(modalOptions.modalType === "deleteExperience"){
+          $rootScope.currentUser.experience.splice(modalData.index, 1);
         }
         if(modalOptions.modalType === "deleteVideo"){
     		  $rootScope.$broadcast('videoDataSaved', {});
