@@ -1,15 +1,29 @@
 'use strict';
 
 angular.module('takhshilaApp')
-  .controller('AddEducationModalCtrl', function ($scope, $mdDialog, $http, userFactory) {
-  	$scope.addEducationFormData = {
-  		degreeName: null,
-  		degreeId: null,
-  		schoolName: null,
-  		schoolId: null,
-  		field: null,
-  		start: null,
-  		end: null
+  .controller('AddEducationModalCtrl', function ($rootScope, $scope, $mdDialog, $http, userFactory, educationData) {
+  	var maxYear = new Date().getFullYear();
+  	$scope.selectedStartYear = null;
+  	$scope.selectedEndYear = null;
+  	if(educationData !== null){
+  		$scope.isUpdate = true;
+  		$scope.modalTitle = "Update Education";
+  		$scope.addEducationFormData = educationData;
+  		$scope.selectedStartYear = educationData.start;
+  		$scope.selectedEndYear = educationData.end;
+  		console.log(educationData);
+  	}else{
+  		$scope.isUpdate = false;
+  		$scope.modalTitle = "Add Education";
+	  	$scope.addEducationFormData = {
+	  		degreeName: null,
+	  		degreeId: null,
+	  		schoolName: null,
+	  		schoolId: null,
+	  		field: null,
+	  		start: null,
+	  		end: null
+	  	}
   	}
   	$scope.startYear = [];
   	$scope.endYear = [];
@@ -21,17 +35,23 @@ angular.module('takhshilaApp')
   		$scope.addEducationFormData[fieldName] = item._id;
   	}
   	$scope.populateStartYear = function(){
-	  	for(var i = 1990; i < 2016; i++){
+	  	for(var i = 1990; i < maxYear; i++){
 	  		$scope.startYear.push({
-	  			value: i
+	  			value: i,
+	  			id: 'start-' + i
 	  		})
+	  	}
+	  	if($scope.updateEducation){
+	  		$scope.populateEndYear();
 	  	}
   	}
   	$scope.populateEndYear = function(){
-  		if($scope.addEducationFormData.start){
-		  	for(var i = $scope.addEducationFormData.start; i < 2020; i++){
+  		$scope.endYear = [];
+  		if($scope.selectedStartYear){
+		  	for(var i = $scope.selectedStartYear; i < (maxYear + 5); i++){
 		  		$scope.endYear.push({
-		  			value: i
+		  			value: i,
+		  			id: 'end-' + i
 		  		})
 		  	}
   		}
@@ -59,11 +79,30 @@ angular.module('takhshilaApp')
 
 	$scope.addEducation = function(){
 		$scope.addEducationProgress = true;
+		$scope.addEducationFormData.start = $scope.selectedStartYear;
+		$scope.addEducationFormData.end = $scope.selectedEndYear;
 		userFactory.addEducation($scope.addEducationFormData)
 		.success(function(response){
-			console.log(response);
+			$rootScope.currentUser.education = response;
+			$scope.addEducationProgress = false;
+			$mdDialog.hide();
 		})
 		.error(function(err){
+			$scope.addEducationProgress = false;
+			console.log(err);
+		})
+	}
+
+	$scope.updateEducation = function(){
+		$scope.addEducationProgress = true;
+		$scope.addEducationFormData.start = $scope.selectedStartYear;
+		$scope.addEducationFormData.end = $scope.selectedEndYear;
+		userFactory.updateEducation($scope.addEducationFormData._id, $scope.addEducationFormData)
+		.success(function(response){
+			$scope.addEducationProgress = false;
+		})
+		.error(function(err){
+			$scope.addEducationProgress = false;
 			console.log(err);
 		})
 	}

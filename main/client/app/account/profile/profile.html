@@ -288,9 +288,14 @@
                 <p class="degree-name">{{education.degreeName}}, {{education.field}}</p>
                 <p class="period"></p>
               </span>
-              <span class="education-action">
-                <i class="write icon"></i>
-              </span>
+              <div class="education-action-container">
+                <span class="education-action" ng-click="editEducation($index)">
+                  <i class="write icon"></i>
+                </span>
+                <span class="education-action" ng-click="confirmDeleteEducation($event, $index)">
+                  <i class="remove icon red"></i>
+                </span>
+              </div>
             </div>
           </div>
         </div>

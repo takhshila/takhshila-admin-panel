@@ -38,8 +38,8 @@ var UserSchema = new Schema({
     schoolId: {type: String, ref: 'School', required: true},
     schoolName: {type: String, required: true},
     field: String,
-    start: Date,
-    end: Date
+    start: Number,
+    end: Number
   }],
   experience: [{
     company: {type: String, required: true},

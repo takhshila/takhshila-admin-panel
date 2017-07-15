@@ -215,6 +215,16 @@
     .education-item{
       margin-bottom: 20px;
       display: table;
+      .education-action-container{
+        visibility: hidden;
+      }
+      &:hover{
+        .education-action-container{
+          display: table-cell;
+          vertical-align: middle;
+          visibility: visible;
+        }
+      }
       span{
         display: table-cell;
         vertical-align: middle;
@@ -245,6 +255,9 @@
             color: #00B5AD;
             cursor: pointer;
             font-size: 18px;
+            &.delete{
+              font-size: 22px;
+            }
           }
         }
       }

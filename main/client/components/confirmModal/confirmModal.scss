@@ -1,0 +1,90 @@
+#confirm-modal{
+  height: 300px;
+  width: 550px;
+  background: #fff;
+  &.deleteEducation{
+  	height: 240px;
+  }
+  .modal-header{
+    width: 100%;
+    text-align: center;
+    background: #00918b;
+    padding: 15px;
+    .title{
+      font-size: 18px;
+      color: #fff;
+    }
+    i{
+      float: left;
+      margin-right: 10px;
+      font-size: 30px;
+      font-weight: 100;
+      line-height: 18px;
+      margin-left: -10px;
+      &.remove{
+        position: absolute;
+        right: 0px;
+        top: 15px;
+        z-index: 999;
+        font-size: 20px;
+        cursor: pointer;
+        color: #fff;
+      }
+    }
+  }
+  .modal-content{
+    padding: 0px 15px 0px 15px;
+    width: 100%;
+	.ui{
+		margin: 0px;
+	    border-radius: 0px;
+	    box-shadow: none;
+	    border: 0px;
+	    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    	.data-header{
+    		display: block;
+    		width: 100%;
+    		margin-bottom: 15px;
+    	}
+	    .data-content{
+	    	display: table;
+	    	width: 100%;
+	    	.data-item{
+	    		display: table-cell;
+	    		width: 20%;
+	    		vertical-align: middle;
+	    		padding: 5px;
+	    		.education-icon{
+					font-size: 50px;
+				    color: #00B5AD;
+				    line-height: 1;
+	    		}
+	    	}
+	    	.data-details{
+	    		display: table-cell;
+	    		vertical-align: middle;
+	    		width: 80%;
+	    		padding: 5px;
+	    		p{
+	    			text-transform: capitalize;
+	    			margin: 0px;
+	    			line-height: 1.4285em;
+				    color: #5D5D5D;
+				    font-size: 14px;
+		    		&.data-title{
+		    			line-height: 1.4285em;
+					    font-size: 16px;
+					    color: #1D1D1D;
+		    		}
+	    		}
+	    	}
+	    }
+	}
+}
+  .modal-footer{
+    position: relative;
+    top: 15px;
+    text-align: center;
+    width: 100%;
+  }
+}

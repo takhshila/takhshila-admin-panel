@@ -333,8 +333,55 @@ angular.module('takhshilaApp')
       $scope.edit.specialization.data[index].level = level;
     }
 
+    $scope.editEducation = function(index){
+      var edducationData = $rootScope.currentUser.education[index];
+      console.log(edducationData);
+      $scope.showAddEducationModal('', edducationData);
+    }
 
-    $scope.showAddEducationModal = function($event){
+
+
+    $scope.deleteEducation = function(index){
+      return userFactory.deleteEducation($rootScope.currentUser.education[index]._id)
+    }
+
+    $scope.confirmDeleteEducation = function($event, index){
+      var parentEl = angular.element(document.body);
+      var educationData = $rootScope.currentUser.education[index];
+      educationData.index = index;
+      $mdDialog.show({
+        templateUrl: 'components/confirmModal/confirmModal.html',
+        controller: 'ConfirmModalCtrl',
+        parent: parentEl,
+        targetEvent: $event,
+        disableParentScroll: true,
+        clickOutsideToClose: false,
+        locals: {          
+          modalData: educationData,
+          modalOptions: {
+            headerText: 'Confirm Delete',
+            contentTitle: 'Are you sure you want to remove this education?',
+            modalType: 'deleteEducation',
+            confirmText: 'Delete',
+            confirmClass: 'red',
+            cancelClass: '',
+            cancelText: 'Cancel',
+            processConfirm: $scope.deleteEducation
+          }
+        }
+      })
+      .then(function() {
+        console.log('You confirmed delete');
+      }, function() {
+        console.log('You cancelled delete');
+      });
+    }
+
+
+    $scope.showAddEducationModal = function($event, educationData){
+      if(educationData === undefined){
+        educationData = null;
+      }
       var parentEl = angular.element(document.body);
       $mdDialog.show({
         templateUrl: 'components/addEducationModal/addEducationModal.html',
@@ -344,7 +391,7 @@ angular.module('takhshilaApp')
         disableParentScroll: true,
         clickOutsideToClose: true,
         locals: {
-          
+          educationData: educationData
         }
       });
     }

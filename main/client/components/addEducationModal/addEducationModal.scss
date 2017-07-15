@@ -37,6 +37,15 @@
     padding: 0px 15px 0px 15px;
     overflow: hidden;
     width: 100%;
+    .delete-button-container{
+      .ui{
+        &.horizontal{
+          &.divider{
+            margin: 10px 0px;
+          }
+        }
+      }
+    }
   }
   .modal-footer{
     position: absolute;

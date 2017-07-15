@@ -1,6 +1,6 @@
 <modal id = "add-education-modal">
   <div class = "modal-header">
-    <div class = "title">Add Education</div>
+    <div class = "title">{{modalTitle}}</div>
     <i class="remove icon" ng-click = "closeDialog()"></i>
   </div>
 
@@ -64,8 +64,8 @@
             <div class="field" style="margin-right: 2%;width:48%;float:left;" ng-class = "{'has-error': addEducationForm.start.$invalid && addEducationForm.start.$touched}">
 		      <md-input-container style="width:100%;">
 		        <label>Select start year</label>
-		        <md-select ng-model="addEducationFormData.start" ng-change="populateEndYear()">
-		          <md-option ng-repeat="year in startYear" value="{{year.value}}">
+		        <md-select ng-model="selectedStartYear" ng-change="populateEndYear()">
+		          <md-option ng-repeat="year in startYear track by year.id" ng-value="{{year.value}}" ng-selected="{{(year.value === addEducationFormData.start && addEducationFormData.start !== null)}}">
 		          	{{year.value}}
 		          </md-option>
 		        </md-select>
@@ -78,8 +78,8 @@
             <div class="field" style="margin-left: 2%;width:48%;float:left;" ng-class = "{'has-error': addEducationForm.end.$invalid && addEducationForm.end.$touched}">
 		      <md-input-container style="width:100%;">
 		        <label>Select end year</label>
-		        <md-select ng-model="addEducationFormData.end" ng-change="populateEndYear()" ng-disabled="!addEducationFormData.start">
-		          <md-option ng-repeat="year in endYear track by $index" value="{{year.value}}">
+		        <md-select ng-model="selectedEndYear" ng-disabled="!selectedStartYear">
+		          <md-option ng-repeat="year in endYear track by year.id" value="{{year.value}}" ng-selected="{{(year.value === addEducationFormData.end && addEducationFormData.end !== null)}}">
 		          	{{year.value}}
 		          </md-option>
 		        </md-select>
@@ -97,7 +97,16 @@
     <div class="ui buttons">
       <button class="ui button" ng-click = "closeDialog()">Cancel</button>
       <div class="or"></div>
-      <button class="ui primary button" ng-click = "addEducation()" ng-class="{'loading': addEducationProgress}" lx-ripple>Add Education</button>
+      <button ng-disabled="addEducationProgress" ng-if="isUpdate" class="ui primary button" ng-click = "updateEducation()" ng-class="{'loading': addEducationProgress}" lx-ripple>Update</button>
+      <button ng-disabled="addEducationProgress" ng-if="!isUpdate" class="ui primary button" ng-click = "addEducation()" ng-class="{'loading': addEducationProgress}" lx-ripple>Add Education</button>
     </div>
+<!--     <div ng-if="updateEducation" class="delete-button-container">
+      <div class="ui horizontal divider">
+        Or
+      </div>
+      <div class="ui buttons">
+        <button class="ui button red" ng-click = "confirmDeleteEducation()" ng-class="{'loading': deleteEducationProgress}" lx-ripple>Delete this education</button>
+      </div>
+    </div> -->
   </div>
 </modal>
