@@ -59,12 +59,25 @@
 				    color: #00B5AD;
 				    line-height: 1;
 	    		}
+				.thumbnailContainer{
+					height: 100px;
+					padding: 0px;
+					.thumbnail{
+						position: absolute;
+						width: 100%;
+						height: 100%;
+						background-size: cover;
+						background-position: center;
+					}
+				}
 	    	}
 	    	.data-details{
 	    		display: table-cell;
-	    		vertical-align: middle;
 	    		width: 80%;
 	    		padding: 5px;
+	    		&.data-middle{
+	    			vertical-align: middle;
+	    		}
 	    		p{
 	    			text-transform: capitalize;
 	    			margin: 0px;

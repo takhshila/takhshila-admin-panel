@@ -6,30 +6,30 @@
 
   <div class = "modal-content">
     <div class="row">
-      <div ng-if="imageUrl" class="col-md-3 col-sm-3">
-        <div class="ui segment thumbnailContainer">
-          <div ng-if="videoUploaded || !showProgress" class="thumbnail" style="background-image: url('{{videoThumbnail}}');"></div>
-          <div class="ui active inverted dimmer" ng-if="!videoUploaded && showProgress">
-            <div class="ui text loader">Loading</div>
-          </div>
-          <p></p>
-        </div>
-      </div>
 
-      <div ng-class="{'col-md-9 col-sm-9' : imageUrl, 'col-md-12 col-sm-12' : !imageUrl}">
+      <div class="col-md-12 col-sm-12">
 		<div class="ui segment">
 			<div class="data-header">
 				<p>{{modalOptions.contentTitle}}</p>
 			</div>
 			<div class="data-content">
 				<div class="data-item">
-					<span ng-if="modalOptions.modalType === 'deleteEducation'" class="education-icon">
+					<div ng-if="modalOptions.modalType === 'deleteEducation'" class="education-icon">
 						<i class="student icon"></i>
-					</span>
+					</div>
+			        <div ng-if="modalOptions.modalType === 'deleteVideo'" class="ui segment thumbnailContainer">
+			          <div class="thumbnail" style="background-image: url('thumbnails/{{modalData.thumbnailFile}}');"></div>
+			        </div>
 				</div>
-				<div class="data-details">
-					<p class="data-title">{{modalData.schoolName}}</p>
-					<p class="data-description">{{modalData.degreeName}}, {{modalData.field}}</p>
+				<div class="data-details" ng-class="{'data-middle' : modalOptions.modalType === 'deleteEducation'}">
+					<div ng-if="modalOptions.modalType === 'deleteEducation'">
+						<p class="data-title">{{modalData.schoolName}}</p>
+						<p class="data-description">{{modalData.degreeName}}, {{modalData.field}}</p>
+					</div>
+					<div ng-if="modalOptions.modalType === 'deleteVideo'">
+						<p class="data-title">{{modalData.title}}</p>
+						<p class="data-description">{{modalData.description}}</p>
+					</div>
 				</div>
 			</div>
 		</div>

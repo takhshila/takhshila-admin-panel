@@ -9,6 +9,9 @@ angular.module('takhshilaApp')
       },
       updateVideo: function( id, data ){
           return api.putData(subUrl, id, data, {});
+      },
+      deleteVideo: function(id){
+        return api.delete(subUrl, id, {});
       }
       // getAvailability: function(id, params){
       //   return api.post(subUrl + 'availability/' + id, params);

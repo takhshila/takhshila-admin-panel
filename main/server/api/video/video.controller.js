@@ -117,9 +117,11 @@ exports.update = function(req, res) {
 
 // Deletes a video from the DB.
 exports.destroy = function(req, res) {
+  var userId = req.user._id;
   Video.findById(req.params.id, function (err, video) {
     if(err) { return handleError(res, err); }
     if(!video) { return res.status(404).send('Not Found'); }
+    if(video.userId.toString() !== userId.toString()){ return res.status(403).send('You are not authorized to delete this video'); }
     video.remove(function(err) {
       if(err) { return handleError(res, err); }
       return res.status(204).send('No Content');

@@ -41,7 +41,7 @@ angular.module('takhshilaApp')
       saturday: []
     }
 
-    $scope.gerUserVideos = function(){
+    $scope.getUserVideos = function(){
       videoFactory.getUserVideos($rootScope.currentUser._id)
       .success(function(response){
         $scope.demoVideos = response;
@@ -208,6 +208,41 @@ angular.module('takhshilaApp')
   	$scope.editVideo = function(index) {
   		$rootScope.showVideoUploadModal('', $scope.demoVideos[index]);
   	}
+    $scope.deleteVideo = function(index){
+      return videoFactory.deleteVideo($scope.demoVideos[index]._id);
+    }
+    $scope.confirmDeleteVideo = function($event, index){
+      var parentEl = angular.element(document.body);
+      var videoData = $scope.demoVideos[index];
+      videoData.index = index;
+
+      $mdDialog.show({
+        templateUrl: 'components/confirmModal/confirmModal.html',
+        controller: 'ConfirmModalCtrl',
+        parent: parentEl,
+        targetEvent: $event,
+        disableParentScroll: true,
+        clickOutsideToClose: false,
+        locals: {          
+          modalData: videoData,
+          modalOptions: {
+            headerText: 'Confirm Delete',
+            contentTitle: 'Are you sure you want to remove this video?',
+            modalType: 'deleteVideo',
+            confirmText: 'Delete',
+            confirmClass: 'red',
+            cancelClass: '',
+            cancelText: 'Cancel',
+            processConfirm: $scope.deleteVideo
+          }
+        }
+      })
+      .then(function() {
+        console.log('You confirmed delete');
+      }, function() {
+        console.log('You cancelled delete');
+      });
+    }
 
     $scope.editBasicInfo = function(evt){
       angular.element(evt.currentTarget).addClass('ng-hide');
@@ -339,8 +374,6 @@ angular.module('takhshilaApp')
       $scope.showAddEducationModal('', edducationData);
     }
 
-
-
     $scope.deleteEducation = function(index){
       return userFactory.deleteEducation($rootScope.currentUser.education[index]._id)
     }
@@ -407,12 +440,12 @@ angular.module('takhshilaApp')
     };
 
     $rootScope.$on('videoDataSaved', function(data){
-      $scope.gerUserVideos();
+      $scope.getUserVideos();
     });
 
     $rootScope.$watch('loggedIn', function(status){
       if(status === true){
-        $scope.gerUserVideos();
+        $scope.getUserVideos();
       }
     });
 
