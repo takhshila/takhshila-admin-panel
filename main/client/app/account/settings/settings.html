@@ -1,8 +1,91 @@
-<div ng-include="'components/navbar/navbar.html'"></div>
+<!-- <div ng-include="'components/navbar/navbar.html'"></div> -->
+<navbar></navbar>
 
-<div class="container">
+<div class="container" id="settings">
   <div class="row">
-    <div class="col-sm-12">
+    <md-tabs md-dynamic-height md-border-bottom>
+      <md-tab label="Personal Info">
+        <md-content class="md-padding">
+          <i class="icon user"></i>
+          <md-input-container class="md-block half" flex-gt-sm>
+            <label>First name</label>
+            <input ng-model="user.name.firstName">
+          </md-input-container>
+
+          <md-input-container class="md-block half" flex-gt-sm>
+            <label>Last Name</label>
+            <input ng-model="user.name.lastName">
+          </md-input-container>
+
+          <i class="icon mail"></i>
+          <md-input-container class="md-block" flex-gt-sm>
+            <label>Email</label>
+            <input ng-model="user.email">
+          </md-input-container>
+
+          <i class="icon marker"></i>
+          <md-input-container class="md-block" flex-gt-sm>
+            <label>Country</label>
+            <md-select ng-model="user.state">
+              <md-option ng-repeat="state in states" value="{{state.abbrev}}">
+                {{state.abbrev}}
+              </md-option>
+            </md-select>
+          </md-input-container>
+
+          <i class="icon phone"></i>
+          <md-input-container class="md-block one-tenth" flex-gt-sm>
+            <label>Country Code</label>
+            <input ng-model="user.phone.countryCode" disabled>
+          </md-input-container>
+
+          <md-input-container class="md-block nine-tenth" flex-gt-sm>
+            <label>Phone</label>
+            <input ng-model="user.phone.number">
+          </md-input-container>
+
+          <div class="action-container">
+            <div class="ui buttons">
+              <button ng-click="!loggedIn && showLoginModal($event)" class = "ui button primary">Save</button>
+            </div>
+          </div>
+        </md-content>
+      </md-tab>
+
+<!--       <md-tab label="Address">
+        <md-content class="md-padding">
+
+        </md-content>
+      </md-tab> -->
+
+      <md-tab label="Change Password">
+        <md-content class="md-padding">
+          <!-- <h1 class="md-display-2">Tab One</h1> -->
+          <md-input-container class="md-block" flex-gt-sm>
+            <label>Old Password</label>
+            <input ng-model="user.password.old">
+          </md-input-container>
+
+          <md-input-container class="md-block" flex-gt-sm>
+            <label>New Password</label>
+            <input ng-model="user.password.new">
+          </md-input-container>
+
+          <md-input-container class="md-block" flex-gt-sm>
+            <label>Confirm Password</label>
+            <input ng-model="user.password.confirm">
+          </md-input-container>
+
+          <div class="action-container">
+            <div class="ui buttons">
+              <button ng-click="!loggedIn && showLoginModal($event)" class = "ui button primary">Change Password</button>
+            </div>
+          </div>
+        </md-content>
+      </md-tab>
+    </md-tabs>
+
+<!--     <div class="col-sm-12">
       <h1>Change Password</h1>
     </div>
     <div class="col-sm-12">
@@ -34,6 +117,6 @@
 
         <button class="btn btn-lg btn-primary" type="submit">Save changes</button>
       </form>
-    </div>
+    </div> -->
   </div>
 </div>

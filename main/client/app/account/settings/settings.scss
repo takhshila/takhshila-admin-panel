@@ -1,0 +1,35 @@
+#settings{
+	.row{
+		md-tabs-canvas{
+			background: #fff;
+		}
+		md-content{
+			i{
+				font-size: 30px;
+			    color: #00918b;
+			}
+			md-input-container{
+				display: inline-block;
+				width: calc(100% - 42px);
+				&.half{
+					width: calc(50% - 23px);
+				}
+				&.one-tenth{
+					width: calc(10% - 23px);
+				}
+				&.nine-tenth{
+					width: calc(90% - 23px);
+				}
+			}
+			.action-container{
+				width: 100%;
+				text-align: left;
+				.ui{
+					&.buttons{
+						min-width: 200px;
+					}
+				}
+			}
+		}
+	}
+}

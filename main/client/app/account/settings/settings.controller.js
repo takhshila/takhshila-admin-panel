@@ -1,7 +1,8 @@
 'use strict';
 
 angular.module('takhshilaApp')
-  .controller('SettingsCtrl', function ($scope, User, Auth) {
+  .controller('SettingsCtrl', function ($rootScope, $scope, User, Auth) {
+    $rootScope.isLoading = false;
     $scope.errors = {};
 
     $scope.changePassword = function(form) {
@@ -18,4 +19,5 @@ angular.module('takhshilaApp')
         });
       }
 		};
+    
   });

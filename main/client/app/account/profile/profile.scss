@@ -95,6 +95,13 @@
           }
       }
       .segment{
+        .wrapEditor{
+          position: absolute;
+          width: 100%;
+          background: rgba(255, 255, 255, 0.3);
+          height: 100%;
+          z-index: 99;
+        }
         .editable-area{
           width: 100%;
           min-height: 100px;

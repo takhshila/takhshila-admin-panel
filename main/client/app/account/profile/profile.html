@@ -338,7 +338,7 @@
       </div>
 
 
-      <div class="row" ng-if = "currentUser.isTeacher">
+<!--       <div class="row" ng-if = "currentUser.isTeacher">
         <div class="ui attached message">
           <div class="header">
             Reviews & Ratings
@@ -349,17 +349,27 @@
             This is the details
           </p>
         </div>
-      </div>
+      </div> -->
 
       <div class="row" ng-if = "currentUser.isTeacher">
         <div class="ui attached message">
           <div class="header">
-            Availability
-            <button class="ui button primary" ng-click = "updateAvailability()">Save</button>
+            <span class="title">Availability</span>
+            <div class="action-container">
+              <a ng-show="!edit.availability.editing" class="edit-action" ng-click="editAvailability($event)">
+                <i class="write icon"></i>
+              </a>
+              <div ng-show="edit.availability.editing" class="ui buttons">
+                <button class="ui button primary" ng-disabled="edit.availability.progress" ng-click = "updateAvailability()" ng-class="{'loading': edit.availability.progress}">Save</button>
+                <div class="or"></div>
+                <button class="ui button" ng-disabled="edit.availability.progress" ng-click="cancelEditAvailability($event)">Cancel</button>
+              </div>
+            </div>
           </div>
         </div>
         <div class="ui segment">
           <p>
+            <div ng-show="!edit.availability.editing" class="wrapEditor"></div>
             <div ui-calendar="uiConfig.calendar" ng-model="eventSources" calendar = "availabilityCalendar"></div>
           </p>
         </div>

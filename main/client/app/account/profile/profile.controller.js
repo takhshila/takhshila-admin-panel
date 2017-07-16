@@ -26,6 +26,10 @@ angular.module('takhshilaApp')
         editing: false,
         progress: false,
         data: null
+      },
+      availability: {
+        editing: false,
+        progress: false
       }
     }
 
@@ -173,7 +177,17 @@ angular.module('takhshilaApp')
       }
     }
 
+    $scope.editAvailability = function(evt){
+      angular.element(evt.currentTarget).addClass('ng-hide');
+      $scope.edit.availability.editing = true;
+    }
+
+    $scope.cancelEditAvailability = function(){
+      $scope.edit.availability.editing = false;
+    }
+
     $scope.updateAvailability = function(){
+      $scope.edit.availability.progress = true;
       for(var i = 0; i < $scope.events.length; i++){
         console.log($scope.events[i].start);
         $scope.events[i].start = moment($scope.events[i].start, 'MMM DD, YYYY HH:mm').format();
@@ -182,10 +196,11 @@ angular.module('takhshilaApp')
       console.log($scope.events);
       userFactory.updateAvailability({availability: $scope.events})
       .success(function(response){
-        // $scope.getEvents();
+        $scope.edit.availability.progress = false;
         console.log(response);
       })
       .error(function(err){
+        $scope.edit.availability.progress = false;
         console.log(err);
       });
     }
