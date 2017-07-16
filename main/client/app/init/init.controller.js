@@ -90,6 +90,8 @@ angular.module('takhshilaApp')
         }, function(err){
           deferred.resolve();
         });
+      }else{
+        deferred.resolve();
       }
       return deferred.promise;
     }
@@ -97,4 +99,6 @@ angular.module('takhshilaApp')
     $rootScope.logout = function(){
       Auth.logout();
     }
+
+    $rootScope.populateCountries();
   });

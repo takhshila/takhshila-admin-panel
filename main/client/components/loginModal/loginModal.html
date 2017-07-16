@@ -24,24 +24,39 @@
           Or
         </div>
         <div class="ui form">
-          <form class="" name = "loginForm" novalidate>
+          <form class="" name = "loginForm" novalidate autocomplete="off">
             <div class="field form-error" ng-class = "{'has-error': loginError}">
               <div class="help-block">
                   <p>{{loginErrorMessage}}</p>
               </div>
             </div>
-            <div class="field" ng-class = "{'has-error': loginForm.email.$invalid && loginForm.email.$touched}">
-              <lx-text-field label="Email ID" error = "loginForm.email.$invalid && loginForm.email.$touched">
-                  <input name = "email" type="email" ng-model="loginFormData.email" ng-pattern="/^.+@.+\..+$/" required>
+            <div class="field withCountryDropdown" ng-class = "{'has-error': loginForm.phone.$invalid && loginForm.phone.$touched}">
+              <lx-text-field label="Phone Number" error = "loginForm.phone.$invalid && loginForm.phone.$touched">
+                  <div class="dropdown inputCountrySelector">
+                      <a data-toggle="dropdown" class="ui label dropdown-toggle" href="#">
+                        <span>+</span>{{selectedCountry.dial_code}}
+                        <b class="caret"></b>
+                      </a>
+                      <ul role="menu" class="dropdown-menu">
+                          <li ng-repeat="country in countries" ng-click="selectCountry($index)">
+                            <div class="countryNameContainer">{{country.name}}</div>
+                            <div class="countryCodeContainer">+{{country.dial_code}}</div>
+                          </li>
+<!--                           <li class="divider"></li>
+                          <li><a href="#" ng-click = "logout()">Logout</a></li> -->
+                      </ul>
+                  </div>
+                  <input name = "phone" type="text" ng-model="phone" required autocomplete="off">
+                  <!-- <input name = "email" type="email" ng-model="loginFormData.email" ng-pattern="/^.+@.+\..+$/" required> -->
               </lx-text-field>
-              <div class="help-block" ng-messages="loginForm.email.$error" ng-if="loginForm.email.$touched">
-                  <p ng-message="pattern">Invalid Email.</p>
+              <div class="help-block" ng-messages="loginForm.phone.$error" ng-if="loginForm.phone.$touched">
+                  <p ng-message="pattern">Invalid Phone Number.</p>
                   <p ng-message="required">This field is required.</p>
               </div>
             </div>
             <div class="field" ng-class = "{'has-error': loginForm.password.$invalid && loginForm.password.$touched}">
               <lx-text-field label="Password">
-                  <input name = "password" type="password" ng-model="loginFormData.password" required>
+                  <input name = "password" type="password" ng-model="loginFormData.password" required autocomplete="off">
               </lx-text-field>
               <div class="help-block" ng-messages="loginForm.password.$error" ng-if="loginForm.password.$touched">
                   <p ng-message="required">This field is required.</p>
@@ -93,7 +108,8 @@
               </div>
               <div class="clear clearfix"></div>
             </div>
-            <div class="field" ng-class = "{'has-error': registerForm.email.$invalid && registerForm.email.$touched}">
+
+<!--             <div class="field" ng-class = "{'has-error': registerForm.email.$invalid && registerForm.email.$touched}">
               <lx-text-field label="Email ID" error = "registerForm.email.$invalid && registerForm.email.$touched">
                   <input name = "email" type="email" ng-model="registerFormData.email" ng-pattern="/^.+@.+\..+$/" required>
               </lx-text-field>
@@ -102,7 +118,33 @@
                   <p ng-message="required">This field is required.</p>
                   <p ng-message="serverError">{{registerForm.email.$error.errorMessage}}</p>
               </div>
+            </div> -->
+
+            <div class="field withCountryDropdown" ng-class = "{'has-error': registerForm.phone.$invalid && registerForm.phone.$touched}">
+              <lx-text-field label="Phone Number" error = "registerForm.phone.$invalid && registerForm.phone.$touched">
+                  <div class="dropdown inputCountrySelector">
+                      <a data-toggle="dropdown" class="ui label dropdown-toggle" href="#">
+                        <span>+</span>{{selectedCountry.dial_code}}
+                        <b class="caret"></b>
+                      </a>
+                      <ul role="menu" class="dropdown-menu">
+                          <li ng-repeat="country in countries" ng-click="selectCountry($index)">
+                            <div class="countryNameContainer">{{country.name}}</div>
+                            <div class="countryCodeContainer">+{{country.dial_code}}</div>
+                          </li>
+<!--                           <li class="divider"></li>
+                          <li><a href="#" ng-click = "logout()">Logout</a></li> -->
+                      </ul>
+                  </div>
+                  <input name = "phone" type="text" ng-model="registerFormData.phone" required ng-pattern="/^[0-9]{5,10}$/">
+                  <!-- <input name = "email" type="email" ng-model="loginFormData.email" ng-pattern="/^.+@.+\..+$/" required> -->
+              </lx-text-field>
+              <div class="help-block" ng-messages="registerForm.phone.$error" ng-if="registerForm.phone.$touched">
+                  <p ng-message="pattern">Invalid Phone Number.</p>
+                  <p ng-message="required">This field is required.</p>
+              </div>
             </div>
+
             <div class="field" ng-class = "{'has-error': registerForm.password.$invalid && registerForm.password.$touched}">
               <lx-text-field label="Password">
                   <input name = "password" type="password" ng-model="registerFormData.password" required>
@@ -154,5 +196,33 @@
         </div>
       </div>
     </div>
+
+    <div class = "tab tab-forgot-password" ng-class = "{'active': current == 'verify-otp'}">
+      <div class="ui center aligned basic segment">
+        <div class="heading-text">
+          <i class="angle left icon" ng-click = "current = 'default'"></i>
+          Enter One Time Password
+        </div>
+        <p>
+          One Time Password (OTP) has been sent to your mobile number, please enter the same here to register.
+        </p>
+        <div class="ui form">
+          <form class="" name = "verifyOTPForm" novalidate>
+            <div class="field" ng-class = "{'has-error': verifyOTPForm.otp.$invalid && verifyOTPForm.otp.$touched}">
+              <lx-text-field label="OTP" error = "verifyOTPForm.otp.$invalid && verifyOTPForm.otp.$touched">
+                  <input name = "otp" type="text" ng-model="verifyOTPFormData.otp" required>
+              </lx-text-field>
+              <div class="help-block" ng-messages="verifyOTPForm.otp.$error" ng-if="verifyOTPForm.otp.$touched">
+                  <p ng-message="pattern">Invalid OTP.</p>
+                  <p ng-message="required">This field is required.</p>
+              </div>
+            </div>
+            <br>
+            <button ng-init = "reseting = false" ng-click = "reseting = !reseting" ng-class = "{'loading': reseting}" class="ui button primary" lx-ripple>Verify</button>
+        </form>
+        </div>
+      </div>
+    </div>
+
   </div>
 </modal>

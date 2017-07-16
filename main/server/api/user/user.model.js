@@ -10,8 +10,15 @@ var UserSchema = new Schema({
     firstName: { type: String, required: true },
     lastName: { type: String, required: true }
   },
-  email: { type: String, lowercase: true, required: true },
-  phone: { type: Number },
+  country: {type: String, ref: 'Countries', required: true},
+  dialCode: {type: Number, required: true},
+  tempPhone: { type: String, default: null },
+  phone: { type: String, default: null },
+  email: { type: String, lowercase: true },
+  phoneVerificationCode: {type: Number, default: null},
+  emailVerificationCode: { type: Number, default: null },
+  isPhoneVerified: { type: Boolean, default: false },
+  isEmailVerified: { type: Boolean, default: false },
   isTeacher: { type: Boolean, default: false },
   profileSetup: { type: Boolean, default: false },
   role: { type: String, default: 'user' },
@@ -25,8 +32,8 @@ var UserSchema = new Schema({
     value: Number,
     currency: { type: String, default: 'INR'}
   },
-  basicInfo: String,
-  status: String,
+  basicInfo: { type: String, default: ''},
+  status: { type: String, default: 'pending'},
   specialization: [{
     topic: {type: String, ref: 'Topic', required: true},
     level: {type: String, enum : ["Basic", "Intermediate", "Advanced", "Expert"], required: true},
@@ -42,6 +49,7 @@ var UserSchema = new Schema({
     end: Number
   }],
   experience: [{
+    companyId: {type: String, ref: 'Company', required: true},
     companyName: {type: String, required: true},
     designation: {type: String, required: true},
     start: Number,

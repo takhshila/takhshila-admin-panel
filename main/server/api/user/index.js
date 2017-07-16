@@ -33,6 +33,9 @@ router.put('/availability', auth.isAuthenticated(), controller.updateAvailabilit
 
 // router.put('/:id/password', auth.isAuthenticated(), controller.changePassword);
 router.get('/:id', /*auth.isAuthenticated(),*/ controller.show);
-router.post('/', controller.create);
+
+// router.post('/', controller.create);
+router.post('/register', controller.sendVerificationCode);
+router.post('/verifyPhoneNumber', controller.verifyPhoneNumber);
 
 module.exports = router;

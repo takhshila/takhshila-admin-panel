@@ -1,3 +1,4 @@
+input:-webkit-autofill { -webkit-box-shadow:0 0 0 500px white inset; }
 md-dialog.md-default-theme, md-dialog{
   border-radius: 0px;
   background: none;
@@ -135,4 +136,60 @@ md-dialog.md-default-theme, md-dialog{
   z-index: 999;
   font-size: 20px;
   cursor: pointer;
+}
+.withCountryDropdown{
+  .inputCountrySelector{
+    display: inline-block;
+    width: 25%;
+    a{
+      &.ui{
+        &.label{
+          background-color: transparent;
+          border: 0px;
+          color: rgba(0, 0, 0, 0.6);
+          background-image: none;
+          &:hover{
+            background-color: transparent;
+            border: 0px;
+            color: rgba(0, 0, 0, 0.6);
+            background-image: none;
+          }
+        }
+      }
+    }
+    ul{
+      overflow-x: hidden;
+      &.dropdown-menu{
+        height: 250px;
+        text-align: left;
+        width: 290px;
+        overflow-y: scroll;
+        li{
+          padding: 5px;
+          &:hover{
+            background: #f5f5f5;
+          }
+          .countryCodeContainer{
+            display: inline-block;
+            width: 20%;
+            text-overflow: ellipsis;
+            overflow: hidden;
+          }
+          .countryNameContainer{
+            display: inline-block;
+            width: 76%;
+            text-overflow: ellipsis;
+            overflow: hidden;
+          }
+        }
+      }
+    }
+  }
+  label{
+    left: 26%;
+  }
+  input{
+    display: inline-block;
+    width: 73%;
+  }
 }

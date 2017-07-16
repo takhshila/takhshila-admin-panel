@@ -5,7 +5,10 @@ var Countries = require('./countries.model');
 
 // Get list of countries
 exports.index = function(req, res) {
-  Countries.find(function (err, countryList) {
+  Countries
+  .find()
+  .sort({name:1})
+  .exec(function (err, countryList) {
     if(err) { return handleError(res, err); }
     return res.status(200).json(countryList);
   });

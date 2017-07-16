@@ -6,12 +6,12 @@
 'use strict';
 
 var Countries = require('../api/countries/countries.model');
-var Language = require('../api/countries/language.model');
-var School = require('../api/countries/school.model');
+var Language = require('../api/language/language.model');
+var School = require('../api/school/school.model');
 
-var countryList = require('./countries.json');
-var languageList = require('./languages.json');
-var schoolList = require('./universityDomain.json');
+var countryList = require('./seedData/countries.json');
+var languageList = require('./seedData/languages.json');
+var schoolList = require('./seedData/universityDomain.json');
 // var User = require('../api/user/user.model');
 
 // Thing.find({}).remove(function() {
@@ -40,7 +40,7 @@ Countries.find({}).remove(function() {
 	for(var i = 0; i < countryList.length; i++){
 		var countryData = {
 			name: countryList[i].name,
-			code: countryList[i].code,
+			code: countryList[i].code.replace(/\s/g,''),
 			dialCode: countryList[i].dial_code
 		}
 		Countries.create(countryData, function(err, addedCountry){
@@ -74,7 +74,7 @@ School.find({}).remove(function() {
 			countryName: languageList[i].country,
 			website: languageList[i].web_page
 		}
-		School.create(languageData, function(err, addedSchool){
+		School.create(schoolData, function(err, addedSchool){
 			if(err) { console.log("Error is: ", err); }
 		})
 	}

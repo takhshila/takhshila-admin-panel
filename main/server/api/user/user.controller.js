@@ -29,18 +29,70 @@ exports.index = function(req, res) {
 };
 
 /**
- * Creates a new user
+ * Send verification code for new user
  */
-exports.create = function (req, res, next) {
-  var newUser = new User(req.body);
-  newUser.provider = 'local';
-  newUser.role = 'user';
-  newUser.save(function(err, user) {
-    if (err) return validationError(res, err);
-    var token = jwt.sign({_id: user._id }, config.secrets.session, { expiresInMinutes: 60*5 });
-    res.json({ token: token });
-  });
+exports.sendVerificationCode = function (req, res, next) {
+  User.find({
+    phone: req.body.phone,
+    dialCode: req.body.dialCode
+  }, function(err, user){
+    if (err) return next(err);
+    if(user.length > 0){ return res.status(200).json({success: false, error: 'Phone number exists'}); }
+    var userData = {
+      name: req.body.name,
+      password: req.body.password,
+      provider: 'local',
+      role: 'user',
+      dialCode: req.body.dialCode,
+      country: req.body.country,
+      tempPhone: req.body.phone,
+      phoneVerificationCode: 3223
+    }
+    User.create(userData, function(err, user) {
+      if (err) return validationError(res, err);
+      // var token = jwt.sign({_id: user._id }, config.secrets.session, { expiresInMinutes: 60*5 });
+      res.json({ id: user._id });
+    });
+  })
 };
+
+/**
+ * Verify phone verification code for new user
+ */
+exports.verifyPhoneNumber = function (req, res, next) {
+  var verificationCode = req.body.otp;
+  User.findOne({
+    _id: req.body.userId,
+    phoneVerificationCode: req.body.otp,
+    status: 'pending'
+  }, function(err, user){
+    if (err) return next(err);
+    if(!user){ return res.status(200).json({success: false, error: 'Invalid otp'}); }
+    user.phone = user.tempPhone;
+    user.isPhoneVerified = true;
+    user.tempPhone = null;
+    user.status = 'active';
+    user.save(function(err, user) {
+      if (err) return validationError(res, err);
+      var token = jwt.sign({_id: user._id }, config.secrets.session, { expiresIn: 60*5 });
+      res.json({ success: true, token: token });
+    });
+  })
+};
+
+// /**
+//  * Creates a new user
+//  */
+// exports.create = function (req, res, next) {
+//   var newUser = new User(req.body);
+//   newUser.provider = 'local';
+//   newUser.role = 'user';
+//   newUser.save(function(err, user) {
+//     if (err) return validationError(res, err);
+//     var token = jwt.sign({_id: user._id }, config.secrets.session, { expiresInMinutes: 60*5 });
+//     res.json({ token: token });
+//   });
+// };
 
 /**
  * Get a single user
