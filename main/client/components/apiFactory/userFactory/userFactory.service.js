@@ -4,6 +4,9 @@ angular.module('takhshilaApp')
   .factory('userFactory', function (api) {
     var subUrl = 'users/'
     var userFactory = {
+      register: function( data ){
+          return api.post(subUrl + 'register/', data);
+      },
       getUserDetails: function( id ){
           return api.get(subUrl, id);
       },

@@ -34,19 +34,19 @@
               <lx-text-field label="Phone Number" error = "loginForm.phone.$invalid && loginForm.phone.$touched">
                   <div class="dropdown inputCountrySelector">
                       <a data-toggle="dropdown" class="ui label dropdown-toggle" href="#">
-                        <span>+</span>{{selectedCountry.dial_code}}
+                        <span>+</span>{{selectedCountry.dialCode}}
                         <b class="caret"></b>
                       </a>
                       <ul role="menu" class="dropdown-menu">
                           <li ng-repeat="country in countries" ng-click="selectCountry($index)">
                             <div class="countryNameContainer">{{country.name}}</div>
-                            <div class="countryCodeContainer">+{{country.dial_code}}</div>
+                            <div class="countryCodeContainer">+{{country.dialCode}}</div>
                           </li>
 <!--                           <li class="divider"></li>
                           <li><a href="#" ng-click = "logout()">Logout</a></li> -->
                       </ul>
                   </div>
-                  <input name = "phone" type="text" ng-model="phone" required autocomplete="off">
+                  <input name = "phone" type="text" ng-model="loginFormData.phone" required autocomplete="off">
                   <!-- <input name = "email" type="email" ng-model="loginFormData.email" ng-pattern="/^.+@.+\..+$/" required> -->
               </lx-text-field>
               <div class="help-block" ng-messages="loginForm.phone.$error" ng-if="loginForm.phone.$touched">
@@ -124,13 +124,13 @@
               <lx-text-field label="Phone Number" error = "registerForm.phone.$invalid && registerForm.phone.$touched">
                   <div class="dropdown inputCountrySelector">
                       <a data-toggle="dropdown" class="ui label dropdown-toggle" href="#">
-                        <span>+</span>{{selectedCountry.dial_code}}
+                        <span>+</span>{{selectedCountry.dialCode}}
                         <b class="caret"></b>
                       </a>
                       <ul role="menu" class="dropdown-menu">
                           <li ng-repeat="country in countries" ng-click="selectCountry($index)">
                             <div class="countryNameContainer">{{country.name}}</div>
-                            <div class="countryCodeContainer">+{{country.dial_code}}</div>
+                            <div class="countryCodeContainer">+{{country.dialCode}}</div>
                           </li>
 <!--                           <li class="divider"></li>
                           <li><a href="#" ng-click = "logout()">Logout</a></li> -->
@@ -208,6 +208,11 @@
         </p>
         <div class="ui form">
           <form class="" name = "verifyOTPForm" novalidate>
+            <div class="field form-error" ng-class = "{'has-error': loginError}">
+              <div class="help-block">
+                  <p>{{verifyOtpErrorMessage}}</p>
+              </div>
+            </div>
             <div class="field" ng-class = "{'has-error': verifyOTPForm.otp.$invalid && verifyOTPForm.otp.$touched}">
               <lx-text-field label="OTP" error = "verifyOTPForm.otp.$invalid && verifyOTPForm.otp.$touched">
                   <input name = "otp" type="text" ng-model="verifyOTPFormData.otp" required>
@@ -218,7 +223,7 @@
               </div>
             </div>
             <br>
-            <button ng-init = "reseting = false" ng-click = "reseting = !reseting" ng-class = "{'loading': reseting}" class="ui button primary" lx-ripple>Verify</button>
+            <button ng-init = "verifyingOtp = false" ng-click = "verifyOtp(verifyOTPForm)" ng-class = "{'loading': verifyingOtp}" ng-disabled="verifyingOtp" class="ui button primary" lx-ripple>Verify</button>
         </form>
         </div>
       </div>

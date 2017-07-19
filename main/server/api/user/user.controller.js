@@ -67,7 +67,8 @@ exports.verifyPhoneNumber = function (req, res, next) {
     status: 'pending'
   }, function(err, user){
     if (err) return next(err);
-    if(!user){ return res.status(200).json({success: false, error: 'Invalid otp'}); }
+    if(!user){ return res.status(403).json({errors: {otp: 'Invalid otp'}}); }
+    user.phoneVerificationCode = null;
     user.phone = user.tempPhone;
     user.isPhoneVerified = true;
     user.tempPhone = null;

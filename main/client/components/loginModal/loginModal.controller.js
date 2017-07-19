@@ -2,13 +2,19 @@
 
 angular.module('takhshilaApp')
   .controller('LoginModalCtrl', function ($rootScope, $mdDialog, $scope, $state, Auth) {
+    $scope.registeredId = null;
     $scope.loginError = false;
     $scope.loginErrorMessage = null;
     $scope.registerError = false;
     $scope.registerErrorMessage = null;
     $scope.loginFormData = {
       phone: null,
+      dialCode: null,
       password: null,
+    }
+    $scope.verifyOTPFormData = {
+      userId: null,
+      otp: null
     }
     $scope.forgotPasswordFormData = {
       email: null
@@ -28,7 +34,7 @@ angular.module('takhshilaApp')
     // $scope.selectedCountry = {
     //   active:true,
     //   code:"IN",
-    //   dial_code:"91",
+    //   dialCode:"91",
     //   name:"India",
     //   _id:"59410de6025c24614f2c7e7b"
     // }
@@ -53,12 +59,15 @@ angular.module('takhshilaApp')
         return false;
       }else{
         $scope.logging = true;
-        $scope.loginFormData.country = $scope.selectedCountry;
-        $scope.loginFormData.phone = $scope.selectedCountry.dial_code.toString() + $scope.loginFormData.phone.toString();
-        Auth.login($scope.loginFormData)
+        var loginData = {
+          phone: $scope.loginFormData.phone,
+          dialCode: $scope.selectedCountry.dialCode,
+          password: $scope.loginFormData.password
+        }
+        Auth.login(loginData)
         .then(function(data){
           $scope.logging = false;
-          $scope.closeDialog()
+          $scope.closeDialog();
         }, function(err){
           $scope.logging = false;
           $scope.loginError = true;
@@ -84,18 +93,19 @@ angular.module('takhshilaApp')
             lastName: $scope.registerFormData.name.lastName
           },
           phone: $scope.registerFormData.phone,
-          dialCode: $scope.selectedCountry.dial_code,
+          dialCode: $scope.selectedCountry.dialCode,
           password: $scope.registerFormData.password,
           country: $scope.selectedCountry._id
         }
         Auth.register(registerData)
         .then(function(data){
+          $scope.registeredId = data.id;
           $scope.logging = false;
-          // $scope.current = 'verify-otp';
+          $scope.current = 'verify-otp';
           // $scope.closeDialog();
         }, function(err){
           $scope.logging = false;
-          for(var error in err.data.errors){
+          for(var error in err.errors){
             registerForm[error].$valid = false;
             registerForm[error].$invalid = true;
             registerForm[error].$error.serverError = true;
@@ -106,39 +116,31 @@ angular.module('takhshilaApp')
       }
     }
 
-    $scope.signUp = function(registerForm){
-      if(registerForm.$invalid){
-        var el = angular.element("[name='" + registerForm.$name + "']").find('.ng-invalid:visible:first');
+    $scope.verifyOtp = function(verifyOTPForm){
+      if(verifyOTPForm.$invalid){
+        var el = angular.element("[name='" + verifyOTPForm.$name + "']").find('.ng-invalid:visible:first');
         var elName = el[0].name;
-        registerForm[elName].$dirty = true;
-        registerForm[elName].$pristine = false;
-        angular.element("[name='" + registerForm.$name + "']").find('.ng-invalid:visible:first').focus();
+        verifyOTPForm[elName].$dirty = true;
+        verifyOTPForm[elName].$pristine = false;
+        angular.element("[name='" + verifyOTPForm.$name + "']").find('.ng-invalid:visible:first').focus();
         return false;
       }else{
         $scope.logging = true;
-        var registerData = {
-          name: {
-            firstName: $scope.registerFormData.name.firstName,
-            lastName: $scope.registerFormData.name.lastName
-          },
-          phone: $scope.registerFormData.phone,
-          dialCode: $scope.selectedCountry.dial_code,
-          password: $scope.registerFormData.password,
-          country: $scope.selectedCountry._id
-        }
-        Auth.sendVerificationCode(registerData)
+        $scope.verifyOTPFormData.userId = $scope.registeredId;
+        Auth.verifyOTP($scope.verifyOTPFormData)
         .then(function(data){
           $scope.logging = false;
           // $scope.current = 'verify-otp';
-          // $scope.closeDialog();
+          $scope.closeDialog();
         }, function(err){
           $scope.logging = false;
-          for(var error in err.data.errors){
-            registerForm[error].$valid = false;
-            registerForm[error].$invalid = true;
-            registerForm[error].$error.serverError = true;
-            registerForm[error].$error.errorMessage = err.data.errors[error].message;
-            angular.element("[name='" + registerForm.$name + "'] [name='" + error + "']").focus();
+          console.log(err);
+          for(var error in err.errors){
+            verifyOTPForm[error].$valid = false;
+            verifyOTPForm[error].$invalid = true;
+            verifyOTPForm[error].$error.serverError = true;
+            $scope.verifyOtpErrorMessage = err.errors[error];
+            angular.element("[name='" + verifyOTPForm.$name + "'] [name='" + error + "']").focus();
           }
         })
       }

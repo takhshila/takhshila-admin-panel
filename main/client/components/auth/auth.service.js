@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('takhshilaApp')
-  .factory('Auth', function Auth($location, $rootScope, $http, User, $cookieStore, $q) {
+  .factory('Auth', function Auth($location, $rootScope, $http, User, userFactory, $cookieStore, $q) {
     var currentUser = {};
     if($cookieStore.get('token')) {
       currentUser = User.get();
@@ -20,10 +20,7 @@ angular.module('takhshilaApp')
         var cb = callback || angular.noop;
         var deferred = $q.defer();
 
-        $http.post('/auth/local', {
-          email: user.email,
-          password: user.password
-        }).
+        $http.post('/auth/local', user).
         success(function(data) {
           $cookieStore.put('token', data.token);
           currentUser = User.get();
@@ -56,19 +53,51 @@ angular.module('takhshilaApp')
        * @param  {Function} callback - optional
        * @return {Promise}
        */
-      createUser: function(user, callback) {
+      register: function(user, callback) {
         var cb = callback || angular.noop;
+        var deferred = $q.defer();
 
-        return User.save(user,
-          function(data) {
-            $cookieStore.put('token', data.token);
-            currentUser = User.get();
-            return cb(user);
-          },
-          function(err) {
-            this.logout();
-            return cb(err);
-          }.bind(this)).$promise;
+        $http.post('/api/v1/users/register', user).
+        success(function(data) {
+          // $cookieStore.put('token', data.token);
+          // currentUser = User.get();
+          deferred.resolve(data);
+          return cb(data);
+        }).
+        error(function(err) {
+          this.logout();
+          deferred.reject(err);
+          return cb(err);
+        }.bind(this));
+
+        return deferred.promise;
+      },
+
+      /**
+       * Verify One Time Password
+       *
+       * @param  {Object}   user     - user info
+       * @param  {Function} callback - optional
+       * @return {Promise}
+       */
+      verifyOTP: function(data, callback) {
+        var cb = callback || angular.noop;
+        var deferred = $q.defer();
+
+        $http.post('/api/v1/users/verifyPhoneNumber', data).
+        success(function(data) {
+          $cookieStore.put('token', data.token);
+          currentUser = User.get();
+          deferred.resolve(data);
+          return cb(data);
+        }).
+        error(function(err) {
+          this.logout();
+          deferred.reject(err);
+          return cb(err);
+        }.bind(this));
+
+        return deferred.promise;
       },
 
       /**
