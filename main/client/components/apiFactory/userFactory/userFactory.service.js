@@ -7,6 +7,9 @@ angular.module('takhshilaApp')
       register: function( data ){
           return api.post(subUrl + 'register/', data);
       },
+      saveSettings: function(data){
+        return api.putData(subUrl + 'settings', '', data);
+      },
       getUserDetails: function( id ){
           return api.get(subUrl, id);
       },

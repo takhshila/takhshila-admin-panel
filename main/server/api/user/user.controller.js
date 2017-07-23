@@ -145,6 +145,48 @@ exports.changePassword = function(req, res, next) {
   });
 };
 /**
+ * Update my name
+ */
+exports.updateSettings = function(req, res, next) {
+  var userId = req.user._id;
+  console.log(req.body);
+  var phoneNumberUpdated = false;
+  var name = req.body.name;
+  if(!name.firstName || !name.lastName) { return res.status(400).send('Invalid Value'); }
+
+  User.findById(userId, function (err, user) {
+    if (err) { return handleError(res, err); }
+    if(!user) { return res.status(404).send('Not Found'); }
+    user.name = name;
+    var promise = new Promise(function(resolve, reject){
+      if(req.body.phone && req.body.phone !== user.phone){
+        User.find({
+          phone: req.body.phone,
+          dialCode: user.dialCode
+        }, function(err, data){
+            if (err) return next(err);
+            if(user.length > 0){ return res.status(200).json({success: false, error: 'Phone number exists'}); }
+            if(user.phone !== req.body.phone){
+              user.tempPhone = req.body.phone;
+              user.phoneVerificationCode = 3223;
+              phoneNumberUpdated = true;
+            }
+            resolve();
+        })
+      }else{
+        resolve();
+      }
+    });
+
+    promise.then(function(response){
+      user.save(function (err) {
+        if (err) { return handleError(res, err); }
+        return res.status(200).json({phoneNumberUpdated: phoneNumberUpdated, data: user.profile});
+      });
+    })
+  });
+};
+/**
  * Update my basic info
  */
 exports.updateBasicInfo = function(req, res, next) {
