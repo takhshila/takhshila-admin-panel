@@ -7,6 +7,9 @@ md-dialog.md-default-theme, md-dialog{
   height: 520px;
   width: 620px;
 }
+#login-modal .md-char-counter{
+  display: none;
+}
 #login-modal .form-error p{
   text-align: center;
   margin-top: 10px;
@@ -40,7 +43,6 @@ md-dialog.md-default-theme, md-dialog{
   margin-left: -10px;
 }
 #login-modal .tab-default {
-  text-align: center;
   white-space: nowrap;
 }
 #login-modal .tab {

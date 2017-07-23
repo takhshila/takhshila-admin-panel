@@ -63,8 +63,7 @@ exports.verifyPhoneNumber = function (req, res, next) {
   var verificationCode = req.body.otp;
   User.findOne({
     _id: req.body.userId,
-    phoneVerificationCode: req.body.otp,
-    status: 'pending'
+    phoneVerificationCode: req.body.otp
   }, function(err, user){
     if (err) return next(err);
     if(!user){ return res.status(403).json({errors: {otp: 'Invalid otp'}}); }
@@ -75,8 +74,16 @@ exports.verifyPhoneNumber = function (req, res, next) {
     user.status = 'active';
     user.save(function(err, user) {
       if (err) return validationError(res, err);
-      var token = jwt.sign({_id: user._id }, config.secrets.session, { expiresIn: 60*5 });
-      res.json({ success: true, token: token });
+      if(req.body.otp.generateToken){
+        var token = jwt.sign({_id: user._id }, config.secrets.session, { expiresIn: 60*5 });
+        res.json({ success: true, token: token });
+      }else{
+        if(user.isTeacher){
+          res.json(user.teacherProfile);
+        }else {
+          res.json(user.profile);
+        }
+      }
     });
   })
 };

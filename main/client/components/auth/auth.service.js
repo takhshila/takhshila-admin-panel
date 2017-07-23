@@ -86,13 +86,14 @@ angular.module('takhshilaApp')
 
         $http.post('/api/v1/users/verifyPhoneNumber', data).
         success(function(data) {
-          $cookieStore.put('token', data.token);
-          currentUser = User.get();
+          if(data.token){
+            $cookieStore.put('token', data.token);
+            currentUser = User.get();
+          }
           deferred.resolve(data);
           return cb(data);
         }).
         error(function(err) {
-          this.logout();
           deferred.reject(err);
           return cb(err);
         }.bind(this));

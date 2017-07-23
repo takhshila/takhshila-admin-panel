@@ -31,14 +31,6 @@ angular.module('takhshilaApp')
       isTeacher: ($state.current.name === "teach") ? true: false
     }
 
-    // $scope.selectedCountry = {
-    //   active:true,
-    //   code:"IN",
-    //   dialCode:"91",
-    //   name:"India",
-    //   _id:"59410de6025c24614f2c7e7b"
-    // }
-
     $scope.selectCountry = function(index){
       if($rootScope.countries[index] !== undefined){
         $scope.selectedCountry = $rootScope.countries[index];
@@ -127,6 +119,7 @@ angular.module('takhshilaApp')
       }else{
         $scope.logging = true;
         $scope.verifyOTPFormData.userId = $scope.registeredId;
+        $scope.verifyOTPFormData.generateToken = true;
         Auth.verifyOTP($scope.verifyOTPFormData)
         .then(function(data){
           $scope.logging = false;
@@ -149,6 +142,7 @@ angular.module('takhshilaApp')
     $rootScope.populateCountries()
     .then(function(){
       $scope.countries = $rootScope.countries;
+      $scope.selectedCountry = $scope.countries[0];
     });
 
   });

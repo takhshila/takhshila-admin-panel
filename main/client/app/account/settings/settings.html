@@ -60,7 +60,7 @@
 
             <div class="action-container">
               <div class="ui buttons">
-                <button ng-click="saveSettings(settingsForm)" class = "ui button primary">Save</button>
+                <button ng-init = "saving = false" ng-class = "{'loading': saving}" ng-disabled="saving" ng-click="saveSettings(settingsForm)" class = "ui button primary">Save</button>
               </div>
             </div>
           </form>

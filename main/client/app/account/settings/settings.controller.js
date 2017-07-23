@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('takhshilaApp')
-  .controller('SettingsCtrl', function ($rootScope, $scope, User, userFactory, Auth) {
+  .controller('SettingsCtrl', function ($rootScope, $scope, $mdDialog, User, userFactory, Auth) {
     $scope.errors = {};
 
     $scope.changePassword = function(form) {
@@ -20,6 +20,7 @@ angular.module('takhshilaApp')
     };
 
     $scope.saveSettings = function(settingsForm){
+      $scope.saving = true;
       var updateData = {
         name: {
           firstName: $scope.user.name.firstName,
@@ -28,21 +29,24 @@ angular.module('takhshilaApp')
         email: $scope.user.email,
         phone: $scope.user.phone
       }
-      console.log(updateData);
       userFactory.saveSettings(updateData)
       .success(function(response){
-        console.log(response);
+        $scope.saving = false;
         $rootScope.currentUser.name = response.data.name;
+        if(response.phoneNumberUpdated){
+          var parentEl = angular.element(document.body);
+          $mdDialog.show({
+            templateUrl: 'components/verifyOtpModal/verifyOtpModal.html',
+            controller: 'VerifyOtpModalCtrl',
+            parent: parentEl,
+            disableParentScroll: true
+          });
+        }
       })
       .error(function(err){
+        $scope.saving = false;
         console.log(err);
-      })
-      // if($rootScope.currentUser.phone !== $scope.user.phone){
-      //   console.log("Phone number has changed");
-      // }
-      // if($rootScope.currentUser.email !== $scope.user.email){
-      //   console.log("Email has changed");
-      // }
+      });
     }
     
     $rootScope.$watch('loggedIn', function(status){
@@ -64,8 +68,6 @@ angular.module('takhshilaApp')
             break;
           }
         }
-        console.log($scope.user);
-        console.log($scope.selectedCountry);
       }
     });
   });
