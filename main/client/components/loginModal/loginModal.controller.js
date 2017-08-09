@@ -27,8 +27,7 @@ angular.module('takhshilaApp')
       country: null,
       phone: null,
       phoneNumber: null,
-      password: null,
-      isTeacher: ($state.current.name === "teach") ? true: false
+      password: null
     }
 
     $scope.selectCountry = function(index){
@@ -87,7 +86,8 @@ angular.module('takhshilaApp')
           phone: $scope.registerFormData.phone,
           dialCode: $scope.selectedCountry.dialCode,
           password: $scope.registerFormData.password,
-          country: $scope.selectedCountry._id
+          country: $scope.selectedCountry._id,
+          isTeacher: ($state.current.name === "teach") ? true: false
         }
         Auth.register(registerData)
         .then(function(data){

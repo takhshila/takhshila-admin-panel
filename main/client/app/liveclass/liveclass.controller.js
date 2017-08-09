@@ -25,6 +25,7 @@ angular.module('takhshilaApp')
     var connectToClass = function(peerID){
     	var deferred = $q.defer();
 		socket.socket.emit('joinClass', {classID: classID, peerID: peerID}, function(response){
+			console.log(response);
 			if(response.success){
 				deferred.resolve();
 			}else{

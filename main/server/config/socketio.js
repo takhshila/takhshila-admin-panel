@@ -42,6 +42,7 @@ function onConnect(socket) {
   });
 
   // Insert sockets below
+  require('../api/classDetails/classDetails.socket').register(socket);
   require('../api/company/company.socket').register(socket);
   require('../api/language/language.socket').register(socket);
   require('../api/countries/countries.socket').register(socket);
@@ -88,6 +89,7 @@ function onConnect(socket) {
             liveClassList[classID].connectedUser.push(userID);
           }
           output.success = true
+          output.classDetails = userclass
         }
         callback(output);
         startLiveClass(classID);

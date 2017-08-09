@@ -26,7 +26,7 @@ var TransactionSchema = new Schema({
   classID: {type: String, ref: 'Userclass'},
   firstName: {type: String, required: true},
   lastName: {type: String},
-  email: {type: String, required: true},
+  email: {type: String},
   phone: {type: Number, required: true},
   status: {type: String, default: 'Not Started'}
 });

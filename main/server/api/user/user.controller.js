@@ -46,7 +46,8 @@ exports.sendVerificationCode = function (req, res, next) {
       dialCode: req.body.dialCode,
       country: req.body.country,
       tempPhone: req.body.phone,
-      phoneVerificationCode: 3223
+      phoneVerificationCode: 3223,
+      isTeacher: req.body.isTeacher
     }
     User.create(userData, function(err, user) {
       if (err) return validationError(res, err);
@@ -74,7 +75,7 @@ exports.verifyPhoneNumber = function (req, res, next) {
     user.status = 'active';
     user.save(function(err, user) {
       if (err) return validationError(res, err);
-      if(req.body.otp.generateToken){
+      if(req.body.generateToken){
         var token = jwt.sign({_id: user._id }, config.secrets.session, { expiresIn: 60*5 });
         res.json({ success: true, token: token });
       }else{
