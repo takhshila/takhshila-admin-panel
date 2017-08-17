@@ -18,7 +18,7 @@ exports.initiatePayment = function(req, res) {
   if(req.body._id) { delete req.body._id; }
   if(!req.body.classData.length){return handleError(res, 'Invalid class data');}
   
-  var classData = [], totalAmount = 0, currency = req.body.currency;
+  var classData = [], totalAmount = 0, currency = req.body.currency, userclassList = [];
 
   for(var i = 0; i < req.body.classData.length; i++){
     var _data = {
@@ -39,66 +39,73 @@ exports.initiatePayment = function(req, res) {
     classData.push(_data);
     totalAmount += req.body.classData[i].cost;
   }
-  Userclass.create(classData, function(err, userclass){
-    console.log(userclass);
-  });
-  User.findById(req.user._id, function (err, user){
-    if(err) { return handleError(res, err); }
-    var transactionData = {
-      amount: totalAmount,
-      currency: currency,
-      classInfo: classData,
-      productInfo: 'Class request',
-      firstName: user.name.firstName,
-      lastName: user.name.lastName,
-      email: user.email,
-      phone: user.phone || 7777777777,
-      status: 'Not Started'
-    }
-    Transaction.create(transactionData, function(err, transaction) {
-      if(err) { return handleError(res, err); }
-      var generatedHash = hashBeforeTransaction({
-        'key': key,
-        'txnid': transaction._id,
-        'amount': totalAmount,
-        'productinfo': 'Class request',
-        'firstname': user.name.firstName,
-        'email': user.email
-      });
-
-      var generatedresponse = {
-        'key': key,
-        'txnid': transaction._id,
-        'firstname': user.name.firstName,
-        'lastname': user.name.lastname,
-        'email': user.email,
-        'phone': '7777777777',
-        'productinfo': 'Class request',
-        'amount': totalAmount,
-        'surl': 'http://localhost:9000/api/v1/transactions/payment/update',
-        'furl': 'http://localhost:9000/api/v1/transactions/payment/update',
-        'hash': generatedHash,
-        'service_provider': '',
-        'address1': '',
-        'address2': '',
-        'city': '',
-        'state': '',
-        'country': '',
-        'zipcode': '',
-        'udf1': '',
-        'udf2': '',
-        'udf3': '',
-        'udf4': '',
-        'udf5': '',
-        'udf6': '',
-        'udf7': '',
-        'udf8': '',
-        'udf9': '',
-        'udf10': ''
-      }
-      return res.status(201).json(generatedresponse);
+  var createClassPromise = new Promise(function(resolve, reject){
+    Userclass.create(classData, function(err, userclass){
+      resolve(userclass);
     });
+  });
+  createClassPromise.then(function(data){
+    User.findById(req.user._id, function (err, user){
+      if(err) { return handleError(res, err); }
+      var transactionData = {
+        amount: totalAmount,
+        currency: currency,
+        classInfo: data,
+        productInfo: 'Class request',
+        firstName: user.name.firstName,
+        lastName: user.name.lastName,
+        email: user.email,
+        phone: user.phone || 7777777777,
+        status: 'Not Started'
+      }
+      Transaction.create(transactionData, function(err, transaction) {
+        if(err) { return handleError(res, err); }
+        var generatedHash = hashBeforeTransaction({
+          'key': key,
+          'txnid': transaction._id,
+          'amount': totalAmount,
+          'productinfo': 'Class request',
+          'firstname': user.name.firstName,
+          'email': user.email
+        });
+
+        var generatedresponse = {
+          'key': key,
+          'txnid': transaction._id,
+          'firstname': user.name.firstName,
+          'lastname': user.name.lastname,
+          'email': user.email,
+          'phone': '7777777777',
+          'productinfo': 'Class request',
+          'amount': totalAmount,
+          'surl': 'http://localhost:9000/api/v1/transactions/payment/update',
+          'furl': 'http://localhost:9000/api/v1/transactions/payment/update',
+          'hash': generatedHash,
+          'service_provider': '',
+          'address1': '',
+          'address2': '',
+          'city': '',
+          'state': '',
+          'country': '',
+          'zipcode': '',
+          'udf1': '',
+          'udf2': '',
+          'udf3': '',
+          'udf4': '',
+          'udf5': '',
+          'udf6': '',
+          'udf7': '',
+          'udf8': '',
+          'udf9': '',
+          'udf10': ''
+        }
+        return res.status(201).json(generatedresponse);
+      });
+    })
   })
+  .catch(function(err){
+
+  });
 };
 // Get list of transactions
 exports.index = function(req, res) {
@@ -128,7 +135,7 @@ exports.create = function(req, res) {
 // Updates an existing transaction in the DB.
 exports.updatePayment = function(req, res) {
   if(req.body._id) { delete req.body._id; }
-  
+
   console.log(req.body);
 
   var generatedHash = hashAfterTransaction(req.body, req.body.status);
@@ -140,25 +147,33 @@ exports.updatePayment = function(req, res) {
       if(!transaction) { return res.status(404).send('Not Found'); }
 
       var _classData = transaction.classInfo;
-      
-      Userclass.create(_classData, function(err, userclass) {
-        if(err) { return handleError(res, err); }
-        for(var i = 0; i < userclass.length; i++){
-          var _notificationData = {
-            forUser: userclass[i].teacherID,
-            fromUser: userclass[i].studentID,
-            notificationType: 'classRequest',
-            notificationStatus: 'unread',
-            notificationMessage: 'Test Message',
-            referenceClass: userclass[i]._id
-          }
-          Notification.create(_notificationData, function(err, notification){
-            console.log(err);
-            return res.redirect('/profile');
-            // return res.status(201).json(userclass);
+
+      for(var i = 0; i < _classData.length; i++){
+        var classId = _classData[i]._id;
+
+        Userclass.findOne({
+          _id: classId
+        }, function(err, classData){
+          if (err) { return handleError(res, err); }
+          classData.status = 'requested';
+          classData.save(function(err){
+            if (err) { return handleError(res, err); }
+            var _notificationData = {
+              forUser: classData.teacherID,
+              fromUser: classData.studentID,
+              notificationType: 'classRequest',
+              notificationStatus: 'unread',
+              notificationMessage: 'Test Message',
+              referenceClass: classData._id
+            }
+            Notification.create(_notificationData, function(err, notification){
+              console.log(err);
+              return res.redirect('/profile');
+              // return res.status(201).json(userclass);
+            });
           });
-        }
-      });
+        });
+      }
     });
   }else{
     return res.redirect('/payment/failure/');

@@ -13,8 +13,12 @@ var UserclassSchema = new Schema({
     startFormated: {type: String, required: true},
     endFormated: {type: String, required: true}
   },
+  amount: {
+    currency: {type: String, required: true},
+    cost: {type: Number, required: true}
+  },
   requestedOn: {type: Date, default: Date.now},
-  status: {type: String, default: 'requested'}
+  status: {type: String, default: 'pendingPayment'}
 });
 
 module.exports = mongoose.model('Userclass', UserclassSchema);
