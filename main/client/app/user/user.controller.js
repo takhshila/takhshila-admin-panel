@@ -285,8 +285,7 @@ angular.module('takhshilaApp')
     // }else {
     //   _allowedToBook = true;
     // }
-
-    if($scope.events[_index].status == "booked" || $scope.events[_index].status == "requested" || $scope.events[_index].status == "confirmed"){
+    if($scope.events[_index].status == "booked" || $scope.events[_index].status == "requested" || $scope.events[_index].status == "confirmed" || $scope.events[_index].status == "pendingPayment"){
       return false;
     }else if($scope.events[_index].status == "available"){
       $scope.events[_index].status = "selected";

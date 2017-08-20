@@ -7,6 +7,7 @@ var _ = require('lodash'),
     User = require('../user/user.model'),
     Userclass = require('../userclass/userclass.model'),
     Notification = require('../notification/notification.model'),
+    schedule = require('node-schedule'),
     hashSequence = "key|txnid|amount|productinfo|firstname|email|udf1|udf2|udf3|udf4|udf5|udf6|udf7|udf8|udf9|udf10",
     merchantID = 5804204,
     key = 'gtKFFx',
@@ -56,10 +57,23 @@ exports.initiatePayment = function(req, res) {
         lastName: user.name.lastName,
         email: user.email,
         phone: user.phone || 7777777777,
-        status: 'Not Started'
+        status: 'initiated'
       }
       Transaction.create(transactionData, function(err, transaction) {
         if(err) { return handleError(res, err); }
+        
+        var validateTransactionTime = moment().add(1, 'm').valueOf();
+        
+        var minute = moment(validateTransactionTime).minute();
+        var hour = moment(validateTransactionTime).hour();
+        var date = moment(validateTransactionTime).date();
+        var month = moment(validateTransactionTime).month();
+        var dayOfWeek = moment(validateTransactionTime).weekday();
+
+        var j = schedule.scheduleJob(validateTransactionTime, function(y){
+          console.log(y);
+        }.bind(null,transaction._id));
+
         var generatedHash = hashBeforeTransaction({
           'key': key,
           'txnid': transaction._id,
@@ -137,43 +151,64 @@ exports.updatePayment = function(req, res) {
   if(req.body._id) { delete req.body._id; }
 
   console.log(req.body);
+  var transactionData = req.body;
+  var generatedHash = hashAfterTransaction(transactionData, transactionData.status);
 
-  var generatedHash = hashAfterTransaction(req.body, req.body.status);
-
-  if(generatedHash === req.body.hash){
-    var transactionId = req.body.txnid;
+  if(generatedHash === transactionData.hash){
+    var transactionId = transactionData.txnid;
     Transaction.findById(transactionId, function (err, transaction) {
       if (err) { return handleError(res, err); }
       if(!transaction) { return res.status(404).send('Not Found'); }
 
       var _classData = transaction.classInfo;
-
-      for(var i = 0; i < _classData.length; i++){
-        var classId = _classData[i]._id;
-
-        Userclass.findOne({
-          _id: classId
-        }, function(err, classData){
-          if (err) { return handleError(res, err); }
-          classData.status = 'requested';
-          classData.save(function(err){
-            if (err) { return handleError(res, err); }
-            var _notificationData = {
-              forUser: classData.teacherID,
-              fromUser: classData.studentID,
-              notificationType: 'classRequest',
-              notificationStatus: 'unread',
-              notificationMessage: 'Test Message',
-              referenceClass: classData._id
-            }
-            Notification.create(_notificationData, function(err, notification){
-              console.log(err);
-              return res.redirect('/profile');
-              // return res.status(201).json(userclass);
-            });
-          });
+      transaction.status = transactionData.status;
+      transaction.transactionData = transactionData;
+      transaction.save(function(err){
+        if (err) { return handleError(res, err); }
+        var transactionProcessingPromise = _classData.map(function(data, i){
+          return new Promise(function(resolve, reject){
+            var classId = _classData[i]._id;
+            Userclass.findOne({
+              _id: classId
+            }, function(err, classData){
+              if (err) { return handleError(res, err); }
+              if(transactionData.status === 'success'){
+                classData.status = 'requested';
+                classData.save(function(err){
+                  if (err) { return handleError(res, err); }
+                  var _notificationData = {
+                    forUser: classData.teacherID,
+                    fromUser: classData.studentID,
+                    notificationType: 'classRequest',
+                    notificationStatus: 'unread',
+                    notificationMessage: 'Test Message',
+                    referenceClass: classData._id
+                  }
+                  Notification.create(_notificationData, function(err, notification){
+                    if (err) { return handleError(res, err); }
+                  });
+                });
+              }else{
+                classData.remove(function(err){
+                  if (err) { return handleError(res, err); }
+                  resolve();
+                });
+              }
+            })
+          })
         });
-      }
+        Promise.all(transactionProcessingPromise)
+        .then(function(data){
+          if(transactionData.status === 'success'){
+            return res.redirect('/profile');
+          }else{
+            return res.redirect('/payment/failure/');
+          }
+        })
+        .catch(function(err){
+          return handleError(res, err);
+        })
+      })
     });
   }else{
     return res.redirect('/payment/failure/');
@@ -237,4 +272,8 @@ function hashAfterTransaction(data, transactionStatus) {
   string = string.substr(0, string.length - 1);
 
   return crypto.createHash('sha512', salt).update(string).digest('hex');
+}
+
+function validateTransaction(params){
+  console.log(params);
 }

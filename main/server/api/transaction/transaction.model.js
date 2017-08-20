@@ -28,7 +28,8 @@ var TransactionSchema = new Schema({
   lastName: {type: String},
   email: {type: String},
   phone: {type: Number, required: true},
-  status: {type: String, default: 'Not Started'}
+  transactionData: {type: Object},
+  status: {type: String, default: 'initiated'}
 });
 
 module.exports = mongoose.model('Transaction', TransactionSchema);

@@ -164,6 +164,7 @@
         opacity: 0.75;
       }
     }
+    &.pendingPayment,
     &.requested,
     &.confirmed{
       background-color: #E7E7E7;
