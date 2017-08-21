@@ -64,14 +64,14 @@ exports.initiatePayment = function(req, res) {
         
         var validateTransactionTime = moment().add(1, 'm').valueOf();
         
-        var minute = moment(validateTransactionTime).minute();
-        var hour = moment(validateTransactionTime).hour();
-        var date = moment(validateTransactionTime).date();
-        var month = moment(validateTransactionTime).month();
-        var dayOfWeek = moment(validateTransactionTime).weekday();
+        // var minute = moment(validateTransactionTime).minute();
+        // var hour = moment(validateTransactionTime).hour();
+        // var date = moment(validateTransactionTime).date();
+        // var month = moment(validateTransactionTime).month();
+        // var dayOfWeek = moment(validateTransactionTime).weekday();
 
-        var j = schedule.scheduleJob(validateTransactionTime, function(y){
-          console.log(y);
+        var j = schedule.scheduleJob(validateTransactionTime, function(transactionId){
+          validateTransaction(transactionId);
         }.bind(null,transaction._id));
 
         var generatedHash = hashBeforeTransaction({
@@ -274,6 +274,24 @@ function hashAfterTransaction(data, transactionStatus) {
   return crypto.createHash('sha512', salt).update(string).digest('hex');
 }
 
-function validateTransaction(params){
-  console.log(params);
+function validateTransaction(transactionId){
+  Transaction.findById(transactionId, function (err, transaction){
+    if(transaction.status === 'initiated'){
+      var classData = transaction.classInfo;
+      transaction.status = 'unprocessed';
+      transaction.save(function(err){
+        // if (err) { return handleError(res, err); }
+        classData.map(function(data, i){
+          var classId = classData[i]._id;
+          Userclass.findOne({
+            _id: classId
+          }, function(err, classData){
+            classData.remove(function(err){
+              // if (err) { return handleError(res, err); }
+            });
+          });
+        });
+      });
+    }
+  })
 }
