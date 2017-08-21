@@ -4,6 +4,11 @@ var _ = require('lodash');
 var moment = require('moment');
 var Userclass = require('./userclass.model');
 var Notification = require('../notification/notification.model');
+var eventEmitter;
+
+exports.setEvenetEmitter = function(emitter){
+  eventEmitter = emitter;
+};
 
 // Get list of userclasss
 exports.index = function(req, res) {
