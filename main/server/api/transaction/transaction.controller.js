@@ -150,70 +150,81 @@ exports.create = function(req, res) {
 exports.updatePayment = function(req, res) {
   if(req.body._id) { delete req.body._id; }
 
-  console.log(req.body);
   var transactionData = req.body;
   var generatedHash = hashAfterTransaction(transactionData, transactionData.status);
 
   if(generatedHash === transactionData.hash){
     var transactionId = transactionData.txnid;
-    Transaction.findById(transactionId, function (err, transaction) {
-      if (err) { return handleError(res, err); }
-      if(!transaction) { return res.status(404).send('Not Found'); }
-
-      var _classData = transaction.classInfo;
-      transaction.status = transactionData.status;
-      transaction.transactionData = transactionData;
-      transaction.save(function(err){
+    var transactionPromise = new Promise(function(resolve, reject){
+      Transaction.findById(transactionId, function (err, transaction){
         if (err) { return handleError(res, err); }
-        var transactionProcessingPromise = _classData.map(function(data, i){
-          return new Promise(function(resolve, reject){
-            var classId = _classData[i]._id;
-            Userclass.findOne({
-              _id: classId
-            }, function(err, classData){
-              if (err) { return handleError(res, err); }
-              if(transactionData.status === 'success'){
-                classData.status = 'requested';
-                classData.save(function(err){
-                  if (err) { return handleError(res, err); }
-                  var _notificationData = {
-                    forUser: classData.teacherID,
-                    fromUser: classData.studentID,
-                    notificationType: 'classRequest',
-                    notificationStatus: 'unread',
-                    notificationMessage: 'Test Message',
-                    referenceClass: classData._id
-                  }
-                  Notification.create(_notificationData, function(err, notification){
+        if(!transaction) { return res.status(404).send('Not Found'); }
+
+        var _classData = transaction.classInfo;
+
+        transaction.status = transactionData.status;
+        transaction.transactionData = transactionData;
+        
+        transaction.save(function(err){
+          if (err) { return handleError(res, err); }
+          var transactionProcessingPromise = _classData.map(function(data, i){
+            return new Promise(function(resolve, reject){
+              var classId = _classData[i]._id;
+              Userclass.findOne({
+                _id: classId
+              }, function(err, classData){
+                if (err) { return handleError(res, err); }
+                if(transactionData.status === 'success'){
+                  classData.status = 'requested';
+                  classData.save(function(err){
                     if (err) { return handleError(res, err); }
+                    var _notificationData = {
+                      forUser: classData.teacherID,
+                      fromUser: classData.studentID,
+                      notificationType: 'classRequest',
+                      notificationStatus: 'unread',
+                      notificationMessage: 'Test Message',
+                      referenceClass: classData._id
+                    }
+                    Notification.create(_notificationData, function(err, notification){
+                      if (err) { return handleError(res, err); }
+                      resolve();
+                    });
                   });
-                });
-              }else{
-                classData.remove(function(err){
-                  if (err) { return handleError(res, err); }
-                  resolve();
-                });
-              }
+                }else{
+                  classData.remove(function(err){
+                    if (err) { return handleError(res, err); }
+                    resolve();
+                  });
+                }
+              })
             })
+          });
+          Promise.all(transactionProcessingPromise)
+          .then(function(data){
+            if(transactionData.status === 'success'){
+              resolve();
+            }else{
+              reject();
+            }
           })
-        });
-        Promise.all(transactionProcessingPromise)
-        .then(function(data){
-          if(transactionData.status === 'success'){
-            return res.redirect('/profile');
-          }else{
-            return res.redirect('/payment/failure/');
-          }
+          .catch(function(err){
+            reject();
+          })
         })
-        .catch(function(err){
-          return handleError(res, err);
-        })
-      })
+      });
+    });
+
+    transactionPromise
+    .then(function(data){
+      return res.redirect('/profile');
+    })
+    .catch(function(err){
+      return res.redirect('/payment/failure/');
     });
   }else{
     return res.redirect('/payment/failure/');
-  }
-  
+  }  
 };
 
 // Deletes a transaction from the DB.
@@ -275,6 +286,7 @@ function hashAfterTransaction(data, transactionStatus) {
 }
 
 function validateTransaction(transactionId){
+  console.log(validateTransaction);
   Transaction.findById(transactionId, function (err, transaction){
     if(transaction.status === 'initiated'){
       var classData = transaction.classInfo;

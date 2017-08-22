@@ -4,6 +4,7 @@ var _ = require('lodash');
 var moment = require('moment');
 var Userclass = require('./userclass.model');
 var Notification = require('../notification/notification.model');
+var schedule = require('node-schedule');
 var eventEmitter;
 
 exports.setEvenetEmitter = function(emitter){
@@ -76,6 +77,18 @@ exports.confirmClassRequest = function(req, res) {
       userclass.status = "confirmed";
       userclass.save(function (err) {
         if (err) { return handleError(res, err); }
+
+        // var notifyUserTimeTemp = moment().add(1, 'm').valueOf();
+        var notifyUserTime = moment.unix(userclass.requestedTime.start/1000).subtract(5, 'm').valueOf();
+
+        // var jtemp = schedule.scheduleJob(notifyUserTimeTemp, function(classId){
+        //   notifyUser(classId);
+        // }.bind(null,userclass._id));
+
+        var j = schedule.scheduleJob(notifyUserTime, function(classId){
+          notifyUser(classId);
+        }.bind(null,userclass._id));
+
         var _notificationData = {
           forUser: userclass.studentID,
           fromUser: userclass.teacherID,
@@ -152,4 +165,11 @@ exports.destroy = function(req, res) {
 
 function handleError(res, err) {
   return res.status(500).send(err);
+}
+
+function notifyUser(classId){
+  console.log('Notifying user');
+  eventEmitter.emit('notifyUser', {
+    classId: classId
+  });
 }

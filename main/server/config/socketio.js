@@ -176,3 +176,42 @@ eventEmitter.on('paymentInitialised', function(data){
   console.log('Captured Event');
   console.log(data);
 });
+
+eventEmitter.on('notifyUser', function(data){
+  console.log('Received event: Notifying user');
+  var classID = data.classId;
+  var classLink = 'http://localhost:9000/liveclass/' + classID;
+  Userclass
+  .findById(classID)
+  .populate('studentID teacherID')
+  .exec(function (err, userclass){
+    var users = {
+      student: userclass.studentID,
+      teacher: userclass.teacherID
+    };
+    if(liveClassList[classID] === undefined){
+      liveClassList[classID] = {
+        classDetails: null,
+        connectedUser: []
+      }
+    }
+    for(var userType in users){
+      var user = users[userType];
+      if(onlineUsers[user._id.toString()] === undefined){
+        var textMessage = 'Hi ' + user.name.firstName + '! Your takhshila class is about to start. Please visit ' + classLink;
+        sendTextMessage(user.phone, textMessage);
+      }else{
+        onlineUsers[user._id.toString()].emit('liveClassLink', {
+          classLink: classLink
+        });
+      }
+    }
+  })
+});
+
+
+
+function sendTextMessage(phone, message){
+  console.log('Message sent to ' + phone);
+  console.log('Message text is ' + message);
+}

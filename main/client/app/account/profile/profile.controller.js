@@ -188,13 +188,31 @@ angular.module('takhshilaApp')
 
     $scope.updateAvailability = function(){
       $scope.edit.availability.progress = true;
+      var _availability = {
+        sunday: [],
+        monday: [],
+        tuesday: [],
+        wednessday: [],
+        thursday: [],
+        friday: [],
+        saturday: []
+      };
+      var _weekDays = ['sunday', 'monday', 'tuesday', 'wednessday', 'thursday', 'friday', 'saturday'];
       for(var i = 0; i < $scope.events.length; i++){
-        console.log($scope.events[i].start);
-        $scope.events[i].start = moment($scope.events[i].start, 'MMM DD, YYYY HH:mm').format();
-        $scope.events[i].end = moment($scope.events[i].end, 'MMM DD, YYYY HH:mm').format();
+        // $scope.events[i].start = moment($scope.events[i].start, 'MMM DD, YYYY HH:mm').format();
+        // $scope.events[i].end = moment($scope.events[i].end, 'MMM DD, YYYY HH:mm').format();
+        var day = _weekDays[moment($scope.events[i].start).weekday()];
+        // var startHour = moment($scope.events[i].start).hour();
+        // var startMinute = moment($scope.events[i].start).minute();
+        // var endHour = moment($scope.events[i].end).hour();
+        // var endMinute = moment($scope.events[i].end).minute();
+        _availability[day].push({
+          start: moment($scope.events[i].start, 'MMM DD, YYYY HH:mm').format('HH:mm'),
+          end: moment($scope.events[i].end, 'MMM DD, YYYY HH:mm').format('HH:mm')
+        })
       }
-      console.log($scope.events);
-      userFactory.updateAvailability({availability: $scope.events})
+      console.log(_availability);
+      userFactory.updateAvailability({availability: _availability})
       .success(function(response){
         $scope.edit.availability.progress = false;
         console.log(response);

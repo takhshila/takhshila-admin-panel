@@ -280,34 +280,34 @@ exports.updateAvailability = function(req, res, next) {
     if (err) { return handleError(res, err); }
     if(!user) { return res.status(404).send('Not Found'); }
     if(!user.isTeacher) { return res.status(404).send('You are not allowed to update availability'); }
-    var _availability = {
-      sunday: [],
-      monday: [],
-      tuesday: [],
-      wednessday: [],
-      thursday: [],
-      friday: [],
-      saturday: []
-    };
-    var _weekDays = ['sunday', 'monday', 'tuesday', 'wednessday', 'thursday', 'friday', 'saturday'];
-    for(var i = 0; i < availability.length; i++){
-      // var _day = moment(availability[i].start).get('day');
-      var _start = moment(availability[i].start, 'YYYY-MM-DD HH:mm');
-      var _end = moment(availability[i].end, 'YYYY-MM-DD HH:mm');
-      var _day = (_start.day() - 1);
-      if(_day == -1){
-        _day = 6;
-      }
+    // var _availability = {
+    //   sunday: [],
+    //   monday: [],
+    //   tuesday: [],
+    //   wednessday: [],
+    //   thursday: [],
+    //   friday: [],
+    //   saturday: []
+    // };
+    // var _weekDays = ['sunday', 'monday', 'tuesday', 'wednessday', 'thursday', 'friday', 'saturday'];
+    // for(var i = 0; i < availability.length; i++){
+    //   // var _day = moment(availability[i].start).get('day');
+    //   var _start = moment(availability[i].start, 'YYYY-MM-DD HH:mm');
+    //   var _end = moment(availability[i].end, 'YYYY-MM-DD HH:mm');
+    //   var _day = (_start.day() - 1);
+    //   if(_day == -1){
+    //     _day = 6;
+    //   }
 
-      _availability[_weekDays[_day]].push({
-        start: _start.format('HH:mm'),
-        end: _end.format('HH:mm')
-      });
-    }
-    user.availability = _availability;
+    //   _availability[_weekDays[_day]].push({
+    //     start: _start.format('HH:mm'),
+    //     end: _end.format('HH:mm')
+    //   });
+    // }
+    user.availability = availability;
     user.save(function (err) {
       if (err) { return handleError(res, err); }
-      return res.status(200).json(user.profile);
+      return res.status(200).json(user.availability);
     });
   });
 };
