@@ -209,6 +209,19 @@ eventEmitter.on('notifyUser', function(data){
   })
 });
 
+eventEmitter.on('endClass', function(data){
+  console.log('Received event: End class');
+  var classID = data.classId;
+  if(liveClassList[classID] !== undefined){
+    if(liveClassList[classID].connectedUser.length > 0){
+      console.log("Requesting end class");
+      for(var i = 0; i < liveClassList[classID].connectedUser.length; i++){
+        liveClassUsers[liveClassList[classID].connectedUser[i]].emit('endClass');
+      }
+    }
+  }
+})
+
 
 
 function sendTextMessage(phone, message){

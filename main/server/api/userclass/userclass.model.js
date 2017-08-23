@@ -15,7 +15,8 @@ var UserclassSchema = new Schema({
   },
   amount: {
     currency: {type: String, required: true},
-    cost: {type: Number, required: true}
+    totalCost: {type: Number, required: true},
+    paidToTeacher: {type: Number, required: true}
   },
   requestedOn: {type: Date, default: Date.now},
   status: {type: String, default: 'pendingPayment'}

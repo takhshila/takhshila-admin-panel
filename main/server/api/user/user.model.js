@@ -29,6 +29,7 @@ var UserSchema = new Schema({
     dataURI: { type: String, default: null }
   },
   ratePerHour: {
+    base: Number,
     value: Number,
     currency: { type: String, default: 'INR'}
   },

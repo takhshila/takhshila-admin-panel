@@ -308,11 +308,15 @@ angular.module('takhshilaApp')
       $scope.edit.ratePerHour.editing = true;
       $scope.edit.ratePerHour.data = {
         currency: $scope.currentUser.ratePerHour.currency,
+        base: $scope.currentUser.ratePerHour.base,
         value: $scope.currentUser.ratePerHour.value
       };
     }
+    $scope.updateRatePerHour = function(){
+      $scope.edit.ratePerHour.data.value = isNaN(parseFloat($scope.edit.ratePerHour.data.base)) ? 0 : (parseFloat($scope.edit.ratePerHour.data.base) + parseFloat(0.2 * $scope.edit.ratePerHour.data.base)).toFixed(2);
+    }
     $scope.saveRatePerHour = function(){
-      if(($scope.edit.ratePerHour.data.value === $scope.currentUser.ratePerHour.value && $scope.edit.ratePerHour.data.currency === $scope.currentUser.ratePerHour.currency) || !isNaN($scope.edit.ratePerHour.data.value)){
+      if(($scope.edit.ratePerHour.data.value === $scope.currentUser.ratePerHour.base && $scope.edit.ratePerHour.data.currency === $scope.currentUser.ratePerHour.currency) || !isNaN($scope.edit.ratePerHour.data.value)){
         $scope.edit.ratePerHour.progress = true;
         userFactory.updateRatePerHour({ratePerHour: $scope.edit.ratePerHour.data})
         .success(function(response){

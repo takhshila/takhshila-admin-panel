@@ -80,13 +80,25 @@ exports.confirmClassRequest = function(req, res) {
 
         // var notifyUserTimeTemp = moment().add(1, 'm').valueOf();
         var notifyUserTime = moment.unix(userclass.requestedTime.start/1000).subtract(5, 'm').valueOf();
+        var endClassTime = moment.unix(userclass.requestedTime.end/1000).valueOf();
 
         // var jtemp = schedule.scheduleJob(notifyUserTimeTemp, function(classId){
         //   notifyUser(classId);
         // }.bind(null,userclass._id));
 
-        var j = schedule.scheduleJob(notifyUserTime, function(classId){
-          notifyUser(classId);
+        var priorNotificationJob = schedule.scheduleJob(notifyUserTime, function(classId){
+          console.log('Notifying user');
+          eventEmitter.emit('notifyUser', {
+            classId: classId
+          });
+        }.bind(null,userclass._id));
+
+
+        var endClassJob = schedule.scheduleJob(endClassTime, function(classId){
+          eventEmitter.emit('endClass', {
+            classId: classId
+          });
+          processEndClass(classId);
         }.bind(null,userclass._id));
 
         var _notificationData = {
@@ -167,9 +179,6 @@ function handleError(res, err) {
   return res.status(500).send(err);
 }
 
-function notifyUser(classId){
-  console.log('Notifying user');
-  eventEmitter.emit('notifyUser', {
-    classId: classId
-  });
+function processEndClass(classId){
+  
 }

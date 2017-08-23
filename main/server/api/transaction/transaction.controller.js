@@ -19,108 +19,128 @@ exports.initiatePayment = function(req, res) {
   if(req.body._id) { delete req.body._id; }
   if(!req.body.classData.length){return handleError(res, 'Invalid class data');}
   
-  var classData = [], totalAmount = 0, currency = req.body.currency, userclassList = [];
+  var classData = [], totalAmount = 0, totalReceivedAmount = 0, currency = req.body.currency, userclassList = [];
 
-  for(var i = 0; i < req.body.classData.length; i++){
-    var _data = {
-      studentID: req.user._id,
-      teacherID: req.body.teacherID,
-      requestedTime: {
-        start: (moment(req.body.classData[i].start, 'YYYY-MM-DD HH:mm').valueOf()),
-        end: (moment(req.body.classData[i].end, 'YYYY-MM-DD HH:mm').valueOf()),
-        dateFormated: moment(req.body.classData[i].start, 'YYYY-MM-DD HH:mm').format('MMM DD, YYYY'),
-        startFormated: moment(req.body.classData[i].start, 'YYYY-MM-DD HH:mm').format('HH:mm'),
-        endFormated: moment(req.body.classData[i].end, 'YYYY-MM-DD HH:mm').format('HH:mm')
-      },
-      amount: {
-        currency: req.body.classData[i].currency,
-        cost: req.body.classData[i].cost
+  var initiatePaymentPromise = new Promise(function(resolve, reject){
+    User.findById(req.body.teacherID, function(err, teacher){
+      if(err) { reject({status: 500, data: err}); }
+      var ratePerHour = teacher.ratePerHour.value;
+      var currency = teacher.ratePerHour.currency;
+
+      for(var i = 0; i < req.body.classData.length; i++){
+        var totalClassHour = (moment(req.body.classData[i].end, 'YYYY-MM-DD HH:mm').valueOf() - moment(req.body.classData[i].start, 'YYYY-MM-DD HH:mm').valueOf())/(60*60*1000);
+        var totalClassAmount = (parseFloat(totalClassHour) * parseFloat(ratePerHour)).toFixed(2);
+        var amountPaidToTeacher = (parseFloat(totalClassHour) * parseFloat((ratePerHour - (0.2 * ratePerHour)))).toFixed(2);
+        var _data = {
+          studentID: req.user._id,
+          teacherID: req.body.teacherID,
+          requestedTime: {
+            start: (moment(req.body.classData[i].start, 'YYYY-MM-DD HH:mm').valueOf()),
+            end: (moment(req.body.classData[i].end, 'YYYY-MM-DD HH:mm').valueOf()),
+            dateFormated: moment(req.body.classData[i].start, 'YYYY-MM-DD HH:mm').format('MMM DD, YYYY'),
+            startFormated: moment(req.body.classData[i].start, 'YYYY-MM-DD HH:mm').format('HH:mm'),
+            endFormated: moment(req.body.classData[i].end, 'YYYY-MM-DD HH:mm').format('HH:mm')
+          },
+          amount: {
+            currency: currency,
+            totalCost: totalClassAmount,
+            paidToTeacher: amountPaidToTeacher
+          }
+        }
+        classData.push(_data);
+        totalAmount += parseFloat(totalClassAmount);
+        totalReceivedAmount += parseFloat(req.body.classData[i].cost);
       }
-    }
-    classData.push(_data);
-    totalAmount += req.body.classData[i].cost;
-  }
-  var createClassPromise = new Promise(function(resolve, reject){
-    Userclass.create(classData, function(err, userclass){
-      resolve(userclass);
+
+      console.log(totalReceivedAmount + "<>" + totalAmount);
+      console.log(totalReceivedAmount === totalAmount);
+
+      if(parseFloat(totalReceivedAmount) === parseFloat(totalAmount)){
+        Userclass.create(classData, function(err, userclass){
+          User.findById(req.user._id, function (err, user){
+            if(err) { reject({status: 500, data: err}); }
+            var transactionData = {
+              amount: totalAmount,
+              currency: currency,
+              classInfo: userclass,
+              productInfo: 'Class request',
+              firstName: user.name.firstName,
+              lastName: user.name.lastName,
+              email: user.email,
+              phone: user.phone || 7777777777,
+              status: 'initiated'
+            }
+            Transaction.create(transactionData, function(err, transaction) {
+              if(err) { reject({status: 500, data: err}); }
+              
+              var validateTransactionTime = moment().add(5, 'm').valueOf();
+              
+              // var minute = moment(validateTransactionTime).minute();
+              // var hour = moment(validateTransactionTime).hour();
+              // var date = moment(validateTransactionTime).date();
+              // var month = moment(validateTransactionTime).month();
+              // var dayOfWeek = moment(validateTransactionTime).weekday();
+
+              var j = schedule.scheduleJob(validateTransactionTime, function(transactionId){
+                validateTransaction(transactionId);
+              }.bind(null,transaction._id));
+
+              var generatedHash = hashBeforeTransaction({
+                'key': key,
+                'txnid': transaction._id,
+                'amount': totalAmount,
+                'productinfo': 'Class request',
+                'firstname': user.name.firstName,
+                'email': user.email
+              });
+
+              var generatedresponse = {
+                'key': key,
+                'txnid': transaction._id,
+                'firstname': user.name.firstName,
+                'lastname': user.name.lastname,
+                'email': user.email,
+                'phone': '7777777777',
+                'productinfo': 'Class request',
+                'amount': totalAmount,
+                'surl': 'http://localhost:9000/api/v1/transactions/payment/update',
+                'furl': 'http://localhost:9000/api/v1/transactions/payment/update',
+                'hash': generatedHash,
+                'service_provider': '',
+                'address1': '',
+                'address2': '',
+                'city': '',
+                'state': '',
+                'country': '',
+                'zipcode': '',
+                'udf1': '',
+                'udf2': '',
+                'udf3': '',
+                'udf4': '',
+                'udf5': '',
+                'udf6': '',
+                'udf7': '',
+                'udf8': '',
+                'udf9': '',
+                'udf10': ''
+              }
+              resolve(generatedresponse);
+            });
+          });
+        });
+      }else{
+        reject({status: 403, data: 'Invalid cost provided'});
+      }
     });
   });
-  createClassPromise.then(function(data){
-    User.findById(req.user._id, function (err, user){
-      if(err) { return handleError(res, err); }
-      var transactionData = {
-        amount: totalAmount,
-        currency: currency,
-        classInfo: data,
-        productInfo: 'Class request',
-        firstName: user.name.firstName,
-        lastName: user.name.lastName,
-        email: user.email,
-        phone: user.phone || 7777777777,
-        status: 'initiated'
-      }
-      Transaction.create(transactionData, function(err, transaction) {
-        if(err) { return handleError(res, err); }
-        
-        var validateTransactionTime = moment().add(1, 'm').valueOf();
-        
-        // var minute = moment(validateTransactionTime).minute();
-        // var hour = moment(validateTransactionTime).hour();
-        // var date = moment(validateTransactionTime).date();
-        // var month = moment(validateTransactionTime).month();
-        // var dayOfWeek = moment(validateTransactionTime).weekday();
-
-        var j = schedule.scheduleJob(validateTransactionTime, function(transactionId){
-          validateTransaction(transactionId);
-        }.bind(null,transaction._id));
-
-        var generatedHash = hashBeforeTransaction({
-          'key': key,
-          'txnid': transaction._id,
-          'amount': totalAmount,
-          'productinfo': 'Class request',
-          'firstname': user.name.firstName,
-          'email': user.email
-        });
-
-        var generatedresponse = {
-          'key': key,
-          'txnid': transaction._id,
-          'firstname': user.name.firstName,
-          'lastname': user.name.lastname,
-          'email': user.email,
-          'phone': '7777777777',
-          'productinfo': 'Class request',
-          'amount': totalAmount,
-          'surl': 'http://localhost:9000/api/v1/transactions/payment/update',
-          'furl': 'http://localhost:9000/api/v1/transactions/payment/update',
-          'hash': generatedHash,
-          'service_provider': '',
-          'address1': '',
-          'address2': '',
-          'city': '',
-          'state': '',
-          'country': '',
-          'zipcode': '',
-          'udf1': '',
-          'udf2': '',
-          'udf3': '',
-          'udf4': '',
-          'udf5': '',
-          'udf6': '',
-          'udf7': '',
-          'udf8': '',
-          'udf9': '',
-          'udf10': ''
-        }
-        return res.status(201).json(generatedresponse);
-      });
-    })
+  initiatePaymentPromise.then(function(data){
+    return res.status(201).json(data);
   })
   .catch(function(err){
-
+    return res.status(err.status).send(err.data);
   });
 };
+
 // Get list of transactions
 exports.index = function(req, res) {
   Transaction.find(function (err, transactions) {
@@ -154,6 +174,7 @@ exports.updatePayment = function(req, res) {
   var generatedHash = hashAfterTransaction(transactionData, transactionData.status);
 
   if(generatedHash === transactionData.hash){
+    console.log("Hash Verified");
     var transactionId = transactionData.txnid;
     var transactionPromise = new Promise(function(resolve, reject){
       Transaction.findById(transactionId, function (err, transaction){
@@ -169,12 +190,14 @@ exports.updatePayment = function(req, res) {
           if (err) { return handleError(res, err); }
           var transactionProcessingPromise = _classData.map(function(data, i){
             return new Promise(function(resolve, reject){
-              var classId = _classData[i]._id;
-              Userclass.findOne({
-                _id: classId
-              }, function(err, classData){
+              var classId = data._id;
+              console.log(classId);
+              Userclass.findById(classId, function(err, classData){
                 if (err) { return handleError(res, err); }
                 if(transactionData.status === 'success'){
+                  console.log("transactionData success");
+                  console.log(err);
+                  console.log(classData);
                   classData.status = 'requested';
                   classData.save(function(err){
                     if (err) { return handleError(res, err); }
@@ -192,6 +215,7 @@ exports.updatePayment = function(req, res) {
                     });
                   });
                 }else{
+                  console.log("transactionData failure");
                   classData.remove(function(err){
                     if (err) { return handleError(res, err); }
                     resolve();
@@ -223,6 +247,7 @@ exports.updatePayment = function(req, res) {
       return res.redirect('/payment/failure/');
     });
   }else{
+    console.log("Hash Not Verified");
     return res.redirect('/payment/failure/');
   }  
 };

@@ -26,7 +26,7 @@
               </div>
               <div ng-if="edit.ratePerHour.editing" class="edit-price-container">
                 <div class="ui right labeled input">
-                  <input type="text" ng-model="edit.ratePerHour.data.value" class="price-value" placeholder="Enter price per hour">
+                  <input type="text" ng-model="edit.ratePerHour.data.base" class="price-value" placeholder="Enter price per hour" ng-change="updateRatePerHour()">
                   <div class="ui dropdown label">
                     <span uib-dropdown on-toggle="toggled(open)">
                       <div class="text" uib-dropdown-toggle>
@@ -39,6 +39,10 @@
                       </ul>
                     </span>
                   </div>
+                </div>
+                <div class="ui right labeled input">
+                  <span>Display Amount:</span>
+                  {{edit.ratePerHour.data.value}}
                 </div>
                 <div class="ui buttons">
                   <button class="ui primary button" ng-class = "{'loading': edit.ratePerHour.progress}" ng-disabled="edit.ratePerHour.progress" ng-click="saveRatePerHour()">Save</button>
