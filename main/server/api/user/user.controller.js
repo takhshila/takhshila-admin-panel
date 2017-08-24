@@ -4,6 +4,7 @@ var _ = require('lodash');
 var moment = require('moment');
 var User = require('./user.model');
 var Userclass = require('../userclass/userclass.model');
+var Wallet = require('../wallet/wallet.model');
 var Topic = require('../topic/topic.model');
 var School = require('../school/school.model');
 var Company = require('../company/company.model');
@@ -62,31 +63,55 @@ exports.sendVerificationCode = function (req, res, next) {
  */
 exports.verifyPhoneNumber = function (req, res, next) {
   var verificationCode = req.body.otp;
-  User.findOne({
-    _id: req.body.userId,
-    phoneVerificationCode: req.body.otp
-  }, function(err, user){
-    if (err) return next(err);
-    if(!user){ return res.status(403).json({errors: {otp: 'Invalid otp'}}); }
-    user.phoneVerificationCode = null;
-    user.phone = user.tempPhone;
-    user.isPhoneVerified = true;
-    user.tempPhone = null;
-    user.status = 'active';
-    user.save(function(err, user) {
-      if (err) return validationError(res, err);
-      if(req.body.generateToken){
-        var token = jwt.sign({_id: user._id }, config.secrets.session, { expiresIn: 60*5 });
-        res.json({ success: true, token: token });
-      }else{
-        if(user.isTeacher){
-          res.json(user.teacherProfile);
-        }else {
-          res.json(user.profile);
+  
+  var promoBalance = 0.00;
+  var withdrawBalance = 0.00;
+  var nonWithdrawBalance = 0.00;
+  
+  var verifyPhonePromise = new Promise(function(resolve, reject){
+    User.findOne({
+      _id: req.body.userId,
+      phoneVerificationCode: req.body.otp
+    }, function(err, user){
+      if (err) { reject({status: 403, data: err }); return; }
+      if(!user){ reject({status: 403, data: {errors: {otp: 'Invalid otp'}}}); return; }
+      user.phoneVerificationCode = null;
+      user.phone = user.tempPhone;
+      user.isPhoneVerified = true;
+      user.tempPhone = null;
+      user.status = 'active';
+      user.save(function(err, user) {
+        if (err) { reject({status: 422, data: err }); return; };
+        var walletData = {
+          userID: user._id,
+          promoBalance: promoBalance,
+          withdrawBalance: withdrawBalance,
+          nonWithdrawBalance: nonWithdrawBalance,
+          totalBalance: parseFloat(promoBalance + withdrawBalance + nonWithdrawBalance).toFixed(2)
         }
+        Wallet.create(walletData, function(err, wallet) {
+          if (err) { reject({status: 422, data: err }); return; }
+          resolve(user);
+        });
+      });
+    })
+  });
+  verifyPhonePromise
+  .then(function(user){
+    if(req.body.generateToken){
+      var token = jwt.sign({_id: user._id }, config.secrets.session, { expiresIn: 60*5 });
+      res.json({ success: true, token: token });
+    }else{
+      if(user.isTeacher){
+        res.json(user.teacherProfile);
+      }else {
+        res.json(user.profile);
       }
-    });
+    }
   })
+  .catch(function(err){
+    return res.status(err.status).json(err.data);
+  });
 };
 
 // /**

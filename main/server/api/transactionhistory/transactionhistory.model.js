@@ -8,7 +8,8 @@ var TransactionhistorySchema = new Schema({
   previousBalance: {type: Number, required: true, default: 0.00},
   newBalance: {type: Number, required: true, default: 0.00},
   transactionType: {type: String, enum : ["credit", "debit"], required: true},
-  transactiondata: {type: String, default: null},
+  transactionDescription: {type: String, enum : ["credit", "debit"], required: true},
+  transactionData: {type: String, default: null},
   refrenceClass: {type: String, ref: 'Userclass'},
   dateTime: {type: Date, default: Date.now}
 });

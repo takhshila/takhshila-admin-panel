@@ -5,7 +5,10 @@ var mongoose = require('mongoose'),
 
 var WalletSchema = new Schema({
   userID: {type: String, ref: 'User', required: true},
-  balance: {type: Number, required: true, default: 0.00},
+  promoBalance: {type: Number, required: true, default: 0.00},
+  withdrawBalance: {type: Number, required: true, default: 0.00},
+  nonWithdrawBalance: {type: Number, required: true, default: 0.00},
+  totalBalance: {type: Number, required: true, default: 0.00},
   active: Boolean
 });
 

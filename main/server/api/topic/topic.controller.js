@@ -22,11 +22,11 @@ exports.show = function(req, res) {
     return res.json(topic);
   });
 };
-// Get a single topic
+// Search topic
 exports.search = function(req, res) {
   Topic.find({
     topicName: new RegExp(req.params.searchTerm, "i"),
-    active: true
+    // active: true
   }, function (err, topic) {
     if(err) { return handleError(res, err); }
     if(!topic) { return res.status(404).send('Not Found'); }
