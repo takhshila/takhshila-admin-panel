@@ -5,12 +5,13 @@ var mongoose = require('mongoose'),
 
 var TransactionhistorySchema = new Schema({
   userID: {type: String, ref: 'User', required: true},
-  previousBalance: {type: Number, required: true, default: 0.00},
-  newBalance: {type: Number, required: true, default: 0.00},
-  transactionType: {type: String, enum : ["credit", "debit"], required: true},
-  transactionDescription: {type: String, enum : ["credit", "debit"], required: true},
-  transactionData: {type: String, default: null},
-  refrenceClass: {type: String, ref: 'Userclass'},
+  transactionType: {type: String, enum : ["Credit", "Debit"], required: true},
+  transactionDescription: {type: String},
+  transactionAmount: {type: Number, required: true},
+  transactionAmountType: {type: String, required: true},
+  refrenceTransaction: {type: String, ref: 'Transaction'},
+  previousBalance: {type: Number, required: true},
+  newBalance: {type: Number, required: true},
   dateTime: {type: Date, default: Date.now}
 });
 

@@ -7,6 +7,7 @@ var _ = require('lodash'),
     User = require('../user/user.model'),
     Userclass = require('../userclass/userclass.model'),
     Notification = require('../notification/notification.model'),
+    transactionHistoryController = require('../transactionhistory/transactionhistory.controller'),
     schedule = require('node-schedule'),
     hashSequence = "key|txnid|amount|productinfo|firstname|email|udf1|udf2|udf3|udf4|udf5|udf6|udf7|udf8|udf9|udf10",
     merchantID = 5804204,
@@ -16,6 +17,7 @@ var _ = require('lodash'),
 
 // Initiate transactions
 exports.initiatePayment = function(req, res) {
+  var userId = req.user._id;
   if(req.body._id) { delete req.body._id; }
   if(!req.body.classData.length){return handleError(res, 'Invalid class data');}
   
@@ -52,14 +54,12 @@ exports.initiatePayment = function(req, res) {
         totalReceivedAmount += parseFloat(req.body.classData[i].cost);
       }
 
-      console.log(totalReceivedAmount + "<>" + totalAmount);
-      console.log(totalReceivedAmount === totalAmount);
-
       if(parseFloat(totalReceivedAmount) === parseFloat(totalAmount)){
         Userclass.create(classData, function(err, userclass){
           User.findById(req.user._id, function (err, user){
             if(err) { reject({status: 500, data: err}); }
             var transactionData = {
+              userID: user._id,
               amount: totalAmount,
               currency: currency,
               classInfo: userclass,
@@ -169,38 +169,33 @@ exports.create = function(req, res) {
 // Updates an existing transaction in the DB.
 exports.updatePayment = function(req, res) {
   if(req.body._id) { delete req.body._id; }
-
+  var transaction = null;
   var transactionData = req.body;
   var generatedHash = hashAfterTransaction(transactionData, transactionData.status);
 
   if(generatedHash === transactionData.hash){
-    console.log("Hash Verified");
     var transactionId = transactionData.txnid;
     var transactionPromise = new Promise(function(resolve, reject){
       Transaction.findById(transactionId, function (err, transaction){
-        if (err) { return handleError(res, err); }
+        // if (err) { return handleError(res, err); }
         if(!transaction) { return res.status(404).send('Not Found'); }
-
+        transaction = transaction;
         var _classData = transaction.classInfo;
 
         transaction.status = transactionData.status;
         transaction.transactionData = transactionData;
         
         transaction.save(function(err){
-          if (err) { return handleError(res, err); }
+          // if (err) { return handleError(res, err); }
           var transactionProcessingPromise = _classData.map(function(data, i){
             return new Promise(function(resolve, reject){
               var classId = data._id;
-              console.log(classId);
               Userclass.findById(classId, function(err, classData){
-                if (err) { return handleError(res, err); }
+                // if (err) { return handleError(res, err); }
                 if(transactionData.status === 'success'){
-                  console.log("transactionData success");
-                  console.log(err);
-                  console.log(classData);
                   classData.status = 'requested';
                   classData.save(function(err){
-                    if (err) { return handleError(res, err); }
+                    // if (err) { return handleError(res, err); }
                     var _notificationData = {
                       forUser: classData.teacherID,
                       fromUser: classData.studentID,
@@ -210,15 +205,14 @@ exports.updatePayment = function(req, res) {
                       referenceClass: classData._id
                     }
                     Notification.create(_notificationData, function(err, notification){
-                      if (err) { return handleError(res, err); }
+                      // if (err) { return handleError(res, err); }
                       resolve();
                     });
                   });
                 }else{
-                  console.log("transactionData failure");
                   classData.remove(function(err){
-                    if (err) { return handleError(res, err); }
-                    resolve();
+                    // if (err) { return handleError(res, err); }
+                    reject();
                   });
                 }
               })
@@ -227,13 +221,28 @@ exports.updatePayment = function(req, res) {
           Promise.all(transactionProcessingPromise)
           .then(function(data){
             if(transactionData.status === 'success'){
-              resolve();
+              var userId = transaction.userID;
+              var transactionAmount = transactionData.amount;
+              var transactionType = 'Credit';
+              var transactionAmountType = 'nonWithdrawBalance';
+              var transactionDescription = 'Amount paid for class booking';
+              var refrenceTransaction = transaction._id;
+
+              transactionHistoryController
+              .processTransaction(userId, transactionAmount, transactionType, transactionAmountType, transactionDescription, refrenceTransaction)
+              .then(function(response){
+                resolve();
+              })
+              .catch(function(err){
+                // Refund payment code will be added here
+                reject(err);
+              });
             }else{
               reject();
             }
           })
           .catch(function(err){
-            reject();
+            reject(err);
           })
         })
       });
@@ -244,10 +253,10 @@ exports.updatePayment = function(req, res) {
       return res.redirect('/profile');
     })
     .catch(function(err){
+      console.log(err);
       return res.redirect('/payment/failure/');
     });
   }else{
-    console.log("Hash Not Verified");
     return res.redirect('/payment/failure/');
   }  
 };

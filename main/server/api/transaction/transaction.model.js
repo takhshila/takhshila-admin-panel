@@ -25,6 +25,7 @@ var TransactionSchema = new Schema({
 	  requestedOn: {type: Date, default: Date.now},
   }],
   classID: {type: String, ref: 'Userclass'},
+  userID: {type: String, ref: 'User', required: true},
   firstName: {type: String, required: true},
   lastName: {type: String},
   email: {type: String},
