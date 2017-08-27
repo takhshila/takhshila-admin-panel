@@ -11,7 +11,18 @@
 				<div class="image" style="background-image: url('{{notification.fromUser.profilePhoto.dataURI}}');">
 				</div>
 			</div>
-			<div class="notification-content-container">
+			<div class="notification-content-container" ng-if="notification.notificationType === 'requestConfirmed'">
+				<div class="notification-title">
+					<span>
+						<strong>{{notification.fromUser.name.firstName}} {{notification.fromUser.name.lastName}}</strong> confirmed your request for class
+						<span class="class-date">
+							<strong>on</strong> {{notification.referenceClass.requestedTime.start | amDateFormat:'dddd, MMMM Do \'YY'}} <strong> from </strong> {{notification.referenceClass.requestedTime.start | amDateFormat:'h:mm a'}} <strong> to </strong>{{notification.referenceClass.requestedTime.end | amDateFormat:'h:mm a'}}
+						</span>
+						<p>** Please make yourself available atleast 15 mins before the start of the class.</p>
+					</span>
+				</div>	
+			</div>
+			<div class="notification-content-container" ng-if="notification.notificationType === 'classRequest'">
 				<div class="notification-title">
 					<span>
 						<strong>{{notification.fromUser.name.firstName}} {{notification.fromUser.name.lastName}}</strong> requested a class.

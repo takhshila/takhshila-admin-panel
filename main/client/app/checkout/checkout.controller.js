@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('takhshilaApp')
-  .controller('CheckoutCtrl', function ($rootScope, $scope, transactionFactory, cart) {
+  .controller('CheckoutCtrl', function ($rootScope, $scope, $state, transactionFactory, cart) {
   	$rootScope.isLoading = false;
   	$scope.cartData = cart.getCart();
   	$scope.paymentData = {};
@@ -21,10 +21,12 @@ angular.module('takhshilaApp')
     	}
     	transactionFactory.initiatePayment(transactionData)
     	.success(function(response){
-    		console.log("Success");
-    		console.log(response);
-    		$scope.paymentData = response;
-    		$rootScope.$broadcast('processFormSubmit', {formName: 'paymentRedirect'})
+            if(response.paymentRequired){
+        		$scope.paymentData = response.paymentData;
+        		$rootScope.$broadcast('processFormSubmit', {formName: 'paymentRedirect'});
+            }else{
+                $state.go('profile');
+            }
     		// var paymentForm = angular.element('#paymentRedirect');
     		// paymentForm.click();
     		// paymentForm.triggerHandler('submit');

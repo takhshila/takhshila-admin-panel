@@ -59,57 +59,71 @@ exports.destroy = function(req, res) {
 
 
 exports.processTransaction = function(userId, transactionAmount, transactionType, transactionAmountType, transactionDescription, refrenceTransaction){
-  return new Promise(function(resolve, reject){
-    if(!userId || !transactionAmount || !transactionType || !transactionAmountType){
-      console.log(userId);
-      console.log(transactionAmount);
-      console.log(transactionType);
-      console.log(transactionAmountType);
-      reject('Invalid data');
-      return;
+  if(userId === null){
+    var transactionData = {
+      transactionType: transactionType,
+      transactionAmount: parseFloat(transactionAmount),
+      transactionAmountType: transactionAmountType,
+      previousBalance: 0.00,
+      newBalance: 0.00
     }
-
-    Wallet.findOne({
-      userID: userId
-    }, function(err, walletData){
-      if(err){ reject('Invalid user'); return; }
-      var previousWalletBalance = walletData.totalBalance;
-      if(transactionType.toLowerCase() === 'credit'){
-        walletData[transactionAmountType] += parseFloat(transactionAmount);
-        walletData.totalBalance += parseFloat(transactionAmount);
-      } else if(transactionType.toLowerCase() === 'debit'){
-        if(parseFloat(walletData[transactionAmountType]) < parseFloat(transactionAmount)){
-          reject('Invalid transaction'); return;
-        }
-        walletData[transactionAmountType] -= parseFloat(transactionAmount);
-        walletData.totalBalance -= parseFloat(transactionAmount);
-      } else{
-        reject('Invalid transaction type'); return;
+    Transactionhistory.create(transactionData, function(err, transactionHistoryData){
+      if(err){ console.log(err); reject('Invalid transaction data'); return; }
+      return;
+    });
+  } else {
+    return new Promise(function(resolve, reject){
+      if(!userId || !transactionAmount || !transactionType || !transactionAmountType){
+        console.log(userId);
+        console.log(transactionAmount);
+        console.log(transactionType);
+        console.log(transactionAmountType);
+        reject('Invalid data');
+        return;
       }
-      
-      walletData.save(function(err, updatedWalletData){
-        if(err){ reject('Invalid wallet data'); return; }
-        var transactionData = {
-          userID: userId,
-          transactionType: transactionType,
-          transactionAmount: parseFloat(transactionAmount),
-          transactionAmountType: transactionAmountType,
-          previousBalance: previousWalletBalance,
-          newBalance: updatedWalletData.totalBalance
-        }
-        if(transactionDescription){ transactionData.transactionDescription = transactionDescription; }
-        if(refrenceTransaction){ transactionData.refrenceTransaction = refrenceTransaction; }
 
-        Transactionhistory.create(transactionData, function(err, transactionHistoryData){
-          if(err){ console.log(err); reject('Invalid transaction data'); return; }
-          resolve({
-            transactionHistoryData: transactionHistoryData,
-            walletData: updatedWalletData
+      Wallet.findOne({
+        userID: userId
+      }, function(err, walletData){
+        if(err){ reject('Invalid user'); return; }
+        var previousWalletBalance = walletData.totalBalance;
+        if(transactionType.toLowerCase() === 'credit'){
+          walletData[transactionAmountType] += parseFloat(transactionAmount);
+          walletData.totalBalance += parseFloat(transactionAmount);
+        } else if(transactionType.toLowerCase() === 'debit'){
+          if(parseFloat(walletData[transactionAmountType]) < parseFloat(transactionAmount)){
+            reject('Invalid transaction'); return;
+          }
+          walletData[transactionAmountType] -= parseFloat(transactionAmount);
+          walletData.totalBalance -= parseFloat(transactionAmount);
+        } else{
+          reject('Invalid transaction type'); return;
+        }
+        
+        walletData.save(function(err, updatedWalletData){
+          if(err){ reject('Invalid wallet data'); return; }
+          var transactionData = {
+            userID: userId,
+            transactionType: transactionType,
+            transactionAmount: parseFloat(transactionAmount),
+            transactionAmountType: transactionAmountType,
+            previousBalance: previousWalletBalance,
+            newBalance: updatedWalletData.totalBalance
+          }
+          if(transactionDescription){ transactionData.transactionDescription = transactionDescription; }
+          if(refrenceTransaction){ transactionData.refrenceTransaction = refrenceTransaction; }
+
+          Transactionhistory.create(transactionData, function(err, transactionHistoryData){
+            if(err){ console.log(err); reject('Invalid transaction data'); return; }
+            resolve({
+              transactionHistoryData: transactionHistoryData,
+              walletData: updatedWalletData
+            });
           });
         });
-      });
-    })
-  });
+      })
+    });
+  }
 }
 
 function handleError(res, err) {

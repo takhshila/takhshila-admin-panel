@@ -64,7 +64,7 @@ exports.sendVerificationCode = function (req, res, next) {
 exports.verifyPhoneNumber = function (req, res, next) {
   var verificationCode = req.body.otp;
   
-  var promoBalance = 0.00;
+  var promoBalance = 100.00;
   var withdrawBalance = 0.00;
   var nonWithdrawBalance = 0.00;
   

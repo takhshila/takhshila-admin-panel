@@ -6,6 +6,7 @@ var _ = require('lodash'),
     Transaction = require('./transaction.model'),
     User = require('../user/user.model'),
     Userclass = require('../userclass/userclass.model'),
+    Wallet = require('../wallet/wallet.model'),
     Notification = require('../notification/notification.model'),
     transactionHistoryController = require('../transactionhistory/transactionhistory.controller'),
     schedule = require('node-schedule'),
@@ -55,77 +56,155 @@ exports.initiatePayment = function(req, res) {
       }
 
       if(parseFloat(totalReceivedAmount) === parseFloat(totalAmount)){
+        var amountToPay = totalAmount;
         Userclass.create(classData, function(err, userclass){
           User.findById(req.user._id, function (err, user){
             if(err) { reject({status: 500, data: err}); }
-            var transactionData = {
-              userID: user._id,
-              amount: totalAmount,
-              currency: currency,
-              classInfo: userclass,
-              productInfo: 'Class request',
-              firstName: user.name.firstName,
-              lastName: user.name.lastName,
-              email: user.email,
-              phone: user.phone || 7777777777,
-              status: 'initiated'
-            }
-            Transaction.create(transactionData, function(err, transaction) {
+            // Get User Wallet Balance
+            Wallet.findOne({
+              userID: user._id
+            }, function(err, walletData){
               if(err) { reject({status: 500, data: err}); }
-              
-              var validateTransactionTime = moment().add(5, 'm').valueOf();
-              
-              // var minute = moment(validateTransactionTime).minute();
-              // var hour = moment(validateTransactionTime).hour();
-              // var date = moment(validateTransactionTime).date();
-              // var month = moment(validateTransactionTime).month();
-              // var dayOfWeek = moment(validateTransactionTime).weekday();
 
-              var j = schedule.scheduleJob(validateTransactionTime, function(transactionId){
-                validateTransaction(transactionId);
-              }.bind(null,transaction._id));
+              var checkAmountPromise = new Promise(function(resolve, reject){
+                var walletBalance = walletData.totalBalance;
+                var nonWithdrawBalance = walletData.nonWithdrawBalance;
+                var withdrawBalance = walletData.withdrawBalance;
+                var promoBalance = walletData.promoBalance;
+                var bookingBalance = parseFloat(withdrawBalance + promoBalance);
+                
+                var amountToTransfer = 0;
 
-              var generatedHash = hashBeforeTransaction({
-                'key': key,
-                'txnid': transaction._id,
-                'amount': totalAmount,
-                'productinfo': 'Class request',
-                'firstname': user.name.firstName,
-                'email': user.email
+                if(promoBalance >= totalAmount){
+                  amountToPay = 0;
+                  walletData.nonWithdrawBalance = parseFloat(nonWithdrawBalance + totalAmount);
+                  walletData.promoBalance = parseFloat(promoBalance - totalAmount);                  
+                }else if(bookingBalance >= totalAmount){
+                  amountToPay = 0;
+                  walletData.promoBalance = 0;
+                  walletData.withdrawBalance = parseFloat(withdrawBalance - (totalAmount - promoBalance));;
+                  walletData.nonWithdrawBalance = parseFloat(nonWithdrawBalance + totalAmount);
+                }else if(bookingBalance > 0){
+                  amountToPay = parseFloat(totalAmount - bookingBalance);
+                  walletData.promoBalance = 0;
+                  walletData.withdrawBalance = parseFloat(withdrawBalance - (bookingBalance - promoBalance));;
+                  walletData.nonWithdrawBalance = parseFloat(nonWithdrawBalance + bookingBalance);
+                }
+
+                walletData.save(function(err, updatedWalletData){
+                  if(err) { reject({status: 500, data: err}); }
+                  resolve();
+                });
               });
+              
+              checkAmountPromise
+              .then(function(){
+                if(amountToPay > 0){
+                  var transactionData = {
+                    userID: user._id,
+                    amount: amountToPay,
+                    currency: currency,
+                    classInfo: userclass,
+                    productInfo: 'Class request',
+                    firstName: user.name.firstName,
+                    lastName: user.name.lastName,
+                    email: user.email,
+                    phone: user.phone || 7777777777,
+                    status: 'initiated'
+                  }
+                  Transaction.create(transactionData, function(err, transaction) {
+                    if(err) { reject({status: 500, data: err}); }
+                    
+                    var validateTransactionTime = moment().add(5, 'm').valueOf();
 
-              var generatedresponse = {
-                'key': key,
-                'txnid': transaction._id,
-                'firstname': user.name.firstName,
-                'lastname': user.name.lastname,
-                'email': user.email,
-                'phone': '7777777777',
-                'productinfo': 'Class request',
-                'amount': totalAmount,
-                'surl': 'http://localhost:9000/api/v1/transactions/payment/update',
-                'furl': 'http://localhost:9000/api/v1/transactions/payment/update',
-                'hash': generatedHash,
-                'service_provider': '',
-                'address1': '',
-                'address2': '',
-                'city': '',
-                'state': '',
-                'country': '',
-                'zipcode': '',
-                'udf1': '',
-                'udf2': '',
-                'udf3': '',
-                'udf4': '',
-                'udf5': '',
-                'udf6': '',
-                'udf7': '',
-                'udf8': '',
-                'udf9': '',
-                'udf10': ''
-              }
-              resolve(generatedresponse);
+                    var j = schedule.scheduleJob(validateTransactionTime, function(transactionId){
+                      validateTransaction(transactionId);
+                    }.bind(null,transaction._id));
+
+                    var generatedHash = hashBeforeTransaction({
+                      'key': key,
+                      'txnid': transaction._id,
+                      'amount': amountToPay,
+                      'productinfo': 'Class request',
+                      'firstname': user.name.firstName,
+                      'email': user.email
+                    });
+
+                    var generatedresponse = {
+                      'key': key,
+                      'txnid': transaction._id,
+                      'firstname': user.name.firstName,
+                      'lastname': user.name.lastname,
+                      'email': user.email,
+                      'phone': '7777777777',
+                      'productinfo': 'Class request',
+                      'amount': amountToPay,
+                      'surl': 'http://localhost:9000/api/v1/transactions/payment/update',
+                      'furl': 'http://localhost:9000/api/v1/transactions/payment/update',
+                      'hash': generatedHash,
+                      'service_provider': '',
+                      'address1': '',
+                      'address2': '',
+                      'city': '',
+                      'state': '',
+                      'country': '',
+                      'zipcode': '',
+                      'udf1': '',
+                      'udf2': '',
+                      'udf3': '',
+                      'udf4': '',
+                      'udf5': '',
+                      'udf6': '',
+                      'udf7': '',
+                      'udf8': '',
+                      'udf9': '',
+                      'udf10': ''
+                    }
+                    resolve({
+                      paymentRequired: true,
+                      paymentData: generatedresponse
+                    });
+                  });
+                }else{
+                  var updateClassDataPromise = userclass.map(function(data, i){
+                    return new Promise(function(resolve, reject){
+                      var classId = data._id;
+                      Userclass.findById(classId, function(err, classData){
+                        classData.status = 'requested';
+                        classData.save(function(err){
+                          var _notificationData = {
+                            forUser: classData.teacherID,
+                            fromUser: classData.studentID,
+                            notificationType: 'classRequest',
+                            notificationStatus: 'unread',
+                            notificationMessage: 'Test Message',
+                            referenceClass: classData._id
+                          }
+                          Notification.create(_notificationData, function(err, notification){
+                            resolve();
+                          });
+                        });
+                      })
+                    })
+                  });
+
+                  Promise.all(updateClassDataPromise)
+                  .then(function(){
+                    resolve({
+                      paymentRequired: false,
+                      paymentData: null
+                    });
+                  })
+                  .catch(function(err){
+                    reject({status: 500, data: err});
+                  });
+                }
+              })
+              .catch(function(err){
+                reject({status: 500, data: err});
+              });
             });
+
           });
         });
       }else{
@@ -133,10 +212,11 @@ exports.initiatePayment = function(req, res) {
       }
     });
   });
-  initiatePaymentPromise.then(function(data){
-    return res.status(201).json(data);
+  initiatePaymentPromise.then(function(response){
+    return res.status(201).json(response);
   })
   .catch(function(err){
+    console.log(err);
     return res.status(err.status).send(err.data);
   });
 };
