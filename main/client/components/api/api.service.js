@@ -11,7 +11,7 @@ angular.module('takhshilaApp')
         return $http.get(base_url+url, {params: params});
     }
     function getListRequest(url, params) {
-        return $http.get(base_url+url, params);
+        return $http.get(base_url+url, {params: params});
     }
     function postRequest(url, data) {
         return $http.post(base_url+url, data);

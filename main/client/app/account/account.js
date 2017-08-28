@@ -20,6 +20,13 @@ angular.module('takhshilaApp')
         navStick: true,
         authenticate: true
       })
+      .state('class', {
+        url: '/class',
+        templateUrl: 'app/account/class/class.html',
+        controller: 'ClassCtrl',
+        navStick: true,
+        authenticate: true
+      })
       .state('settings', {
         url: '/settings',
         templateUrl: 'app/account/settings/settings.html',

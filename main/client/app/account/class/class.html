@@ -1,0 +1,64 @@
+<navbar></navbar>
+
+<div class="container" id="classses">
+  <div class="row">
+    <md-tabs md-dynamic-height md-border-bottom>
+      <md-tab label="All Classes" ng-click="loadClasses()">
+        <md-content class="md-padding">
+        	<!-- <h1 class="md-display-2">All classes</h1> -->
+			<div class="ui items">
+			  <div class="item" ng-repeat="class in classList">
+			    <div class="ui tiny image" ng-if="class.teacherID._id !== currentUser._id">
+			      <img ng-src="{{class.teacherID.profilePhoto.dataURI}}">
+			    </div>
+
+			    <div class="ui tiny image" ng-if="class.studentID._id !== currentUser._id">
+			      <img ng-src="{{class.studentID.profilePhoto.dataURI}}">
+			    </div>
+		  		
+			    <div class="content" ng-if="class.studentID._id !== currentUser._id">
+			      <div class="header">{{class.studentID.name.firstName}} {{class.studentID.name.lastName}}</div>
+			      <div class="meta">
+			        <span class="price">$1200</span>
+			        <span class="stay">1 Month</span>
+			      </div>
+			      <div class="description">
+			        <p></p>
+			      </div>
+			    </div>
+
+			    <div class="content" ng-if="class.teacherID._id !== currentUser._id">
+			      <div class="header">{{class.teacherID.name.firstName}} {{class.teacherID.name.lastName}}</div>
+			      <div class="meta">
+			        <span class="price">$1200</span>
+			        <span class="stay">1 Month</span>
+			      </div>
+			      <div class="description">
+			        <p></p>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+
+            <div class="action-container centered" ng-if="hasMoreData">
+              <div class="ui buttons">
+                <button ng-class = "{'loading': loading}" ng-disabled="loading" ng-click="getClasses()" class = "ui button basic primary">Load More</button>
+              </div>
+            </div>
+        </md-content>
+      </md-tab>
+
+      <md-tab label="Upcoming Classes" ng-click="loadClasses('upcoming')">
+        <md-content class="md-padding">
+          <h1 class="md-display-2">Upcoming Classes</h1>
+        </md-content>
+      </md-tab>
+
+      <md-tab label="Previous Classes" ng-click="loadClasses('past')">
+        <md-content class="md-padding">
+          <h1 class="md-display-2">Previous Classes</h1>
+        </md-content>
+      </md-tab>
+    </md-tabs>
+  </div>
+</div>

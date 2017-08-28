@@ -13,7 +13,31 @@ exports.setEvenetEmitter = function(emitter){
 
 // Get list of userclasss
 exports.index = function(req, res) {
-  Userclass.find(function (err, userclasss) {
+  var perPage = 10;
+  var page = req.query.page || 0;
+  var userID = req.user._id;
+  var params = {
+    $or: [
+      {studentID: userID},
+      {teacherID: userID}
+    ]
+  }
+  var _currentTime = moment().valueOf();
+  if(req.query.type && req.query.type === 'upcoming'){
+    params['requestedTime.start'] = {$gte: _currentTime};
+  }else if(req.query.type && req.query.type === 'past'){
+    params['requestedTime.start'] = {$lte: _currentTime};
+  }
+  Userclass
+  .find(params)
+  .limit(perPage)
+  .skip(perPage * page)
+  .sort({
+    requestedOn: 'asc'
+  })
+  .populate('studentID', 'name country profilePhoto')
+  .populate('teacherID', 'name country profilePhoto')
+  .exec(function (err, userclasss) {
     if(err) { return handleError(res, err); }
     return res.status(200).json(userclasss);
   });

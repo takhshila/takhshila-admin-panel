@@ -1,0 +1,34 @@
+#classses{
+	.row{
+		md-tabs-canvas{
+			background: #fff;
+		}
+		md-content{
+			i{
+				font-size: 30px;
+			    color: #00918b;
+			    padding: 25px 0px;
+			}
+			md-input-container{
+				display: inline-block;
+				width: calc(100% - 42px);
+			}
+			.action-container{
+				width: 100%;
+				text-align: center;
+				.ui{
+					&.buttons{
+						min-width: 200px;
+					}
+				}
+			}
+			.items{
+				.item{
+					.item-conteiner{
+						display: inline-block;
+					}
+				}
+			}
+		}
+	}
+}

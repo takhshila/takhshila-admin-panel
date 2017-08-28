@@ -4,8 +4,8 @@ angular.module('takhshilaApp')
   .factory('userClassFactory', function (api) {
     var subUrl = 'userClasses/'
     var userFactory = {
-      getClasses: function( id ){
-          return api.get(subUrl, id);
+      getClasses: function(params){
+        return api.getList(subUrl, params);
       },
       requestClass: function(id, params){
         return api.post(subUrl + id, params);
