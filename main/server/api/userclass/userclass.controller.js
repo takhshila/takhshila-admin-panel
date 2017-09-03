@@ -23,9 +23,9 @@ exports.index = function(req, res) {
     ]
   }
   var _currentTime = moment().valueOf();
-  if(req.query.type && req.query.type === 'upcoming'){
+  if(req.query.classType && req.query.classType === 'upcoming'){
     params['requestedTime.start'] = {$gte: _currentTime};
-  }else if(req.query.type && req.query.type === 'past'){
+  }else if(req.query.classType && req.query.classType === 'past'){
     params['requestedTime.start'] = {$lte: _currentTime};
   }
   Userclass

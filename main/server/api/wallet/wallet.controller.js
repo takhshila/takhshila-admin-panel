@@ -11,6 +11,19 @@ exports.index = function(req, res) {
   });
 };
 
+// Get current user wallet
+exports.getBalance = function(req, res) {
+  var userID = req.user.id;
+  console.log(userID);
+  Wallet.findOne({
+    userID: userID
+  }, function (err, wallet) {
+    if(err) { return handleError(res, err); }
+    if(!wallet) { return res.status(404).send('Not Found'); }
+    return res.json(wallet);
+  });
+};
+
 // Get a single wallet
 exports.show = function(req, res) {
   Wallet.findById(req.params.id, function (err, wallet) {

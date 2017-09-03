@@ -24,9 +24,19 @@
 			}
 			.items{
 				.item{
-					.item-conteiner{
-						display: inline-block;
+					.content{
+						.header{
+							font-weight: bold;
+						}
+						.meta{
+							.meta-item{
+								display: block;
+								margin: 5px 0px;
+							}
+						}
 					}
+					border-bottom: 1px solid #e5e5e5;
+					padding-bottom: 10px;
 				}
 			}
 		}

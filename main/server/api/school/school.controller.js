@@ -33,7 +33,9 @@ exports.search = function(req, res) {
   if(req.query.state !== undefined){
     queryObject.state = new RegExp(req.query.state, "i")
   }
-  School.find(queryObject, function(err, schoolList){
+  School.find(queryObject)
+  .limit(10)
+  .exec(function(err, schoolList){
     if(err){ return handleError(res, err) }
     return res.status(200).json(schoolList);
   })

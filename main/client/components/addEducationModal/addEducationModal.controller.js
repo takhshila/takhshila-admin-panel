@@ -61,12 +61,14 @@ angular.module('takhshilaApp')
     };
 
 	$scope.getSchools = function(index, schoolName) {
-		return $http.get('/api/v1/schools/search?schoolName='+schoolName)
-			.then(function(response){
-			return response.data.map(function(item){
-				return item;
+		if(schoolName.length > 3){
+			return $http.get('/api/v1/schools/search?schoolName='+schoolName)
+				.then(function(response){
+				return response.data.map(function(item){
+					return item;
+				});
 			});
-		});
+		}
 	};
 	$scope.getDegree = function(index, degreeName) {
 		return $http.get('/api/v1/degrees/search?degreeName='+degreeName)

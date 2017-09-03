@@ -1,0 +1,50 @@
+#wallet{
+  .ui{
+    margin: 0px;
+    border-radius: 0px;
+    box-shadow: none;
+    border: 1px solid rgba(34, 36, 38, 0.15);
+  }
+
+  .wallet-container{
+    .wallet-item{
+      margin-bottom: 20px;
+      display: table;
+      width: 100%;
+      span{
+        display: table-cell;
+        vertical-align: middle;
+        &.wallet-icon{
+          width: 15%;
+          padding: 5px;
+          i{
+            font-size: 55px;
+            color: #00B5AD;
+            line-height: 1;
+          }
+        }
+        &.wallet-balance-item{
+          width: 33%;
+          p{
+            margin: 0px;
+            text-transform: capitalize;
+            &.wallet-price{
+              color: #5D5D5D;
+              font-size: 20px;
+              font-weight: bold;
+            }
+            &.wallet-description{
+              color: #5D5D5D;
+              font-size: 12px;
+              font-weight: normal;
+            }
+          }
+          &:last-child{
+            border-left: 1px solid rgba(34, 36, 38, 0.15);
+            padding-left: 20px;
+          }
+        }
+      }
+    }
+  }
+}

@@ -7,7 +7,12 @@ var Wallet = require('../wallet/wallet.model');
 
 // Get list of transactionhistorys
 exports.index = function(req, res) {
-  Transactionhistory.find(function (err, transactionhistorys) {
+  var userID = req.user.id;
+  Transactionhistory.find({
+    userID: userID
+  })
+  .populate('userID')
+  .exec(function (err, transactionhistorys) {
     if(err) { return handleError(res, err); }
     return res.status(200).json(transactionhistorys);
   });

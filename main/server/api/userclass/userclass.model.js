@@ -13,6 +13,8 @@ var UserclassSchema = new Schema({
     startFormated: {type: String, required: true},
     endFormated: {type: String, required: true}
   },
+  classRuntime: {type: Number, default: null},
+  liveClassLink: {type: String, default: null},
   amount: {
     currency: {type: String, required: true},
     totalCost: {type: Number, required: true},

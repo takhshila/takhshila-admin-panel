@@ -27,6 +27,13 @@ angular.module('takhshilaApp')
         navStick: true,
         authenticate: true
       })
+      .state('wallet', {
+        url: '/wallet',
+        templateUrl: 'app/account/wallet/wallet.html',
+        controller: 'WalletCtrl',
+        navStick: true,
+        authenticate: true
+      })
       .state('settings', {
         url: '/settings',
         templateUrl: 'app/account/settings/settings.html',

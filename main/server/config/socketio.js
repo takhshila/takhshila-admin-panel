@@ -219,23 +219,29 @@ eventEmitter.on('endClass', function(data){
         liveClassUsers[liveClassList[classID].connectedUser[i]].emit('endClass');
       }
 
-      // Transfer money from student wallet to  teacher's wallet
-      var studentID = liveClassList[classID].classDetails.studentID;
-      var teacherID = liveClassList[classID].classDetails.teacherID;
-      var totalCost = liveClassList[classID].classDetails.amount.totalCost;
-      var paidToTeacher = liveClassList[classID].classDetails.amount.paidToTeacher;
-      var commission = parseFloat(totalCost - paidToTeacher);
+      Userclass
+      .findById(classID, function (err, userclass){
+        userclass.status = "completed";
+        userclass.save(function (err, updateduserclass){
+          // Transfer money from student wallet to  teacher's wallet
+          var studentID = liveClassList[classID].classDetails.studentID;
+          var teacherID = liveClassList[classID].classDetails.teacherID;
+          var totalCost = liveClassList[classID].classDetails.amount.totalCost;
+          var paidToTeacher = liveClassList[classID].classDetails.amount.paidToTeacher;
+          var commission = parseFloat(totalCost - paidToTeacher);
 
-      transactionHistoryController
-      .processTransaction(studentID, totalCost, 'Debit', 'nonWithdrawBalance', 'Live Class', null)
-      .then(function(){
-        return transactionHistoryController.processTransaction(teacherID, paidToTeacher, 'Credit', 'withdrawBalance', 'Live Class', null);
-      })
-      .then(function(){
-        transactionHistoryController.processTransaction(null, commission, 'Credit', 'withdrawBalance', 'Live Class', null);
-      })
-      .catch(function(err){
-        console.log(err);
+          transactionHistoryController
+          .processTransaction(studentID, totalCost, 'Debit', 'nonWithdrawBalance', 'Live Class', null)
+          .then(function(){
+            return transactionHistoryController.processTransaction(teacherID, paidToTeacher, 'Credit', 'withdrawBalance', 'Live Class', null);
+          })
+          .then(function(){
+            transactionHistoryController.processTransaction(null, commission, 'Credit', 'withdrawBalance', 'Live Class', null);
+          })
+          .catch(function(err){
+            console.log(err);
+          });
+        });
       });
     }
   }
