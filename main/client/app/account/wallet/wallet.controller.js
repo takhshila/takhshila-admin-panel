@@ -23,7 +23,7 @@ angular.module('takhshilaApp')
 				$scope.hasMoreData = false;
 			}
 			$scope.page++;
-			$scope.transactionHistory = response;
+			$scope.transactionHistory = response.data;
 		}, function(err){
 			console.log(err);
 		});

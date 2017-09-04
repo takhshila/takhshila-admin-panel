@@ -11,7 +11,7 @@ exports.index = function(req, res) {
   Transactionhistory.find({
     userID: userID
   })
-  .populate('userID')
+  .populate('userID', 'name profilePhoto')
   .exec(function (err, transactionhistorys) {
     if(err) { return handleError(res, err); }
     return res.status(200).json(transactionhistorys);
