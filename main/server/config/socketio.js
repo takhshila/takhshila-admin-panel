@@ -7,6 +7,7 @@
 var config = require('./environment');
 var User = require('../api/user/user.model');
 var Userclass = require('../api/userclass/userclass.model');
+var Wallet = require('../api/wallet/wallet.model');
 var events = require('events');
 var eventEmitter = new events.EventEmitter();
 
@@ -227,19 +228,40 @@ eventEmitter.on('endClass', function(data){
           var studentID = liveClassList[classID].classDetails.studentID;
           var teacherID = liveClassList[classID].classDetails.teacherID;
           var totalCost = liveClassList[classID].classDetails.amount.totalCost;
-          var paidToTeacher = liveClassList[classID].classDetails.amount.paidToTeacher;
+          var paidToTeacher = parseFloat(liveClassList[classID].classDetails.amount.paidToTeacher);
           var commission = parseFloat(totalCost - paidToTeacher);
 
-          transactionHistoryController
-          .processTransaction(studentID, totalCost, 'Debit', 'nonWithdrawBalance', 'Live Class', null)
-          .then(function(){
-            return transactionHistoryController.processTransaction(teacherID, paidToTeacher, 'Credit', 'withdrawBalance', 'Live Class', null);
-          })
-          .then(function(){
-            transactionHistoryController.processTransaction(null, commission, 'Credit', 'withdrawBalance', 'Live Class', null);
-          })
-          .catch(function(err){
-            console.log(err);
+          var transactionDataForTeacher = {
+            userID: teacherID,
+            transactionType: 'Credit',
+            transactionIdentifier: 'walletCashReceived',
+            transactionDescription: 'Wallet cash for INR ' + paidToTeacher + ' received',
+            transactionAmount: paidToTeacher,
+            classRefrence: userclass._id,
+            status: 'completed'
+          }
+
+          Transaction.create(transactionDataForTeacher, function(err){
+            Wallet.findOne({
+              userID: teacherID
+            }, function(err, walletData){
+              walletData.withdrawBalance = parseFloat(walletData.withdrawBalance + paidToTeacher);
+              walletData.totalBalance = parseFloat(walletData.totalBalance + paidToTeacher);
+              walletData.save(function(err){
+                var transactionDataForTakhshila = {
+                  transactionType: 'Credit',
+                  transactionIdentifier: 'commissionReceived',
+                  transactionDescription: 'Commission for INR ' + commission + ' received',
+                  transactionAmount: commission,
+                  classRefrence: userclass._id,
+                  status: 'completed'
+                }
+
+                Transaction.create(transactionDataForTakhshila, function(err){
+                  console.log('Transaction after completion of class has been completed');
+                });
+              });
+            });
           });
         });
       });

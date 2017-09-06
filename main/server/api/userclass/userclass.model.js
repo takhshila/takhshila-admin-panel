@@ -6,6 +6,7 @@ var mongoose = require('mongoose'),
 var UserclassSchema = new Schema({
   studentID: {type: String, ref: 'User', required: true},
   teacherID: {type: String, ref: 'User', required: true},
+  paymentRefrence: {type: String, ref: 'Transaction', default: null},
   requestedTime: {
     start: {type: String, required: true},
     end: {type: String, required: true},

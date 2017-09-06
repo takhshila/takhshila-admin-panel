@@ -3,6 +3,7 @@
 var _ = require('lodash');
 var moment = require('moment');
 var Userclass = require('./userclass.model');
+var Wallet = require('../wallet/wallet.model');
 var Notification = require('../notification/notification.model');
 var schedule = require('node-schedule');
 var eventEmitter;
@@ -153,18 +154,29 @@ exports.denyClassRequest = function(req, res) {
     if(userclass.status == "requested"){
       userclass.status = "denied";
       userclass.save(function (err) {
-        if (err) { return handleError(res, err); }
-        var _notificationData = {
-          forUser: userclass.studentID,
-          fromUser: userclass.teacherID,
-          notificationType: 'requestDenied',
-          notificationStatus: 'unread',
-          notificationMessage: req.body.message,
-          referenceClass: userclass._id
-        }
-        Notification.create(_notificationData, function(err, notification){
-          console.log(err);
-          return res.status(201).json(userclass);
+        Wallet.findOne({
+          userID: userclass.studentID
+        }, function(err, walletData){
+          // var refundAmount = parseFloat(userclass.amount.withdrawBalance);
+          walletData.nonWithdrawBalance = parseFloat(walletData.nonWithdrawBalance - (userclass.amount.withdrawBalance + userclass.amount.promoBalance));
+          walletData.withdrawBalance = parseFloat(walletData.withdrawBalance + userclass.amount.withdrawBalance);
+          walletData.promoBalance = parseFloat(walletData.promoBalance + userclass.amount.promoBalance);
+          walletData.totalBalance = parseFloat(walletData.totalBalance + (userclass.amount.withdrawBalance + userclass.amount.promoBalance));
+
+          walletData.save(function(err){
+            var _notificationData = {
+              forUser: userclass.studentID,
+              fromUser: userclass.teacherID,
+              notificationType: 'requestDenied',
+              notificationStatus: 'unread',
+              notificationMessage: 'Test Message',
+              referenceClass: userclass._id
+            }
+            Notification.create(_notificationData, function(err, notification){
+              console.log(err);
+              return res.status(201).json(userclass);
+            });
+          });
         });
       });
     }else{

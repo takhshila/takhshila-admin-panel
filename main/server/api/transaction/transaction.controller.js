@@ -7,6 +7,7 @@ var _ = require('lodash'),
     crypto = require('crypto'),
     moment = require('moment'),
     querystring = require('querystring'),
+    config = require('../../config/environment'),
     Transaction = require('./transaction.model'),
     User = require('../user/user.model'),
     Userclass = require('../userclass/userclass.model'),
@@ -16,10 +17,6 @@ var _ = require('lodash'),
     transactionHistoryController = require('../transactionhistory/transactionhistory.controller'),
     schedule = require('node-schedule'),
     hashSequence = "key|txnid|amount|productinfo|firstname|email|udf1|udf2|udf3|udf4|udf5|udf6|udf7|udf8|udf9|udf10",
-    merchantID = 4934580,
-    key = 'rjQUPktU',
-    salt = 'e5iIg1jwi8',
-    authorizationHeader = 'y8tNAC1Ar0Sd8xAHGjZ817UGto5jt37zLJSX/NHK3ok=',
     tempClassData = [],
     payu = {
       merchantID: 4934580,
@@ -116,7 +113,7 @@ exports.initiatePayment = function(req, res) {
                 if(err) { reject({status: 500, data: err}); }
                 tempClassData[transaction._id] = classData;
                 var generatedHash = hashBeforeTransaction({
-                  'key': key,
+                  'key': config.payu.key,
                   'txnid': transaction._id,
                   'amount': amountToPay,
                   'productinfo': 'Class request',
@@ -125,7 +122,7 @@ exports.initiatePayment = function(req, res) {
                 });
 
                 var generatedresponse = {
-                  'key': key,
+                  'key': config.payu.key,
                   'txnid': transaction._id,
                   'firstname': user.name.firstName,
                   'lastname': user.name.lastname,
@@ -156,6 +153,7 @@ exports.initiatePayment = function(req, res) {
                 }
 
                 var validateTransactionTime = moment().add(5, 'm').valueOf();
+                // var validateTransactionTime = moment().add(10, 's').valueOf();
 
                 var j = schedule.scheduleJob(validateTransactionTime, function(transactionId){
                   validateTransaction(transactionId);
@@ -225,61 +223,33 @@ exports.updatePayment = function(req, res) {
   if(req.body._id) { delete req.body._id; }
   var transaction = null;
   var transactionData = req.body;
-  // var generatedHash = hashAfterTransaction(transactionData, transactionData.status);
-  console.log("transactionData");
-  console.log(req.body);
-  getTransactionResponse(payu.host, payu.path.paymentResponse, {
-    merchantKey: payu.key,
-    merchantTransactionIds: '59afca62eefbea200c05b58c'
-  }, 'POST', payu.authorizationHeader);
-
-  return res.status(204).send('No Content');
-
-  if(generatedHash === transactionData.hash){
-    var transactionId = transactionData.txnid;
-    var transactionPromise = new Promise(function(resolve, reject){
-      Transaction.findById(transactionId, function (err, transaction){
-        // if (err) { return handleError(res, err); }
-        if(!transaction) { return res.status(404).send('Not Found'); }
-        var userID = transaction.userID;
-        var transactionAmount = transaction.transactionAmount;
-        var classData = tempClassData[transaction._id];
-
-        transaction.status = transactionData.status;
-        transaction.transactionData = transactionData;
-        transaction.save(function(err){
-          Wallet.findOne({
-            userID: userID
-          })
-          .exec(function(err, walletData){
-            walletData.totalBalance = parseFloat(walletData.totalBalance + transactionAmount);
-            walletData.withdrawBalance = parseFloat(walletData.withdrawBalance + transactionAmount);
-            walletData.save(function(err, updatedWalletData){
-              bookClass(classData)
-              .then(function(response){
-                delete tempClassData[transaction._id];
-                resolve(response);
-              })
-              .catch(function(err){
-                reject(err);
-              });
-            });
-          });
+  var updatePaymentPromise = new Promise(function(resolve, reject){
+    processPaymentResponse(transactionData)
+    .then(function(walletData){
+      var classData = tempClassData[transactionData.txnid];
+      if(classData){
+        bookClass(classData, transactionData.txnid)
+        .then(function(response){
+          delete tempClassData[transactionData.txnid];
+          resolve(response);
+        })
+        .catch(function(err){
+          reject(err);
         });
-      });
-    });
-
-    transactionPromise
-    .then(function(data){
-      return res.redirect('/profile');
+      }
     })
     .catch(function(err){
-      console.log(err);
-      return res.redirect('/payment/failure/');
+      reject(err);
     });
-  }else{
+  });
+  updatePaymentPromise
+  .then(function(data){
+    return res.redirect('/profile');
+  })
+  .catch(function(err){
+    console.log(err);
     return res.redirect('/payment/failure/');
-  }  
+  });
 };
 
 // Deletes a transaction from the DB.
@@ -301,7 +271,7 @@ function handleError(res, err) {
 function hashBeforeTransaction(data) {
   var string = "";
   var sequence = hashSequence.split('|');
-  if (!(data && salt)){
+  if (!(data && config.payu.salt)){
     return false;
   }
   for (var i = 0; i < sequence.length; i++) {
@@ -312,8 +282,8 @@ function hashBeforeTransaction(data) {
       string += '|';
     }
   }
-  string += salt;
-  return crypto.createHash('sha512', salt).update(string).digest('hex');
+  string += config.payu.salt;
+  return crypto.createHash('sha512', config.payu.salt).update(string).digest('hex');
 }
 
 function hashAfterTransaction(data, transactionStatus) {
@@ -321,11 +291,11 @@ function hashAfterTransaction(data, transactionStatus) {
       string = "";
 
   var sequence = hashSequence.split('|').reverse();
-  if (!(data && salt && transactionStatus)){
+  if (!(data && config.payu.salt && transactionStatus)){
     return false;
   }
 
-  string += salt + '|' + transactionStatus + '|';
+  string += config.payu.salt + '|' + transactionStatus + '|';
   for (var i = 0; i < sequence.length; i++) {
     k = sequence[i];
     if(data[k] !== undefined){
@@ -337,127 +307,120 @@ function hashAfterTransaction(data, transactionStatus) {
 
   string = string.substr(0, string.length - 1);
 
-  return crypto.createHash('sha512', salt).update(string).digest('hex');
+  return crypto.createHash('sha512', config.payu.salt).update(string).digest('hex');
 }
 
 function validateTransaction(transactionId){
   Transaction.findById(transactionId, function (err, transaction){
     if(transaction.status === 'pending'){
-      var classData = transaction.classInfo;
-      transaction.status = 'unprocessed';
-      transaction.save(function(err){
-        // if (err) { return handleError(res, err); }
-        classData.map(function(data, i){
-          var classId = classData[i]._id;
-          Userclass.findOne({
-            _id: classId
-          }, function(err, classData){
-            classData.remove(function(err){
-              // if (err) { return handleError(res, err); }
+      getTransactionResponse(
+        config.payu.host, 
+        config.payu.path.paymentResponse, 
+        {
+          merchantKey: config.payu.key,
+          merchantTransactionIds: transactionId
+        }, 
+        'POST', 
+        config.payu.authorizationHeader
+      )
+      .then(function(transactionData){
+        processPaymentResponse(transactionData)
+        .then(function(walletData){
+          var classData = tempClassData[transactionData.txnid];
+          if(classData){
+            bookClass(classData, transactionId)
+            .then(function(response){
+              delete tempClassData[transaction._id];
+              console.log('Successfully added class request');
+            })
+            .catch(function(err){
+              console.log(err);
             });
-          });
+          }else{
+            console.log('Class data was not found');
+          }
+        })
+        .catch(function(err){
+          console.log(err);
         });
-      });
+      })
+      .catch(function(err){
+        console.log(err);
+      })
     }
   })
 }
 
 function getTransactionResponse(host, path, queryParams, method, authorizationHeader, body){
-  var url = host + path;
-  // if(body){ body = querystring.stringify(body); }else{ body = ''; }
+  return new Promise(function(resolve, reject){
+    var url = host + path;
+    // Set the headers
+    var headers = {
+        'User-Agent':       'Super Agent/0.0.1',
+        'Content-Type':     'application/json'
+    }
+    if(authorizationHeader){ headers.Authorization = authorizationHeader }
+    // Configure the request
+    var options = {
+        url: url,
+        method: method,
+        headers: headers,
+        qs: queryParams
+    }
 
-  // const options = {
-  //   hostname: host,
-  //   path: path,
-  //   method: method,
-  //   headers: {
-  //     'Content-Type': 'application/json',
-  //     'Content-Length': Buffer.byteLength(body),
-  //   }
-  // };
-
-
-  // Set the headers
-  var headers = {
-      'User-Agent':       'Super Agent/0.0.1',
-      'Content-Type':     'application/json'
-  }
-  if(authorizationHeader){ headers.Authorization = authorizationHeader }
-
-  // Configure the request
-  var options = {
-      url: url,
-      method: method,
-      headers: headers,
-      qs: queryParams
-  }
-
-  // Start the request
-  request(options, function (error, response, body) {
-    console.log(error);
-    console.log(response);
-    console.log(body);
+    // Start the request
+    request(options, function (error, response, body) {
       if (!error && response.statusCode == 200) {
           // Print out the response body
           console.log(body)
+      }else{
+        reject(error);
       }
-  })
-
-  // console.log("options Data");
-  // console.log(options);
-
-  // const req = https.request(options, (res) => {
-  //   console.log(`STATUS: ${res.statusCode}`);
-  //   console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
-  //   res.setEncoding('utf8');
-  //   res.on('data', (chunk) => {
-  //     console.log(`BODY: ${chunk}`);
-  //   });
-  //   res.on('end', () => {
-  //     console.log('No more data in response.');
-  //   });
-  // });
-
-  // req.on('error', (e) => {
-  //   console.error(`problem with request: ${e.message}`);
-  // });
-
-  // // Send the request
-  // req.write(body);
-  // req.end();
+    });
+  });
 }
 
-function bookClass(classData){
+function bookClass(classData, paymentRefrence){
   return new Promise(function(resolve, reject){
-    var bookClassPromise = classData.map(function(singleClassData){
-      var userID = singleClassData.studentID;
-      var totalAmount = parseFloat(singleClassData.amount.totalCost);
+    var tempWalletData = null;
+    Wallet.findOne({
+      userID: classData[0].studentID
+    })
+    .exec(function(err, walletData){
+      tempWalletData = walletData;
+      var bookClassPromise = classData.map(function(singleClassData){
+        var userID = singleClassData.studentID;
+        var totalAmount = parseFloat(singleClassData.amount.totalCost);
 
-      return new Promise(function(resolve, reject){
-        Wallet.findOne({
-          userID: userID
-        })
-        .populate('userID')
-        .exec(function(err, walletData){            
+        return new Promise(function(resolve, reject){
           var usedPromoBalance = 0;
           var usedWithdrawBalance = 0;
 
-          var walletBalance = walletData.totalBalance;
-          var nonWithdrawBalance = walletData.nonWithdrawBalance;
-          var withdrawBalance = walletData.withdrawBalance;
-          var promoBalance = walletData.promoBalance;
+          var walletBalance = tempWalletData.totalBalance;
+          var nonWithdrawBalance = tempWalletData.nonWithdrawBalance;
+          var withdrawBalance = tempWalletData.withdrawBalance;
+          var promoBalance = tempWalletData.promoBalance;
           var bookingBalance = parseFloat(withdrawBalance + promoBalance);
 
           if(promoBalance >= totalAmount){
             usedPromoBalance = totalAmount;
           }else{
-            usedPromoBalance = walletData.promoBalance;
-            usedWithdrawBalance = totalAmount - promoBalance;
+            usedPromoBalance = tempWalletData.promoBalance;
+            usedWithdrawBalance = parseFloat(totalAmount - tempWalletData.promoBalance);
           }
 
+          console.log('totalAmount = ' + totalAmount);
+          console.log('usedPromoBalance = ' + usedPromoBalance);
+          console.log('usedWithdrawBalance = ' + usedWithdrawBalance);
+
+          tempWalletData.withdrawBalance = parseFloat(tempWalletData.withdrawBalance - usedWithdrawBalance);
+          tempWalletData.promoBalance = parseFloat(tempWalletData.promoBalance - usedPromoBalance);
+          tempWalletData.nonWithdrawBalance = parseFloat(tempWalletData.nonWithdrawBalance + totalAmount);
+              
           singleClassData.status = 'requested';
           singleClassData.amount.promoBalance = usedPromoBalance;
           singleClassData.amount.withdrawBalance = usedWithdrawBalance;
+          if(paymentRefrence){ singleClassData.paymentRefrence = paymentRefrence; }
 
           Userclass.create(singleClassData, function(err, userclass){
             var transactionData = {
@@ -471,35 +434,66 @@ function bookClass(classData){
             }
 
             Transaction.create(transactionData, function(err, transaction){
-              walletData.withdrawBalance = parseFloat(walletData.withdrawBalance - usedWithdrawBalance);
-              walletData.promoBalance = parseFloat(walletData.promoBalance - usedPromoBalance);
-              walletData.nonWithdrawBalance = parseFloat(walletData.nonWithdrawBalance + totalAmount);
-
-              walletData.save(function(err){
-                var notificationData = {
-                  forUser: singleClassData.teacherID,
-                  fromUser: singleClassData.studentID,
-                  notificationType: 'classRequest',
-                  notificationStatus: 'unread',
-                  notificationMessage: 'Test Message',
-                  referenceClass: singleClassData._id
-                }
-                Notification.create(notificationData, function(err, notification){
-                  resolve(singleClassData);
-                });
+              var notificationData = {
+                forUser: userclass.teacherID,
+                fromUser: userclass.studentID,
+                notificationType: 'classRequest',
+                notificationStatus: 'unread',
+                notificationMessage: 'Test Message',
+                referenceClass: userclass._id
+              }
+              Notification.create(notificationData, function(err, notification){
+                console.log('Notification created');
+                console.log(err);
+                resolve(singleClassData);
               });
             });
           });
         });
       });
-    });
 
-    Promise.all(bookClassPromise)
-    .then(function(data){
-      resolve(data);
-    })
-    .catch(function(err){
-      reject(err);
-    })
+      Promise.all(bookClassPromise)
+      .then(function(data){
+        tempWalletData.save(function(err){
+          console.log('wallet data updated');
+          resolve(data);
+        });
+      })
+      .catch(function(err){
+        reject(err);
+      })
+    });
+  });
+}
+
+function processPaymentResponse(transactionData, transactionType){
+  if(!transactionType){ transactionType = 'paymentReceived'; }
+  return new Promise(function(resolve, reject){
+    var generatedHash = hashAfterTransaction(transactionData, transactionData.status);
+    if(generatedHash === transactionData.hash){
+      var transactionId = transactionData.txnid;
+      Transaction.findById(transactionId, function (err, transaction){
+        if(!transaction) { return res.status(404).send('Not Found'); }
+        var userID = transaction.userID;
+        var transactionAmount = transaction.transactionAmount;
+
+        transaction.status = transactionData.status;
+        transaction.transactionData = transactionData;
+        transaction.save(function(err){
+          Wallet.findOne({
+            userID: userID
+          })
+          .exec(function(err, walletData){
+            walletData.totalBalance = parseFloat(walletData.totalBalance + transactionAmount);
+            walletData.withdrawBalance = parseFloat(walletData.withdrawBalance + transactionAmount);
+            walletData.save(function(err, updatedWalletData){
+              resolve(updatedWalletData);
+            });
+          });
+        });
+      });
+    }else{
+      reject('Invalid hash');
+    }
   });
 }
