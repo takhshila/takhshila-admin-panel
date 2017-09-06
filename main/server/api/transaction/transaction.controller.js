@@ -2,8 +2,11 @@
 
 var _ = require('lodash'),
     http = require('http'),
+    https = require('https'),
+    request = require('request'),
     crypto = require('crypto'),
     moment = require('moment'),
+    querystring = require('querystring'),
     Transaction = require('./transaction.model'),
     User = require('../user/user.model'),
     Userclass = require('../userclass/userclass.model'),
@@ -14,10 +17,20 @@ var _ = require('lodash'),
     schedule = require('node-schedule'),
     hashSequence = "key|txnid|amount|productinfo|firstname|email|udf1|udf2|udf3|udf4|udf5|udf6|udf7|udf8|udf9|udf10",
     merchantID = 4934580,
-    key = 'gtKFFx',
-    salt = 'eCwWELxi',
+    key = 'rjQUPktU',
+    salt = 'e5iIg1jwi8',
     authorizationHeader = 'y8tNAC1Ar0Sd8xAHGjZ817UGto5jt37zLJSX/NHK3ok=',
-    tempClassData = [];
+    tempClassData = [],
+    payu = {
+      merchantID: 4934580,
+      key: 'rjQUPktU',
+      salt: 'e5iIg1jwi8',
+      authorizationHeader: 'y8tNAC1Ar0Sd8xAHGjZ817UGto5jt37zLJSX/NHK3ok=',
+      host: 'https://test.payumoney.com',
+      path: {
+        paymentResponse: '/payment/op/getPaymentResponse'
+      }
+    };
 
 
 // Initiate transactions
@@ -123,7 +136,7 @@ exports.initiatePayment = function(req, res) {
                   'surl': 'http://localhost:9000/api/v1/transactions/payment/update',
                   'furl': 'http://localhost:9000/api/v1/transactions/payment/update',
                   'hash': generatedHash,
-                  'service_provider': '',
+                  'service_provider': 'payu_paisa',
                   'address1': '',
                   'address2': '',
                   'city': '',
@@ -212,7 +225,15 @@ exports.updatePayment = function(req, res) {
   if(req.body._id) { delete req.body._id; }
   var transaction = null;
   var transactionData = req.body;
-  var generatedHash = hashAfterTransaction(transactionData, transactionData.status);
+  // var generatedHash = hashAfterTransaction(transactionData, transactionData.status);
+  console.log("transactionData");
+  console.log(req.body);
+  getTransactionResponse(payu.host, payu.path.paymentResponse, {
+    merchantKey: payu.key,
+    merchantTransactionIds: '59afca62eefbea200c05b58c'
+  }, 'POST', payu.authorizationHeader);
+
+  return res.status(204).send('No Content');
 
   if(generatedHash === transactionData.hash){
     var transactionId = transactionData.txnid;
@@ -341,27 +362,76 @@ function validateTransaction(transactionId){
   })
 }
 
-function getTransactionResponse(txnid){
-  var options = {
-    host: 'example.com',
-    port: 80,
-    path: '/foo.html'
-  };
+function getTransactionResponse(host, path, queryParams, method, authorizationHeader, body){
+  var url = host + path;
+  // if(body){ body = querystring.stringify(body); }else{ body = ''; }
 
-  http.get(options, function(resp){
-    resp.on('data', function(chunk){
-      //do something with chunk
-    });
-  }).on("error", function(e){
-    console.log("Got error: " + e.message);
-  });
+  // const options = {
+  //   hostname: host,
+  //   path: path,
+  //   method: method,
+  //   headers: {
+  //     'Content-Type': 'application/json',
+  //     'Content-Length': Buffer.byteLength(body),
+  //   }
+  // };
+
+
+  // Set the headers
+  var headers = {
+      'User-Agent':       'Super Agent/0.0.1',
+      'Content-Type':     'application/json'
+  }
+  if(authorizationHeader){ headers.Authorization = authorizationHeader }
+
+  // Configure the request
+  var options = {
+      url: url,
+      method: method,
+      headers: headers,
+      qs: queryParams
+  }
+
+  // Start the request
+  request(options, function (error, response, body) {
+    console.log(error);
+    console.log(response);
+    console.log(body);
+      if (!error && response.statusCode == 200) {
+          // Print out the response body
+          console.log(body)
+      }
+  })
+
+  // console.log("options Data");
+  // console.log(options);
+
+  // const req = https.request(options, (res) => {
+  //   console.log(`STATUS: ${res.statusCode}`);
+  //   console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
+  //   res.setEncoding('utf8');
+  //   res.on('data', (chunk) => {
+  //     console.log(`BODY: ${chunk}`);
+  //   });
+  //   res.on('end', () => {
+  //     console.log('No more data in response.');
+  //   });
+  // });
+
+  // req.on('error', (e) => {
+  //   console.error(`problem with request: ${e.message}`);
+  // });
+
+  // // Send the request
+  // req.write(body);
+  // req.end();
 }
 
 function bookClass(classData){
   return new Promise(function(resolve, reject){
     var bookClassPromise = classData.map(function(singleClassData){
       var userID = singleClassData.studentID;
-      var totalAmount = singleClassData.amount.totalCost;
+      var totalAmount = parseFloat(singleClassData.amount.totalCost);
 
       return new Promise(function(resolve, reject){
         Wallet.findOne({
@@ -395,13 +465,13 @@ function bookClass(classData){
               transactionType: 'Debit',
               transactionIdentifier: 'walletCashDeducted',
               transactionDescription: 'Wallet cash deducted for class booking',
-              transactionAmount: parseFloat(totalAmount),
+              transactionAmount: totalAmount,
               classRefrence: userclass._id,
               status: 'completed'
             }
 
             Transaction.create(transactionData, function(err, transaction){
-              walletData.withdrawBalance = parseFloat(walletData.promoBalance - usedWithdrawBalance);
+              walletData.withdrawBalance = parseFloat(walletData.withdrawBalance - usedWithdrawBalance);
               walletData.promoBalance = parseFloat(walletData.promoBalance - usedPromoBalance);
               walletData.nonWithdrawBalance = parseFloat(walletData.nonWithdrawBalance + totalAmount);
 
