@@ -1,6 +1,7 @@
 'use strict';
 
 var _ = require('lodash'),
+    http = require('http'),
     crypto = require('crypto'),
     moment = require('moment'),
     Transaction = require('./transaction.model'),
@@ -8,12 +9,15 @@ var _ = require('lodash'),
     Userclass = require('../userclass/userclass.model'),
     Wallet = require('../wallet/wallet.model'),
     Notification = require('../notification/notification.model'),
+    Transactionhistory = require('../transactionhistory/transactionhistory.model'),
     transactionHistoryController = require('../transactionhistory/transactionhistory.controller'),
     schedule = require('node-schedule'),
     hashSequence = "key|txnid|amount|productinfo|firstname|email|udf1|udf2|udf3|udf4|udf5|udf6|udf7|udf8|udf9|udf10",
-    merchantID = 5804204,
+    merchantID = 4934580,
     key = 'gtKFFx',
-    salt = 'eCwWELxi';
+    salt = 'eCwWELxi',
+    authorizationHeader = 'y8tNAC1Ar0Sd8xAHGjZ817UGto5jt37zLJSX/NHK3ok=',
+    tempClassData = [];
 
 
 // Initiate transactions
@@ -57,156 +61,113 @@ exports.initiatePayment = function(req, res) {
 
       if(parseFloat(totalReceivedAmount) === parseFloat(totalAmount)){
         var amountToPay = totalAmount;
-        Userclass.create(classData, function(err, userclass){
-          User.findById(req.user._id, function (err, user){
+        var usedWithdrawBalance = 0;
+        var usedPromoBalance = 0;
+
+        User.findById(req.user._id, function (err, user){
+          if(err) { reject({status: 500, data: err}); }
+          Wallet.findOne({
+            userID: user._id
+          }, function(err, walletData){
             if(err) { reject({status: 500, data: err}); }
-            // Get User Wallet Balance
-            Wallet.findOne({
-              userID: user._id
-            }, function(err, walletData){
-              if(err) { reject({status: 500, data: err}); }
+            var walletBalance = walletData.totalBalance;
+            var nonWithdrawBalance = walletData.nonWithdrawBalance;
+            var withdrawBalance = walletData.withdrawBalance;
+            var promoBalance = walletData.promoBalance;
+            var bookingBalance = parseFloat(withdrawBalance + promoBalance);
 
-              var checkAmountPromise = new Promise(function(resolve, reject){
-                var walletBalance = walletData.totalBalance;
-                var nonWithdrawBalance = walletData.nonWithdrawBalance;
-                var withdrawBalance = walletData.withdrawBalance;
-                var promoBalance = walletData.promoBalance;
-                var bookingBalance = parseFloat(withdrawBalance + promoBalance);
-                
-                var amountToTransfer = 0;
+            if(promoBalance >= totalAmount){
+              usedPromoBalance = totalAmount;
+              amountToPay = 0;
+            }else if(bookingBalance >= totalAmount){
+              usedPromoBalance = walletData.promoBalance;
+              usedWithdrawBalance = totalAmount - promoBalance;
+              amountToPay = 0;
+            }else if(bookingBalance > 0){
+              amountToPay = parseFloat(totalAmount - bookingBalance);
+              usedPromoBalance = walletData.promoBalance;
+              usedWithdrawBalance = bookingBalance - promoBalance;
+            }
 
-                if(promoBalance >= totalAmount){
-                  amountToPay = 0;
-                  walletData.nonWithdrawBalance = parseFloat(nonWithdrawBalance + totalAmount);
-                  walletData.promoBalance = parseFloat(promoBalance - totalAmount);                  
-                }else if(bookingBalance >= totalAmount){
-                  amountToPay = 0;
-                  walletData.promoBalance = 0;
-                  walletData.withdrawBalance = parseFloat(withdrawBalance - (totalAmount - promoBalance));;
-                  walletData.nonWithdrawBalance = parseFloat(nonWithdrawBalance + totalAmount);
-                }else if(bookingBalance > 0){
-                  amountToPay = parseFloat(totalAmount - bookingBalance);
-                  walletData.promoBalance = 0;
-                  walletData.withdrawBalance = parseFloat(withdrawBalance - (bookingBalance - promoBalance));;
-                  walletData.nonWithdrawBalance = parseFloat(nonWithdrawBalance + bookingBalance);
+            if(amountToPay > 0){
+
+              var transactionData = {
+                userID: user._id,
+                transactionType: 'Credit',
+                transactionIdentifier: 'walletCashReceived',
+                transactionDescription: 'Wallet cash for INR ' + amountToPay + ' received',
+                transactionAmount: parseFloat(amountToPay),
+                status: 'pending'
+              }
+              Transaction.create(transactionData, function(err, transaction) {
+                if(err) { reject({status: 500, data: err}); }
+                tempClassData[transaction._id] = classData;
+                var generatedHash = hashBeforeTransaction({
+                  'key': key,
+                  'txnid': transaction._id,
+                  'amount': amountToPay,
+                  'productinfo': 'Class request',
+                  'firstname': user.name.firstName,
+                  'email': user.email
+                });
+
+                var generatedresponse = {
+                  'key': key,
+                  'txnid': transaction._id,
+                  'firstname': user.name.firstName,
+                  'lastname': user.name.lastname,
+                  'email': user.email,
+                  'phone': '7777777777',
+                  'productinfo': 'Class request',
+                  'amount': amountToPay,
+                  'surl': 'http://localhost:9000/api/v1/transactions/payment/update',
+                  'furl': 'http://localhost:9000/api/v1/transactions/payment/update',
+                  'hash': generatedHash,
+                  'service_provider': '',
+                  'address1': '',
+                  'address2': '',
+                  'city': '',
+                  'state': '',
+                  'country': '',
+                  'zipcode': '',
+                  'udf1': '',
+                  'udf2': '',
+                  'udf3': '',
+                  'udf4': '',
+                  'udf5': '',
+                  'udf6': '',
+                  'udf7': '',
+                  'udf8': '',
+                  'udf9': '',
+                  'udf10': ''
                 }
 
-                walletData.save(function(err, updatedWalletData){
-                  if(err) { reject({status: 500, data: err}); }
-                  resolve();
+                var validateTransactionTime = moment().add(5, 'm').valueOf();
+
+                var j = schedule.scheduleJob(validateTransactionTime, function(transactionId){
+                  validateTransaction(transactionId);
+                }.bind(null,transaction._id));
+
+                resolve({
+                  paymentRequired: true,
+                  paymentData: generatedresponse
                 });
               });
-              
-              checkAmountPromise
-              .then(function(){
-                if(amountToPay > 0){
-                  var transactionData = {
-                    userID: user._id,
-                    amount: amountToPay,
-                    currency: currency,
-                    classInfo: userclass,
-                    productInfo: 'Class request',
-                    firstName: user.name.firstName,
-                    lastName: user.name.lastName,
-                    email: user.email,
-                    phone: user.phone || 7777777777,
-                    status: 'initiated'
-                  }
-                  Transaction.create(transactionData, function(err, transaction) {
-                    if(err) { reject({status: 500, data: err}); }
-                    
-                    var validateTransactionTime = moment().add(5, 'm').valueOf();
-
-                    var j = schedule.scheduleJob(validateTransactionTime, function(transactionId){
-                      validateTransaction(transactionId);
-                    }.bind(null,transaction._id));
-
-                    var generatedHash = hashBeforeTransaction({
-                      'key': key,
-                      'txnid': transaction._id,
-                      'amount': amountToPay,
-                      'productinfo': 'Class request',
-                      'firstname': user.name.firstName,
-                      'email': user.email
-                    });
-
-                    var generatedresponse = {
-                      'key': key,
-                      'txnid': transaction._id,
-                      'firstname': user.name.firstName,
-                      'lastname': user.name.lastname,
-                      'email': user.email,
-                      'phone': '7777777777',
-                      'productinfo': 'Class request',
-                      'amount': amountToPay,
-                      'surl': 'http://localhost:9000/api/v1/transactions/payment/update',
-                      'furl': 'http://localhost:9000/api/v1/transactions/payment/update',
-                      'hash': generatedHash,
-                      'service_provider': '',
-                      'address1': '',
-                      'address2': '',
-                      'city': '',
-                      'state': '',
-                      'country': '',
-                      'zipcode': '',
-                      'udf1': '',
-                      'udf2': '',
-                      'udf3': '',
-                      'udf4': '',
-                      'udf5': '',
-                      'udf6': '',
-                      'udf7': '',
-                      'udf8': '',
-                      'udf9': '',
-                      'udf10': ''
-                    }
-                    resolve({
-                      paymentRequired: true,
-                      paymentData: generatedresponse
-                    });
-                  });
-                }else{
-                  var updateClassDataPromise = userclass.map(function(data, i){
-                    return new Promise(function(resolve, reject){
-                      var classId = data._id;
-                      Userclass.findById(classId, function(err, classData){
-                        classData.status = 'requested';
-                        classData.save(function(err){
-                          var _notificationData = {
-                            forUser: classData.teacherID,
-                            fromUser: classData.studentID,
-                            notificationType: 'classRequest',
-                            notificationStatus: 'unread',
-                            notificationMessage: 'Test Message',
-                            referenceClass: classData._id
-                          }
-                          Notification.create(_notificationData, function(err, notification){
-                            resolve();
-                          });
-                        });
-                      })
-                    })
-                  });
-
-                  Promise.all(updateClassDataPromise)
-                  .then(function(){
-                    resolve({
-                      paymentRequired: false,
-                      paymentData: null
-                    });
-                  })
-                  .catch(function(err){
-                    reject({status: 500, data: err});
-                  });
-                }
+            }else{
+              bookClass(classData)
+              .then(function(response){
+                resolve({
+                  paymentRequired: false,
+                  paymentData: null
+                });
               })
               .catch(function(err){
-                reject({status: 500, data: err});
+                reject(err);
               });
-            });
-
+            }
           });
         });
+
       }else{
         reject({status: 403, data: 'Invalid cost provided'});
       }
@@ -259,72 +220,31 @@ exports.updatePayment = function(req, res) {
       Transaction.findById(transactionId, function (err, transaction){
         // if (err) { return handleError(res, err); }
         if(!transaction) { return res.status(404).send('Not Found'); }
-        transaction = transaction;
-        var _classData = transaction.classInfo;
+        var userID = transaction.userID;
+        var transactionAmount = transaction.transactionAmount;
+        var classData = tempClassData[transaction._id];
 
         transaction.status = transactionData.status;
         transaction.transactionData = transactionData;
-        
         transaction.save(function(err){
-          // if (err) { return handleError(res, err); }
-          var transactionProcessingPromise = _classData.map(function(data, i){
-            return new Promise(function(resolve, reject){
-              var classId = data._id;
-              Userclass.findById(classId, function(err, classData){
-                // if (err) { return handleError(res, err); }
-                if(transactionData.status === 'success'){
-                  classData.status = 'requested';
-                  classData.save(function(err){
-                    // if (err) { return handleError(res, err); }
-                    var _notificationData = {
-                      forUser: classData.teacherID,
-                      fromUser: classData.studentID,
-                      notificationType: 'classRequest',
-                      notificationStatus: 'unread',
-                      notificationMessage: 'Test Message',
-                      referenceClass: classData._id
-                    }
-                    Notification.create(_notificationData, function(err, notification){
-                      // if (err) { return handleError(res, err); }
-                      resolve();
-                    });
-                  });
-                }else{
-                  classData.remove(function(err){
-                    // if (err) { return handleError(res, err); }
-                    reject();
-                  });
-                }
-              })
-            })
-          });
-          Promise.all(transactionProcessingPromise)
-          .then(function(data){
-            if(transactionData.status === 'success'){
-              var userId = transaction.userID;
-              var transactionAmount = transactionData.amount;
-              var transactionType = 'Credit';
-              var transactionAmountType = 'nonWithdrawBalance';
-              var transactionDescription = 'Amount paid for class booking';
-              var refrenceTransaction = transaction._id;
-
-              transactionHistoryController
-              .processTransaction(userId, transactionAmount, transactionType, transactionAmountType, transactionDescription, refrenceTransaction)
+          Wallet.findOne({
+            userID: userID
+          })
+          .exec(function(err, walletData){
+            walletData.totalBalance = parseFloat(walletData.totalBalance + transactionAmount);
+            walletData.withdrawBalance = parseFloat(walletData.withdrawBalance + transactionAmount);
+            walletData.save(function(err, updatedWalletData){
+              bookClass(classData)
               .then(function(response){
-                resolve();
+                delete tempClassData[transaction._id];
+                resolve(response);
               })
               .catch(function(err){
-                // Refund payment code will be added here
                 reject(err);
               });
-            }else{
-              reject();
-            }
-          })
-          .catch(function(err){
-            reject(err);
-          })
-        })
+            });
+          });
+        });
       });
     });
 
@@ -400,9 +320,8 @@ function hashAfterTransaction(data, transactionStatus) {
 }
 
 function validateTransaction(transactionId){
-  console.log(validateTransaction);
   Transaction.findById(transactionId, function (err, transaction){
-    if(transaction.status === 'initiated'){
+    if(transaction.status === 'pending'){
       var classData = transaction.classInfo;
       transaction.status = 'unprocessed';
       transaction.save(function(err){
@@ -420,4 +339,97 @@ function validateTransaction(transactionId){
       });
     }
   })
+}
+
+function getTransactionResponse(txnid){
+  var options = {
+    host: 'example.com',
+    port: 80,
+    path: '/foo.html'
+  };
+
+  http.get(options, function(resp){
+    resp.on('data', function(chunk){
+      //do something with chunk
+    });
+  }).on("error", function(e){
+    console.log("Got error: " + e.message);
+  });
+}
+
+function bookClass(classData){
+  return new Promise(function(resolve, reject){
+    var bookClassPromise = classData.map(function(singleClassData){
+      var userID = singleClassData.studentID;
+      var totalAmount = singleClassData.amount.totalCost;
+
+      return new Promise(function(resolve, reject){
+        Wallet.findOne({
+          userID: userID
+        })
+        .populate('userID')
+        .exec(function(err, walletData){            
+          var usedPromoBalance = 0;
+          var usedWithdrawBalance = 0;
+
+          var walletBalance = walletData.totalBalance;
+          var nonWithdrawBalance = walletData.nonWithdrawBalance;
+          var withdrawBalance = walletData.withdrawBalance;
+          var promoBalance = walletData.promoBalance;
+          var bookingBalance = parseFloat(withdrawBalance + promoBalance);
+
+          if(promoBalance >= totalAmount){
+            usedPromoBalance = totalAmount;
+          }else{
+            usedPromoBalance = walletData.promoBalance;
+            usedWithdrawBalance = totalAmount - promoBalance;
+          }
+
+          singleClassData.status = 'requested';
+          singleClassData.amount.promoBalance = usedPromoBalance;
+          singleClassData.amount.withdrawBalance = usedWithdrawBalance;
+
+          Userclass.create(singleClassData, function(err, userclass){
+            var transactionData = {
+              userID: userID,
+              transactionType: 'Debit',
+              transactionIdentifier: 'walletCashDeducted',
+              transactionDescription: 'Wallet cash deducted for class booking',
+              transactionAmount: parseFloat(totalAmount),
+              classRefrence: userclass._id,
+              status: 'completed'
+            }
+
+            Transaction.create(transactionData, function(err, transaction){
+              walletData.withdrawBalance = parseFloat(walletData.promoBalance - usedWithdrawBalance);
+              walletData.promoBalance = parseFloat(walletData.promoBalance - usedPromoBalance);
+              walletData.nonWithdrawBalance = parseFloat(walletData.nonWithdrawBalance + totalAmount);
+
+              walletData.save(function(err){
+                var notificationData = {
+                  forUser: singleClassData.teacherID,
+                  fromUser: singleClassData.studentID,
+                  notificationType: 'classRequest',
+                  notificationStatus: 'unread',
+                  notificationMessage: 'Test Message',
+                  referenceClass: singleClassData._id
+                }
+                Notification.create(notificationData, function(err, notification){
+                  resolve(singleClassData);
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+
+    Promise.all(bookClassPromise)
+    .then(function(data){
+      resolve(data);
+    })
+    .catch(function(err){
+      reject(err);
+    })
+  });
 }

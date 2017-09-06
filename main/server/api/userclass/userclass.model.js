@@ -17,6 +17,8 @@ var UserclassSchema = new Schema({
   liveClassLink: {type: String, default: null},
   amount: {
     currency: {type: String, required: true},
+    withdrawBalance: {type: Number, required: true},
+    promoBalance: {type: Number, required: true},
     totalCost: {type: Number, required: true},
     paidToTeacher: {type: Number, required: true}
   },

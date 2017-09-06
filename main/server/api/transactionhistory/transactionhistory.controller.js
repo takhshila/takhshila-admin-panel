@@ -63,7 +63,7 @@ exports.destroy = function(req, res) {
 
 
 
-exports.processTransaction = function(userId, transactionAmount, transactionType, transactionAmountType, transactionDescription, refrenceTransaction){
+exports.processTransaction = function(userId, transactionAmount, transactionType, transactionAmountType, transactionIdentifier, transactionDescription, refrenceType, refrenceID){
   if(userId === null){
     var transactionData = {
       transactionType: transactionType,
@@ -110,13 +110,16 @@ exports.processTransaction = function(userId, transactionAmount, transactionType
           var transactionData = {
             userID: userId,
             transactionType: transactionType,
+            transactionDescription: transactionDescription,
+            transactionIdentifier: transactionIdentifier,
             transactionAmount: parseFloat(transactionAmount),
             transactionAmountType: transactionAmountType,
             previousBalance: previousWalletBalance,
             newBalance: updatedWalletData.totalBalance
           }
-          if(transactionDescription){ transactionData.transactionDescription = transactionDescription; }
-          if(refrenceTransaction){ transactionData.refrenceTransaction = refrenceTransaction; }
+          
+          if(refrenceType === 'transaction' && refrenceID){ transactionData.refrenceTransaction = refrenceID; }
+          if(refrenceType === 'class' && refrenceID){ transactionData.classRefrence = refrenceID; }
 
           Transactionhistory.create(transactionData, function(err, transactionHistoryData){
             if(err){ console.log(err); reject('Invalid transaction data'); return; }
