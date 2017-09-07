@@ -30,6 +30,27 @@ var _ = require('lodash'),
     };
 
 
+// Get list of transactionhistorys
+exports.index = function(req, res) {
+  var userID = req.user.id;
+  var perPage = 10;
+  var page = req.query.page || 0;
+  var userID = req.user._id;
+  Transaction.find({
+    userID: userID
+  })
+  .limit(perPage)
+  .skip(perPage * page)
+  .sort({
+    dateTime: 'desc'
+  })
+  .populate('userID', 'name profilePhoto')
+  .exec(function (err, transactions) {
+    if(err) { return handleError(res, err); }
+    return res.status(200).json(transactions);
+  });
+};
+
 // Initiate transactions
 exports.initiatePayment = function(req, res) {
   var userId = req.user._id;
@@ -193,14 +214,6 @@ exports.initiatePayment = function(req, res) {
   });
 };
 
-// Get list of transactions
-exports.index = function(req, res) {
-  Transaction.find(function (err, transactions) {
-    if(err) { return handleError(res, err); }
-    return res.status(200).json(transactions);
-  });
-};
-
 // Get a single transaction
 exports.show = function(req, res) {
   Transaction.findById(req.params.id, function (err, transaction) {
@@ -346,6 +359,14 @@ function validateTransaction(transactionId){
       })
       .catch(function(err){
         console.log(err);
+        Transaction.findById(transactionId, function (err, transaction){
+          if(!transaction) { console.log('Transaction Not Found'); }
+          transaction.status = 'Failed';
+          transaction.transactionData = err;
+          transaction.save(function(err){
+            console.log('Transaction failed');
+          });
+        });
       })
     }
   })

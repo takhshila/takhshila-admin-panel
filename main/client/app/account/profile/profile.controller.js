@@ -215,6 +215,7 @@ angular.module('takhshilaApp')
       userFactory.updateAvailability({availability: _availability})
       .success(function(response){
         $scope.edit.availability.progress = false;
+        $scope.cancelEditAvailability();
         console.log(response);
       })
       .error(function(err){

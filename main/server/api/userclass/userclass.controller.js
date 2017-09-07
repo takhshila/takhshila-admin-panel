@@ -164,18 +164,30 @@ exports.denyClassRequest = function(req, res) {
           walletData.totalBalance = parseFloat(walletData.totalBalance + (userclass.amount.withdrawBalance + userclass.amount.promoBalance));
 
           walletData.save(function(err){
-            var _notificationData = {
-              forUser: userclass.studentID,
-              fromUser: userclass.teacherID,
-              notificationType: 'requestDenied',
-              notificationStatus: 'unread',
-              notificationMessage: 'Test Message',
-              referenceClass: userclass._id
+            var transactionData = {
+              userID: userclass.studentID,
+              transactionType: 'Credit',
+              transactionIdentifier: 'walletCashRefunded',
+              transactionDescription: 'Wallet cash refunded for failed class booking',
+              transactionAmount: parseFloat(userclass.amount.withdrawBalance + userclass.amount.promoBalance),
+              classRefrence: userclass._id,
+              status: 'completed'
             }
-            Notification.create(_notificationData, function(err, notification){
-              console.log(err);
-              return res.status(201).json(userclass);
-            });
+
+            Transaction.create(transactionData, function(err, transaction){
+              var _notificationData = {
+                forUser: userclass.studentID,
+                fromUser: userclass.teacherID,
+                notificationType: 'requestDenied',
+                notificationStatus: 'unread',
+                notificationMessage: 'Test Message',
+                referenceClass: userclass._id
+              }
+              Notification.create(_notificationData, function(err, notification){
+                console.log(err);
+                return res.status(201).json(userclass);
+              });
+            })
           });
         });
       });

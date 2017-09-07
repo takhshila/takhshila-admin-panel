@@ -4,6 +4,48 @@
     border-radius: 0px;
     box-shadow: none;
     border: 1px solid rgba(34, 36, 38, 0.15);
+    &.segment{
+      .transaction-list{
+        p{
+          font-size: 14px;
+        }
+        .transaction-item{
+          padding: 5px;
+          border-bottom: 1px solid rgba(34, 36, 38, 0.15);
+          &:last-child{
+            border: 0px;
+          }
+        }
+        .transaction-details{
+          div{
+            display: block;
+            float: left;
+            &.transaction-icon{
+              width: 15%;
+              i{
+                font-size: 45px;
+                color: #00B5AD;
+                line-height: 0.8;
+              }
+            }
+            &.transaction-description{
+              width: 80%;
+            }
+          }
+        }
+      }
+      .action-container{
+        margin-top: 10px;
+        width: 100%;
+        text-align: center;
+        .ui{
+          &.buttons{
+            min-width: 200px;
+            border: 0px;
+          }
+        }
+      }
+    }
   }
 
   .wallet-container{

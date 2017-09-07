@@ -46,6 +46,7 @@ angular.module('takhshilaApp')
     if($scope.selectedSessions.length){
       var cartData = {
         teacherID: $stateParams.ID,
+        teacherDetails: $scope.user,
         currency: $scope.user.ratePerHour.currency,
         classData: $scope.selectedSessions
       }

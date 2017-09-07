@@ -79,6 +79,12 @@ angular.module('takhshilaApp', [
     };
   })
 
+  .filter('capitalize', function() {
+      return function(input) {
+        return (!!input) ? input.charAt(0).toUpperCase() + input.substr(1).toLowerCase() : '';
+      }
+  })
+
   .run(function ($rootScope, $state, socket, Auth) {
     // Redirect to login if route requires auth and you're not logged in
     $rootScope.$on('$stateChangeStart', function (event, next) {

@@ -37,36 +37,36 @@
 	          	</div>
 	          </div>
 	        </div>
-	        <div class="ui segment">
-	          	<div class="row" ng-repeat="transaction in transactionHistory">
+	        <div class="ui segment transaction-list">
+	          	<div class="row transaction-item" ng-repeat="transaction in transactionHistory">
 		            <div class = "col-sm-5">
 				    	<div class="transaction-details">
 					    	<div class="transaction-icon">
 					    		<i class="money icon"></i>
 					    	</div>
 					    	<div class="transaction-description">
-					    		<p>This is transaction description</p>
+					    		<p>{{transaction.transactionDescription}}</p>
 					    	</div>
 				    	</div>
 		            </div>
 		            <div class = "col-sm-1">
 				    	<div class="transaction-type">
-				    		<p>Credit</p>
+				    		<p>{{transaction.transactionType}}</p>
 				    	</div>
 		            </div>
 		            <div class = "col-sm-2">
 				    	<div class="transaction-amount">
-				    		<p>120.00</p>
+				    		<p>{{transaction.transactionAmount}}</p>
 				    	</div>
 		            </div>
 		            <div class = "col-sm-1">
 				    	<div class="transaction-status">
-				    		<p>Success</p>
+				    		<p>{{transaction.status | capitalize}}</p>
 				    	</div>
 		            </div>
 		            <div class = "col-sm-3">
 				    	<div class="transaction-comment">
-				    		<p>Bank Txn Id: 626716143282926</p>
+				    		<p>{{transaction.dateTime | amUtc | amDateFormat:'MM-DD-YYYY HH:mm'}}</p>
 				    	</div>
 		            </div>
 	          	</div>
@@ -75,6 +75,13 @@
 	          			No Transactions Found
 	          		</div>	          		
 	          	</div>
+
+	            <div class="action-container centered" ng-if="hasMoreData">
+	              <div class="ui buttons">
+	                <button ng-class = "{'loading': loading}" ng-disabled="loading" ng-click="loadTransactionHistory()" class = "ui button basic primary">Load More</button>
+	              </div>
+	            </div>
+	            
 	        </div>
 	      </div>
 		</div>

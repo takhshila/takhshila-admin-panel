@@ -17,13 +17,14 @@ angular.module('takhshilaApp')
   	}
 
   	$scope.getTransactionHistory = function(){
-		$http.get('/api/v1/transactionhistory/')
+		$http.get('/api/v1/transactions/')
 		.then(function(response){
-			if(response.length < 10){
+			if(response.data.length < 10){
 				$scope.hasMoreData = false;
 			}
 			$scope.page++;
 			$scope.transactionHistory = response.data;
+      console.log($scope.transactionHistory);
 		}, function(err){
 			console.log(err);
 		});

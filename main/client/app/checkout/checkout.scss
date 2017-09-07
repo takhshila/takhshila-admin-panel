@@ -1,0 +1,58 @@
+#checkout{
+	.ui{
+		margin: 0px;
+		border-radius: 0px;
+		box-shadow: none;
+		border: 1px solid rgba(34, 36, 38, 0.15);
+		.selectedSession{
+			padding: 10px 0px;
+			margin-top: 10px;
+			border-bottom: 1px dashed rgba(34, 36, 38, 0.15);
+		}
+		.sessionDateTime{
+			width: 65%;
+			float: left;
+		}
+		.sessionCost{
+			width: 32%;
+			float: right;
+			text-align: right;
+			font-weight: bold;
+		}
+		.bookClassButtonContainer {
+		    margin: 10px 0px;
+		    display: block;
+		    button{
+		      width: 100%;
+		      margin: 5px 0px;
+		    }
+		}
+		&.image{
+			border: 0px;
+		}
+		&.items{
+			margin: 0px;
+			.item{
+				.content{
+					.header{
+						font-weight: bold;
+						font-size: 1em;
+					    width: 125px;
+					    display: inline-block;
+					}
+					.meta{
+						.meta-item{
+							font-size: 0.9em;
+							display: block;
+							margin: 10px 0px;
+						}
+					}
+				}
+				border-bottom: 1px solid #e5e5e5;
+				padding: 10px;
+				background: #fff;
+				margin: 0px;
+			}
+		}
+	}
+}
