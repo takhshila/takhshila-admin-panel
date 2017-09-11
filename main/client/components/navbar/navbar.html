@@ -20,7 +20,7 @@
           </li>
           <li ng-if = "loggedIn" class="dropdown">
               <a data-toggle="dropdown" class="ui label dropdown-toggle" href="#">
-                <img class="ui right spaced avatar image" src="http://semantic-ui.com/images/avatar/small/elliot.jpg">
+                <img class="ui right spaced avatar image" src="{{currentUser.profilePhoto.dataURI}}">
                 {{currentUser.name.firstName}}&nbsp;{{currentUser.name.lastName}} <b class="caret"></b>
               </a>
               <ul role="menu" class="dropdown-menu">

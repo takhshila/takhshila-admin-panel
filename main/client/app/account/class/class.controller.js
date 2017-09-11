@@ -4,7 +4,6 @@ angular.module('takhshilaApp')
   .controller('ClassCtrl', function ($rootScope, $scope, $mdDialog, User, userClassFactory, Auth) {
   	$scope.classList = [];
   	$scope.page = 0;
-  	$scope.hasMoreData = true;
   	$scope.loading = false;
 
   	$scope.getClasses = function(type){
@@ -19,7 +18,9 @@ angular.module('takhshilaApp')
 			$scope.loading = false;
 			if(response.length < 10){
 				$scope.hasMoreData = false;
-			}
+			}else{
+        $scope.hasMoreData = true;
+      }
 			$scope.page++;
 			$scope.classList = response;
 		})
@@ -31,7 +32,6 @@ angular.module('takhshilaApp')
 
   	$scope.loadClasses = function(type){
   		$scope.page = 0;
-  		$scope.hasMoreData = true;
   		$scope.getClasses(type);
   	}
     $rootScope.$watch('loggedIn', function(status){

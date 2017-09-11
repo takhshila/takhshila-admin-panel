@@ -99,10 +99,15 @@
           </div>
         </div>
         <div class="ui segment">
-          <p ng-show="!edit.basicInfo.editing">
-            {{currentUser.basicInfo}}
+          <p ng-if="!edit.basicInfo.editing">
+            <span class="no-data" ng-if="!currentUser.basicInfo" ng-click="editBasicInfo($event)">
+              <i class="write icon"></i>Write something about yourself.
+            </span>
+            <span ng-if="currentUser.basicInfo">
+              {{currentUser.basicInfo}}
+            </span>
           </p>
-          <textarea autofocus class="editable-area" ng-disabled="edit.basicInfo.progress" ng-model="edit.basicInfo.data" ng-show="edit.basicInfo.editing">{{edit.basicInfo.data}}</textarea>
+          <textarea autofocus class="editable-area" ng-disabled="edit.basicInfo.progress" ng-model="edit.basicInfo.data" ng-if="edit.basicInfo.editing">{{edit.basicInfo.data}}</textarea>
         </div>
       </div>
 
@@ -301,6 +306,9 @@
                 </span>
               </div>
             </div>
+            <div class="no-data" ng-if="!currentUser.education.length" ng-click="showAddEducationModal($event)">
+              <i class="plus icon"></i> Add Education
+            </div>
           </div>
         </div>
       </div>
@@ -336,6 +344,9 @@
                   <i class="remove icon red"></i>
                 </span>
               </div>
+            </div>
+            <div class="no-data" ng-if="!currentUser.experience.length" ng-click="showAddExperienceModal($event)">
+              <i class="plus icon"></i> Add Experience
             </div>
           </div>
         </div>

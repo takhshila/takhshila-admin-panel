@@ -95,6 +95,11 @@
           }
       }
       .segment{
+        .no-data{
+          line-height: 3em;
+          cursor: pointer;
+          display: block;
+        }
         .wrapEditor{
           position: absolute;
           width: 100%;

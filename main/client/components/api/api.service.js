@@ -4,7 +4,7 @@ angular.module('takhshilaApp')
   .factory('api', function ($http) {
     var version = "v1";
     // var base_url = "http://api.eazevent.in/" + "" + version;
-    var base_url = "http://localhost:9000/api"+ "/" + version + "/";
+    var base_url = "/api"+ "/" + version + "/";
 
     function getRequest(url, id, params) {
         url = url + id + '/';

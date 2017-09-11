@@ -8,15 +8,15 @@
               	<i class="payment icon"></i>
               </span>
               <span class="wallet-balance-item">
-                <p class="wallet-price">Rs. 0</p>
+                <p class="wallet-price">Rs. {{wallet.withdrawBalance}}</p>
                 <p class="wallet-description">Withdrawable wallet Balance</p>
               </span>
               <span class="wallet-balance-item">
-                <p class="wallet-price">Rs. 120</p>
+                <p class="wallet-price">Rs. {{wallet.promoBalance}}</p>
                 <p class="wallet-description">Non-withdrawable wallet Balance</p>
               </span>
               <span class="wallet-balance-item">
-                <p class="wallet-price">Rs. 120</p>
+                <p class="wallet-price">Rs. {{wallet.promoBalance + wallet.withdrawBalance}}</p>
                 <p class="wallet-description">Total wallet Balance</p>
               </span>
             </div>

@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var crypto = require('crypto');
 var authTypes = ['github', 'twitter', 'facebook', 'google'];
+var config = require('../../config/environment');
 
 var UserSchema = new Schema({
   name: {
@@ -26,7 +27,7 @@ var UserSchema = new Schema({
     fileName: { type: String, default: null },
     filePath: { type: String, default: null },
     fileURI: { type: String, default: null },
-    dataURI: { type: String, default: null }
+    dataURI: { type: String, default: config.defaultData.profilePhoto }
   },
   ratePerHour: {
     base: Number,

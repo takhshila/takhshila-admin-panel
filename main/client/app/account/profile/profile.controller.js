@@ -302,6 +302,7 @@ angular.module('takhshilaApp')
     $scope.cancelEditBasicInfo = function(){
       $scope.edit.basicInfo.editing = false;
       $scope.edit.basicInfo.data = null;
+      console.log($scope.currentUser.basicInfo);
     }
 
     $scope.editRatePerHour = function(evt){
