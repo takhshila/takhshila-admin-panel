@@ -42,6 +42,11 @@ module.exports = function (grunt) {
           debug: true
         }
       },
+      staging: {
+        options: {
+          script: 'dist/server/app.js'
+        }
+      },
       prod: {
         options: {
           script: 'dist/server/app.js'
@@ -467,6 +472,9 @@ module.exports = function (grunt) {
     env: {
       test: {
         NODE_ENV: 'test'
+      },
+      staging: {
+        NODE_ENV: 'staging'
       },
       prod: {
         NODE_ENV: 'production'
