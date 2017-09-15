@@ -243,7 +243,7 @@
               <input type="button" name="removeSpecialization" ng-click="removeSpecialization($index)" value="Remove" ng-if="$index !== 0 && ($index + 1) === edit.specialization.data.length"> -->
             </div>
           </div>
-          <ul class="specialization-container">
+          <ul class="specialization-container" ng-if="!currentUser.specialization.length">
             <li ng-repeat="topic in currentUser.specialization">
               <a href="#" class="topic-name">{{topic.topic.topicName}}</a>
               <a href="#" class="topic-level">{{topic.level}}</a>
@@ -253,6 +253,9 @@
               </a>
             </li>
           </ul>
+          <div class="no-data" ng-if="currentUser.specialization.length" ng-click="uploadVideo()">
+            <i class="write icon"></i> Add subject/topics you want to teach
+          </div>
         </div>
       </div>
 
@@ -269,6 +272,12 @@
         </div>
         <div class="ui segment" ng-if="demoVideos.length > 0">
           <video-slider slides="demoVideos" can-edit="true" can-delete="true" edit-handle="editVideo(index)" delete-handle="confirmDeleteVideo($event, index)" click-handle="showVideoModal(index)"></video-slider>
+        </div>
+        <div class="ui segment" ng-if="!demoVideos.length">
+          <div class="no-data" ng-click="uploadVideo()">
+            <i class="plus icon"></i> Add Demo Video
+            <p>Add short video of yourself teaching any topic related to the subject you want to teach.</p>
+          </div>
         </div>
         
         <form id = "uploadVideoForm">

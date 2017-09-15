@@ -47,7 +47,20 @@ hr { width: 100%; border-top: 1px solid #E9E9E9; display: inline-block; }
 .highlight { color: #00918b; }
 .center {text-align:center;}
 .resp-center {text-align:center;}
-.no-data { font-size: 24px; color: rgba(34, 36, 38, 0.35); line-height: 5em; text-align: center; font-weight: bold; }
+.no-data { 
+  font-size: 24px; 
+  color: rgba(34, 36, 38, 0.35); 
+  line-height: 5em; 
+  text-align: center; 
+  font-weight: bold; 
+  p{
+    font-size: 16px;
+    color: rgba(34, 36, 38, 0.45);
+    font-weight: normal;
+    padding-bottom: 20px;
+    margin-top: -10px; 
+  }
+}
 
 
 .icon-active { color: #00918b; }
