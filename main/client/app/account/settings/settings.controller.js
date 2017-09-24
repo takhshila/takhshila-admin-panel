@@ -70,4 +70,65 @@ angular.module('takhshilaApp')
         }
       }
     });
+
+
+
+    $scope.showAddBankAccountModal = function($event, bankAccountData){
+      if(bankAccountData === undefined){
+        bankAccountData = null;
+      }
+      var parentEl = angular.element(document.body);
+      $mdDialog.show({
+        templateUrl: 'components/addBankAccountModal/addBankAccountModal.html',
+        controller: 'AddBankAccountModalCtrl',
+        parent: parentEl,
+        targetEvent: $event,
+        disableParentScroll: true,
+        clickOutsideToClose: true,
+        locals: {
+          bankAccountData: bankAccountData
+        }
+      });
+    }
+
+    $scope.editBankAccount = function(index){
+      var bankAccountData = $rootScope.currentUser.experience[index];
+      $scope.showAddBankAccountModal('', bankAccountData);
+    }
+
+    $scope.deleteBankAccount = function(index){
+      return userFactory.deleteBankAccount($rootScope.currentUser.experience[index]._id)
+    }
+
+    $scope.confirmDeleteBankAccount = function($event, index){
+      var parentEl = angular.element(document.body);
+      var bankAccountData = $rootScope.currentUser.experience[index];
+      bankAccountData.index = index;
+      $mdDialog.show({
+        templateUrl: 'components/confirmModal/confirmModal.html',
+        controller: 'ConfirmModalCtrl',
+        parent: parentEl,
+        targetEvent: $event,
+        disableParentScroll: true,
+        clickOutsideToClose: false,
+        locals: {          
+          modalData: bankAccountData,
+          modalOptions: {
+            headerText: 'Confirm Delete',
+            contentTitle: 'Are you sure you want to remove this experience?',
+            modalType: 'deleteBankAccount',
+            confirmText: 'Delete',
+            confirmClass: 'red',
+            cancelClass: '',
+            cancelText: 'Cancel',
+            processConfirm: $scope.deleteBankAccount
+          }
+        }
+      })
+      .then(function() {
+        console.log('You confirmed delete');
+      }, function() {
+        console.log('You cancelled delete');
+      });
+    }
   });

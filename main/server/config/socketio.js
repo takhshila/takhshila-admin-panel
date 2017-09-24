@@ -49,6 +49,7 @@ function onConnect(socket) {
   });
 
   // Insert sockets below
+  require('../api/bank/bank.socket').register(socket);
 
   // require('../api/classDetails/classDetails.socket').register(socket);
   // require('../api/company/company.socket').register(socket);

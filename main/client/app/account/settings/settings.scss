@@ -22,6 +22,21 @@
 					}
 				}
 			}
+			.bank-account-container{
+				min-height: 200px;
+				background: #fff;
+				margin-bottom: 30px;
+				border: 1px dotted;
+		        .no-data{
+					line-height: 1em;
+					cursor: pointer;
+					display: block;
+					p{
+						font-size: 20px;
+						margin-top: 15px;
+					}
+		        }
+			}
 		}
 	}
 }
