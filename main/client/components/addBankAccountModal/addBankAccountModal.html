@@ -30,10 +30,10 @@
                   	type="text"
                   	ng-change="clearField('bankName')"
                   	ng-model="addBankAccountFormData.bankName"
+                  	ng-disabled="disableFields"
                   	uib-typeahead="bank for bank in getBankList($index, $viewValue)"
                   	typeahead-loading="loading"
                   	typeahead-no-results="noResults"
-                  	typeahead-on-select="addFieldValue($item, 'bankName')"
                   	typeahead-select-on-blur="true"
                   	required
                   	/>
@@ -46,7 +46,7 @@
             <div class="field" ng-class = "{'has-error': addBankAccountForm.branchName.$invalid && addBankAccountForm.branchName.$touched}">
               <lx-text-field label="Branch" error = "addBankAccountForm.branchName.$invalid && addBankAccountForm.branchName.$touched">
                   <input 
-                  	ng-disabled="!addBankAccountFormData.bankName"
+                  	ng-disabled="!addBankAccountFormData.bankName || disableFields"
                   	name = "branchName"
                   	type="text"
                   	ng-change="clearField('branchName')"
@@ -54,7 +54,7 @@
                   	uib-typeahead="branch for branch in getBranchList($index, $viewValue)"
                   	typeahead-loading="loading"
                   	typeahead-no-results="noResults"
-                  	typeahead-on-select="addFieldValue($item, 'branchName')"
+                  	typeahead-on-select="addBranch($item)"
                   	typeahead-select-on-blur="true"
                   	required
                   	/>
@@ -66,7 +66,7 @@
 
             <div class="field" ng-class = "{'has-error': addBankAccountForm.accountNumber.$invalid && addBankAccountForm.accountNumber.$touched}">
               <lx-text-field label="Account Number" error = "addBankAccountForm.accountNumber.$invalid && addBankAccountForm.field.$touched">
-                  <input name = "accountNumber" type="text" ng-model="addBankAccountFormData.accountNumber" required>
+                  <input name = "accountNumber" type="text" ng-model="addBankAccountFormData.accountNumber" ng-disabled="!addBankAccountFormData.branchName || !addBankAccountFormData.bankName || disableFields" required>
               </lx-text-field>
               <div class="help-block" ng-messages="addBankAccountForm.accountNumber.$error" ng-if="addBankAccountForm.accountNumber.$touched">
                   <p ng-message="required">This field is required.</p>
@@ -82,7 +82,7 @@
       <button class="ui button" ng-click = "closeDialog()">Cancel</button>
       <div class="or"></div>
       <button ng-disabled="addBankAccountProgress" ng-if="isUpdate" class="ui primary button" ng-click = "updateBankAccount()" ng-class="{'loading': addBankAccountProgress}" lx-ripple>Update</button>
-      <button ng-disabled="addBankAccountProgress" ng-if="!isUpdate" class="ui primary button" ng-click = "addBankAccount()" ng-class="{'loading': addBankAccountProgress}" lx-ripple>Add Bank Account</button>
+      <button ng-disabled="addBankAccountProgress || disableFields" ng-if="!isUpdate" class="ui primary button" ng-click = "addBankAccount(addBankAccountForm)" ng-class="{'loading': addBankAccountProgress}" lx-ripple>Add Bank Account</button>
     </div>
   </div>
 </modal>

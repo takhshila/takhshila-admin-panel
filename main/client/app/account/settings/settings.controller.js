@@ -1,8 +1,9 @@
 'use strict';
 
 angular.module('takhshilaApp')
-  .controller('SettingsCtrl', function ($rootScope, $scope, $mdDialog, User, userFactory, Auth) {
+  .controller('SettingsCtrl', function ($rootScope, $scope, $mdDialog, $http, User, userFactory, Auth) {
     $scope.errors = {};
+    $scope.bankAccounts = [];
 
     $scope.changePassword = function(form) {
       $scope.submitted = true;
@@ -51,6 +52,7 @@ angular.module('takhshilaApp')
     
     $rootScope.$watch('loggedIn', function(status){
       if(status === true){
+        $scope.getBankAccounts();
         $rootScope.isLoading = false;
         $scope.user = {
           name: {
@@ -72,6 +74,14 @@ angular.module('takhshilaApp')
     });
 
 
+    $scope.getBankAccounts = function(){
+      $http.get('/api/v1/bankAccounts/')
+      .then(function(response){
+        $scope.bankAccounts = response.data;
+      }, function(err){
+        console.log(err);
+      });
+    }
 
     $scope.showAddBankAccountModal = function($event, bankAccountData){
       if(bankAccountData === undefined){
@@ -131,4 +141,8 @@ angular.module('takhshilaApp')
         console.log('You cancelled delete');
       });
     }
+
+    $rootScope.$on('bankAccountDataSaved', function(data){
+      $scope.getBankAccounts();
+    });
   });

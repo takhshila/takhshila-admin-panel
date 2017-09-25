@@ -10,8 +10,9 @@ var path = require('path');
 module.exports = function(app) {
 
   // Insert routes below
-  app.use('/api/banks', require('./api/bank'));
-  app.use('/api/classDetailss', require('./api/classDetails'));
+  app.use('/api/v1/bankAccounts', require('./api/bankAccount'));
+  app.use('/api/v1/banks', require('./api/bank'));
+  app.use('/api/v1/classDetailss', require('./api/classDetails'));
   app.use('/api/v1/company', require('./api/company'));
   app.use('/api/v1/languages', require('./api/language'));
   app.use('/api/v1/countries', require('./api/countries'));

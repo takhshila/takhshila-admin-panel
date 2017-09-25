@@ -23,10 +23,10 @@
 				}
 			}
 			.bank-account-container{
-				min-height: 200px;
+				min-height: 180px;
 				background: #fff;
 				margin-bottom: 30px;
-				border: 1px dotted;
+				padding: 20px;
 		        .no-data{
 					line-height: 1em;
 					cursor: pointer;
@@ -35,6 +35,27 @@
 						font-size: 20px;
 						margin-top: 15px;
 					}
+		        }
+		        .header{
+		        	font-weight: bold;
+		        	font-size: 16px;
+		        }
+		        .content{
+		        	margin-top: 20px;
+		        	p{
+		        		font-weight: normal;
+		        		font-size: 13px;
+		        		line-height: 0.75em;
+		        		span{
+		        			display: inline-block;
+		        			&.content-title{
+		        				font-weight: bold;
+		        			}
+		        			&.content-data{
+		        				font-weight: normal;
+		        			}
+		        		}
+		        	}
 		        }
 			}
 		}

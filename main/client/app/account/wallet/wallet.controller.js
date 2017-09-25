@@ -7,13 +7,13 @@ angular.module('takhshilaApp')
   	$scope.hasMoreData = false;
 
   	$scope.getWalletBalance = function(){
-		$http.get('/api/v1/wallets/balance/')
-		.then(function(response){
-			$scope.wallet = response.data;
-			$scope.getTransactionHistory();
-		}, function(err){
-			console.log(err);
-		});
+  		$http.get('/api/v1/wallets/balance/')
+  		.then(function(response){
+  			$scope.wallet = response.data;
+  			$scope.getTransactionHistory();
+  		}, function(err){
+  			console.log(err);
+  		});
   	}
 
   	$scope.getTransactionHistory = function(){

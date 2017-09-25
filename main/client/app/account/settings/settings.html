@@ -95,12 +95,37 @@
         </md-card-actions>
       </md-card> -->
 
-          <div class="padded bank-account-container" md-whiteframe="1" flex-sm="45" flex-gt-sm="35" flex-gt-md="25" layout layout-align="center center" ng-click="showAddBankAccountModal($event)">
+          <div ng-if="!bankAccounts.length" class="padded bank-account-container" md-whiteframe="1" flex-sm="45" flex-gt-sm="35" flex-gt-md="25" layout layout-align="center center" ng-click="showAddBankAccountModal($event)">
             <div class="no-data">
               <i class="add circle icon"></i>
               <p>Add new bank account</p>
             </div>
           </div>
+
+          <div ng-if="bankAccounts.length" ng-repeat="bankAccount in bankAccounts" class="padded bank-account-container" md-whiteframe="1" flex-sm="45" flex-gt-sm="35" flex-gt-md="25">
+            <div class="header">
+              {{bankAccount.name}}
+            </div>
+            <div class="content">
+              <p>
+                <span class="content-title">Bank: </span>
+                <span class="content-data">{{bankAccount.bankName}}</span>
+              </p>
+              <p>
+                <span class="content-title">Branch: </span>
+                <span class="content-data">{{bankAccount.branchName}}</span>
+              </p>
+              <p>
+                <span class="content-title">IFSC Code: </span>
+                <span class="content-data">{{bankAccount.ifscCode}}</span>
+              </p>
+              <p>
+                <span class="content-title">Account Number: </span>
+                <span class="content-data">{{bankAccount.accountNumber}}</span>
+              </p>
+            </div>
+          </div>
+
         </md-content>
       </md-tab>
 
