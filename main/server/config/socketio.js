@@ -49,6 +49,7 @@ function onConnect(socket) {
   });
 
   // Insert sockets below
+  require('../api/review/review.socket').register(socket);
   require('../api/bankAccount/bankAccount.socket').register(socket);
   require('../api/bank/bank.socket').register(socket);
 
