@@ -20,11 +20,14 @@
 					<div ng-if="modalOptions.modalType === 'deleteExperience'" class="education-icon">
 						<i class="travel icon"></i>
 					</div>
+					<div ng-if="modalOptions.modalType === 'deleteBankAccount'" class="education-icon">
+						<i class="university icon"></i>
+					</div>
 			        <div ng-if="modalOptions.modalType === 'deleteVideo'" class="ui segment thumbnailContainer">
 			          <div class="thumbnail" style="background-image: url('thumbnails/{{modalData.thumbnailFile}}');"></div>
 			        </div>
 				</div>
-				<div class="data-details" ng-class="{'data-middle' : (modalOptions.modalType === 'deleteEducation' || modalOptions.modalType === 'deleteExperience')}">
+				<div class="data-details" ng-class="{'data-middle' : (modalOptions.modalType === 'deleteEducation' || modalOptions.modalType === 'deleteExperience' || modalOptions.odalType === 'deleteBankAccount')}">
 					<div ng-if="modalOptions.modalType === 'deleteExperience'">
 						<p class="data-title">{{modalData.designation}}</p>
 						<p class="data-description">{{modalData.companyName}}</p>
@@ -32,6 +35,13 @@
 					<div ng-if="modalOptions.modalType === 'deleteEducation'">
 						<p class="data-title">{{modalData.schoolName}}</p>
 						<p class="data-description">{{modalData.degreeName}}, {{modalData.field}}</p>
+					</div>
+					<div ng-if="modalOptions.modalType === 'deleteBankAccount'">
+						<p class="data-title">{{modalData.name}}</p>
+						<p class="data-description"><strong>A/C No:</strong>{{modalData.accountNumber}}</p>
+						<p class="data-description"><strong>Bank:</strong>{{modalData.bankName}}</p>
+						<p class="data-description"><strong>Branch:</strong>{{modalData.branchName}}</p>
+						<p class="data-description"><strong>IFSC Code:</strong>{{modalData.ifscCode}}</p>
 					</div>
 					<div ng-if="modalOptions.modalType === 'deleteVideo'">
 						<p class="data-title">{{modalData.title}}</p>

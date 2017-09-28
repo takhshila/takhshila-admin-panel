@@ -89,7 +89,8 @@ exports.addBankAccount = function(req, res) {
 
 exports.updateBankAccount = function(req, res) {
   var updateBankAccountPromise = new Promise(function(resolve, reject){
-    User.findById(userId, function (err, user){
+    var userID = req.user._id;
+    User.findById(userID, function (err, user){
       if (err) { reject(err); }
       BankAccount.findById(req.params.id, function (err, bankAccount){
         if (err) { reject(err); }
@@ -98,7 +99,7 @@ exports.updateBankAccount = function(req, res) {
         bankAccount.accountNumber = req.body.accountNumber;
         bankAccount.bankName = req.body.bankName;
         bankAccount.branchName = req.body.branchName;
-        bankAccount.ifscCode = req.body.ifscCode;
+        bankAccount.ifscCode = req.body.bankDetails.IFSC;
         Bank.findOne({
           ifsc: req.body.bankDetails.IFSC
         })

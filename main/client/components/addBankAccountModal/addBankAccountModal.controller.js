@@ -6,7 +6,13 @@ angular.module('takhshilaApp')
   	if(bankAccountData !== null){
   		$scope.isUpdate = true;
   		$scope.modalTitle = "Update Bank Details";
-  		$scope.addBankAccountFormData = bankAccountData;
+	  	$scope.addBankAccountFormData = {
+	  		name: $rootScope.currentUser.name.firstName + ' ' + $rootScope.currentUser.name.lastName,
+	  		bankName: bankAccountData.bankName,
+	  		branchName: bankAccountData.branchName,
+	  		accountNumber: bankAccountData.accountNumber,
+	  		bankDetails: bankAccountData.bankDetails
+	  	}
   	}else{
   		$scope.isUpdate = false;
   		$scope.modalTitle = "Add Bank Account";
@@ -14,9 +20,26 @@ angular.module('takhshilaApp')
 	  		name: $rootScope.currentUser.name.firstName + ' ' + $rootScope.currentUser.name.lastName,
 	  		bankName: null,
 	  		branchName: null,
-	  		accounNumber: null,
+	  		accountNumber: null,
 	  		bankDetails: null
 	  	}
+  	}
+
+  	var validateBank = function(bankName, branchName){
+  		return new Promise(function(resolve, reject){
+	  		var bankDetailsUrl = 'http://api.techm.co.in/api/getbank/' + encodeURIComponent(bankName) + '/' + encodeURIComponent(branchName);
+			$http.get(bankDetailsUrl)
+			.then(function(response){
+				if(response.data.status === 'success'){
+					resolve(response.data.data);
+				}else{
+					reject("An error occured! Please try again.");
+				}
+			})
+			.catch(function(err){
+				reject("An error occured! Please try again.");
+			});
+  		});
   	}
 
 	$scope.addBankAccount = function(addBankAccountForm){
@@ -43,40 +66,58 @@ angular.module('takhshilaApp')
 	}
 
 	$scope.updateBankAccount = function(){
-		$scope.addBankAccountProgress = true;
-		$scope.addBankAccountFormData.start = parseInt($scope.selectedStartYear);
-		$scope.addBankAccountFormData.end = parseInt($scope.selectedEndYear);
-		userFactory.updateBankAccount($scope.addBankAccountFormData._id, $scope.addBankAccountFormData)
-		.success(function(response){
-			$scope.addBankAccountProgress = false;
-		})
-		.error(function(err){
-			$scope.addBankAccountProgress = false;
-			console.log(err);
-		})
+		if(addBankAccountForm.$invalid){
+			var el = angular.element("[name='" + addBankAccountForm.$name + "']").find('.ng-invalid:visible:first');
+			var elName = el[0].name;
+			addBankAccountForm[elName].$dirty = true;
+			addBankAccountForm[elName].$pristine = false;
+			angular.element("[name='" + addBankAccountForm.$name + "']").find('.ng-invalid:visible:first').focus();
+			return false;
+		}else{
+			$scope.addBankAccountProgress = true;
+			$scope.disableFields = true;
+	  		validateBank($scope.addBankAccountFormData.bankName, $scope.addBankAccountFormData.branchName)
+	  		.then(function(response){
+	  			$scope.disableFields = false;
+	  			$scope.addBankAccountFormData.bankDetails = response;
+				$http.put('/api/v1/bankAccounts/' + bankAccountData._id, $scope.addBankAccountFormData)
+				.then(function(response){
+					$rootScope.$broadcast('bankAccountDataSaved', {});
+					$scope.addBankAccountProgress = false;
+					$mdDialog.hide();
+				}, function(err){
+					$scope.addBankAccountProgress = false;
+					console.log(err);
+				});
+	  		})
+	  		.catch(function(err){
+	  			$scope.disableFields = false;
+				$scope.addBankAccountFormData.branchName = null;
+				$scope.addBankAccountFormData.bankName = null;
+				$scope.errorMessage = err;
+	  		});
+		}
+	}
+
+	$scope.addBank = function(bankName){
+		$scope.addBankAccountFormData.branchName = null;
+		$scope.addBankAccountFormData.accountNumber = null;
 	}
 
   	$scope.addBranch = function(bankName){
   		if($scope.addBankAccountFormData.bankName && $scope.addBankAccountFormData.branchName){
-	  		$scope.disableFields = true;
-	  		var bankDetailsUrl = 'http://api.techm.co.in/api/getbank/' + encodeURIComponent($scope.addBankAccountFormData.bankName) + '/' + encodeURIComponent($scope.addBankAccountFormData.branchName);
-			$http.get(bankDetailsUrl)
-			.then(function(response){
-				$scope.disableFields = false;
-				if(response.data.status === 'success'){
-					$scope.addBankAccountFormData.bankDetails = response.data.data;
-				}else{
-					$scope.addBankAccountFormData.branchName = null;
-					$scope.addBankAccountFormData.bankName = null;
-					$scope.errorMessage = "An error occured! Please try again."
-				}
-			})
-			.catch(function(err){
-				$scope.disableFields = false;
+	  		// $scope.disableFields = true;
+	  		validateBank($scope.addBankAccountFormData.bankName, $scope.addBankAccountFormData.branchName)
+	  		.then(function(response){
+	  			$scope.disableFields = false;
+	  			$scope.addBankAccountFormData.bankDetails = response;
+	  		})
+	  		.catch(function(err){
+	  			$scope.disableFields = false;
 				$scope.addBankAccountFormData.branchName = null;
 				$scope.addBankAccountFormData.bankName = null;
-				$scope.errorMessage = "An error occured! Please try again."
-			});
+				$scope.errorMessage = err;
+	  		})
   		}
   	}
 

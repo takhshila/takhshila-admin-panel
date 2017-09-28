@@ -103,6 +103,14 @@
           </div>
 
           <div ng-if="bankAccounts.length" ng-repeat="bankAccount in bankAccounts" class="padded bank-account-container" md-whiteframe="1" flex-sm="45" flex-gt-sm="35" flex-gt-md="25">
+            <div class="action-container">
+              <span class="action-edit" ng-click="editBankAccount($index)">
+                <i class="write icon"></i>
+              </span>
+              <span class="action-delete" ng-click="confirmDeleteBankAccount($event, $index)">
+                <i class="remove icon"></i>
+              </span>
+            </div>
             <div class="header">
               {{bankAccount.name}}
             </div>

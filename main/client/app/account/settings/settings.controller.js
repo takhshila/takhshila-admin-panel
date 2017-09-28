@@ -102,17 +102,27 @@ angular.module('takhshilaApp')
     }
 
     $scope.editBankAccount = function(index){
-      var bankAccountData = $rootScope.currentUser.experience[index];
+      var bankAccountData = $scope.bankAccounts[index];
       $scope.showAddBankAccountModal('', bankAccountData);
     }
 
     $scope.deleteBankAccount = function(index){
-      return userFactory.deleteBankAccount($rootScope.currentUser.experience[index]._id)
+      // return userFactory.deleteBankAccount($rootScope.currentUser.experience[index]._id)
+      var bankAccountData = $scope.bankAccounts[index];
+      return $http.delete('/api/v1/bankAccounts/' + bankAccountData._id)
+      .then(function(response){
+        $rootScope.$broadcast('bankAccountDataSaved', {});
+        $scope.addBankAccountProgress = false;
+        $mdDialog.hide();
+      }, function(err){
+        $scope.addBankAccountProgress = false;
+        console.log(err);
+      });
     }
 
     $scope.confirmDeleteBankAccount = function($event, index){
       var parentEl = angular.element(document.body);
-      var bankAccountData = $rootScope.currentUser.experience[index];
+      var bankAccountData = $scope.bankAccounts[index];
       bankAccountData.index = index;
       $mdDialog.show({
         templateUrl: 'components/confirmModal/confirmModal.html',
@@ -125,7 +135,7 @@ angular.module('takhshilaApp')
           modalData: bankAccountData,
           modalOptions: {
             headerText: 'Confirm Delete',
-            contentTitle: 'Are you sure you want to remove this experience?',
+            contentTitle: 'Are you sure you want to remove this bank account?',
             modalType: 'deleteBankAccount',
             confirmText: 'Delete',
             confirmClass: 'red',
