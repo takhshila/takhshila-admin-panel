@@ -3,6 +3,8 @@
 angular.module('takhshilaApp')
   .controller('InitCtrl', function ($rootScope, $scope, $state, $mdDialog, $q, $http, Auth) {
     $rootScope.countries = [];
+    $rootScope.showReviewDialog = false;
+    $rootScope.reviewDialogData = {};
 
     $scope.$watch(function(){
       return $state.current.name;
@@ -92,6 +94,35 @@ angular.module('takhshilaApp')
         });
       }else{
         deferred.resolve();
+      }
+      return deferred.promise;
+    }
+
+    $rootScope.getLastClass = function(){
+      var deferred = $q.defer();
+      if($rootScope.currentUser){
+        $http.get('/api/v1/userclasses/last').then(function(response){
+          if(response){
+            deferred.resolve(response);
+          }else{
+            deferred.reject();
+          }
+          deferred.resolve();
+        }, function(err){
+          deferred.reject();
+        });
+      }
+      return deferred.promise;
+    }
+
+    $rootScope.getUserClassReview = function(classID){
+      var deferred = $q.defer();
+      if($rootScope.currentUser){
+        $http.get('/api/v1/reviews/class/' + classID).then(function(response){
+          deferred.resolve(response);
+        }, function(err){
+          deferred.reject();
+        });
       }
       return deferred.promise;
     }

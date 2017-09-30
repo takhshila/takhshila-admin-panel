@@ -5,6 +5,7 @@ var moment = require('moment');
 var Userclass = require('./userclass.model');
 var Wallet = require('../wallet/wallet.model');
 var Notification = require('../notification/notification.model');
+var Review = require('../review/review.model');
 var schedule = require('node-schedule');
 var eventEmitter;
 
@@ -42,6 +43,43 @@ exports.index = function(req, res) {
     if(err) { return handleError(res, err); }
     return res.status(200).json(userclasss);
   });
+};
+
+// Get last userclasss based on review
+exports.getLastClass = function(req, res) {
+  var userID = req.user._id;
+  var status = req.params.status;
+  var _currentTime = moment().valueOf();
+  var params = {
+    $or: [
+      {studentID: userID},
+      {teacherID: userID}
+    ],
+    'requestedTime.start': {$lte: _currentTime}
+  }
+
+  var getLastClassPromise = new Promise(function(resolve, reject){
+    Userclass
+    .findOne(params)
+    .sort({
+      requestedOn: 'desc'
+    })
+    .populate('studentID', 'name country profilePhoto')
+    .populate('teacherID', 'name country profilePhoto')
+    .exec(function (err, userclasss) {
+      if(err) { return reject(err); }
+      if(!userclasss) { return reject('Not Found'); }
+      resolve(userclasss);
+    });
+  });
+
+  getLastClassPromise
+  .then(function(response){
+    return res.status(200).json(response);
+  })
+  .catch(function(err){
+    return handleError(res, err);
+  })
 };
 
 // Get a single userclass

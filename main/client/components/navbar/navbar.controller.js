@@ -11,6 +11,7 @@ angular.module('takhshilaApp')
         $rootScope.navStick = false;
       }
     });
+    
     $scope.$watch('scroll', function(value){
       if(!$state.current.navStick){
         if(value > 400){
@@ -18,6 +19,26 @@ angular.module('takhshilaApp')
         }else{
           $rootScope.navStick = false;
         }
+      }
+    });
+
+    $rootScope.$watch('loggedIn', function(status){
+      if(status === true){
+        $rootScope.getLastClass()
+        .then(function(response){
+          var classData = response.data;
+          $rootScope.getUserClassReview(classData._id)
+          .then(function(reviews){
+            if(reviews.data.length === 0){
+              $rootScope.showReviewDialog = true;
+              $rootScope.reviewDialogData = classData;
+            }
+          }, function(err){
+            console.log(err);
+          })
+        }, function(err){
+          console.log(err);
+        });
       }
     });
   });

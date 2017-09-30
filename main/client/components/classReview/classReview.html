@@ -1,1 +1,58 @@
-<div>this is the classReview directive</div>
+<modal id = "confirm-modal" class="rating-modal">
+  <div class = "modal-header">
+    <div class = "title">{{modalOptions.headerText}}</div>
+  </div>
+
+  <div class = "modal-content">
+    <div class="row">
+
+      <div class="col-md-12 col-sm-12">
+		<div class="ui segment">
+			<div class="data-header">
+				<p class="text-center">{{modalOptions.contentTitle}}</p>
+			</div>
+			<div class="data-content">
+				<div class="data-item">
+			        <div ng-if="reviewDialogData.teacherID._id === currentUser._id" class="ui segment thumbnailContainer">
+			          <div class="thumbnail" style="background-image: url('{{reviewDialogData.studentID.profilePhoto.dataURI}}');"></div>
+			        </div>
+			        <div ng-if="reviewDialogData.studentID._id === currentUser._id" class="ui segment thumbnailContainer">
+			          <div class="thumbnail" style="background-image: url('{{reviewDialogData.studentID.profilePhoto.dataURI}}');"></div>
+			        </div>
+				</div>
+				<div class="data-details">
+					<div ng-if="reviewDialogData.teacherID._id === currentUser._id" class="ui segment thumbnailContainer">
+						<p class="data-title">{{reviewDialogData.studentID.name.firstName}} {{reviewDialogData.studentID.name.lastName}}</p>
+						<p class="data-description">
+							<strong>Date & Time: </strong>
+							{{reviewDialogData.requestedTime.start | amDateFormat:'dddd, MMMM Do \'YY'}}
+							to
+							{{reviewDialogData.requestedTime.end | amDateFormat:'dddd, MMMM Do \'YY'}}
+						</p>
+					</div>
+					
+					<div ng-if="reviewDialogData.studentID._id === currentUser._id" class="ui segment thumbnailContainer">
+						<p class="data-title">{{reviewDialogData.teacherID.name.firstName}} {{reviewDialogData.teacherID.name.lastName}}</p>
+						<p class="data-description">
+							<strong>Date & Time: </strong>
+							{{reviewDialogData.requestedTime.start | amDateFormat:'dddd, MMMM Do \'YY'}}
+							to
+							{{reviewDialogData.requestedTime.end | amDateFormat:'dddd, MMMM Do \'YY'}}
+						</p>
+					</div>
+				</div>
+			</div>
+			<div class="rating-container">
+				<star-rating ng-model="rating" readonly="false"></star-rating>
+			</div>
+		</div>
+      </div>
+    </div>
+
+  </div>
+  <div class = "modal-footer">
+    <div class="ui buttons">
+      <button class="ui button primary" ng-disabled="ratingProcessing" ng-click="rateUser()" lx-ripple>Submit</button>
+    </div>
+  </div>
+</modal>

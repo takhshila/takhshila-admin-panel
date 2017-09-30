@@ -11,6 +11,8 @@ angular.module('takhshilaApp')
   		Upload.currentVideo = null;
   	}
 
+    $scope.rating = 3;
+
     $scope.edit = {
       basicInfo: {
         editing: false,

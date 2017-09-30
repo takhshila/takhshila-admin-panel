@@ -2,6 +2,7 @@
 
 var _ = require('lodash');
 var Review = require('./review.model');
+var User = require('../user/user.model');
 var Userclass = require('../userclass/userclass.model');
 
 // Get list of reviews for logged in user
@@ -31,17 +32,36 @@ exports.show = function(req, res) {
   });
 };
 
+// Get single review for single user by class ID
+exports.getUserReviewByClass = function(req, res) {
+  var userID = req.user._id;
+  var classID = req.params.id;
+  Review.find({
+    userID: userID,
+    refrenceClassID: classID
+  })
+  .populate('refrenceUserID', 'name profilePhoto')
+  .exec(function(err, review){
+    if(err) { return handleError(res, err); }
+    if(!review) { return res.status(404).send('Not Found'); }
+    return res.json(review);
+  });
+};
+
 // Creates a new review in the DB.
 exports.create = function(req, res) {
   var userID = req.user._id;
   var userClassID = req.params.id;
   var createReviewPromise = new Promise(function(resolve, reject){
-    if(!userId || !userClassID){ reject('Not Found'); }
+    if(!userID || !userClassID){ reject('Not Found'); }
     if(isNaN(req.body.rating)){ reject('Invalid Rating'); }
     if(req.body.rating < 0 || req.body.rating > 5){ reject('Invalid Rating'); }
-    User.findById(userId, function (err, user){
+    User.findById(userID, function (err, user){
       if(err) { reject(err); }
       if(!user) { reject('Not Found'); }
+      console.log("Request received 2");
+      console.log("User Found");
+      console.log("Searching for class " + userClassID);
       Userclass.findById(userClassID, function(err, userClass){
         if(err){ reject(err); }
         if(!userClass) { reject('Not Found'); }
@@ -51,10 +71,12 @@ exports.create = function(req, res) {
           rating: req.body.rating,
           review: req.body.review || null
         }
+        console.log("ratingData");
+        console.log(ratingData);
         if(userID.toString() === userClass.studentID.toString()){
-          ratingData.refrenceUserID = teacherID;
+          ratingData.refrenceUserID = userClass.teacherID;
         }else{
-          ratingData.refrenceUserID = studentID;
+          ratingData.refrenceUserID = userClass.studentID;
         }
         Review.create(ratingData, function(err, review){
           if(err){ reject(err); }

@@ -1,0 +1,23 @@
+.rating-modal{
+	.ui{
+		border-bottom: 0px !important;
+	}
+	.rating-container{
+		star-rating{
+			text-align: center;
+			.ui{
+				&.star{
+				    width: 30%;
+				    margin: 0px auto !important;
+				    border-bottom: 0px !important;
+				    display: block;
+				    i{
+				    	&.icon{
+				    		font-size: 25px;
+				    	}
+				    }
+				}
+			}
+		}
+	}
+}
