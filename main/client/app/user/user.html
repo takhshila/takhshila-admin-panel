@@ -17,7 +17,10 @@
                 <div class="content">
                   <a class="header">{{user.name.firstName}}&nbsp;{{user.name.lastName}}</a>
                   <div class="meta">
-                    <span class="date">Joined in 2013</span>
+                    <span class="date">Joined on {{user.joinedOn | amDateFormat:'dddd, MMMM Do \'YY'}}</span>
+                    <span class="rating-container" ng-if="user.isTeacher">
+                      <star-rating ng-model="averageRating" readonly="true"></star-rating>
+                    </span>
                   </div>
                   <div class="description">
                     {{user.basicInfo}}
@@ -47,6 +50,9 @@
               </a>
             </li>
           </ul>
+          <div class="no-data" ng-if="!user.specialization.length">
+            No topics/subjects added
+          </div>
         </div>
       </div>
 
@@ -59,6 +65,11 @@
           <div class="ui segment" ng-if="demoVideos.length > 0">
             <video-slider slides="demoVideos" click-handle="showVideoModal(index)"></video-slider>
           </div>
+        <div class="ui segment" ng-if="!demoVideos.length">
+          <div class="no-data">
+            No demo video available
+          </div>
+        </div>
       </div>
 
       <div class="row">
@@ -77,6 +88,9 @@
                 <p class="period"></p>
               </span>
             </div>
+            <div class="no-data" ng-if="!user.education.length">
+              No education details updated
+            </div>
           </div>
         </div>
       </div>
@@ -88,22 +102,52 @@
           </div>
         </div>
         <div class="ui segment">
-          <p>
-            This is the details
-          </p>
+          <div class="education-container">
+            <div ng-repeat="experience in user.experience" class="education-item">
+              <span class="education-icon">
+                <i class="travel icon"></i>
+              </span>
+              <span class="education-details">
+                <p class="school-name">{{experience.designation}}</p>
+                <p class="degree-name">{{experience.companyName}}</p>
+                <p class="period"></p>
+              </span>
+            </div>
+            <div class="no-data" ng-if="!user.experience.length">
+              No experience added
+            </div>
+          </div>
         </div>
       </div>
 
       <div class="row" ng-if = "user.isTeacher">
         <div class="ui attached message">
-          <div class="header">
+          <div class="header" id = "availabilitySelector">
             Reviews & Ratings
           </div>
         </div>
         <div class="ui segment">
-          <p>
-            This is the details
-          </p>
+          <div class="ui items review-container">
+            <div class="item" ng-repeat="review in reviews">
+              <a class="ui tiny image">
+                <img src="{{review.refrenceUserID.profilePhoto.dataURI}}">
+              </a>
+              <div class="content">
+                <a class="header">
+                  {{review.refrenceUserID.name.firstName}} {{review.refrenceUserID.name.lastName}}
+                </a>
+                <star-rating ng-model="averageRating" readonly="true"></star-rating>
+                <p class="date">
+                  {{review.ratedOn | amDateFormat:'dddd, MMMM Do \'YY'}}
+                </p>
+                <div class="description">
+                  <p>
+                    {{review.review}}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -119,6 +163,8 @@
           </p>
         </div>
       </div>
+
+
     </div>
     <div class="col-md-4 col-sm-4 right">
       <div class="row selectedSessionContainer" ng-if = "user.isTeacher">

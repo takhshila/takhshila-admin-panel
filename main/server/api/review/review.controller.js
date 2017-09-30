@@ -59,9 +59,6 @@ exports.create = function(req, res) {
     User.findById(userID, function (err, user){
       if(err) { reject(err); }
       if(!user) { reject('Not Found'); }
-      console.log("Request received 2");
-      console.log("User Found");
-      console.log("Searching for class " + userClassID);
       Userclass.findById(userClassID, function(err, userClass){
         if(err){ reject(err); }
         if(!userClass) { reject('Not Found'); }
@@ -71,8 +68,6 @@ exports.create = function(req, res) {
           rating: req.body.rating,
           review: req.body.review || null
         }
-        console.log("ratingData");
-        console.log(ratingData);
         if(userID.toString() === userClass.studentID.toString()){
           ratingData.refrenceUserID = userClass.teacherID;
         }else{

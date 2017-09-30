@@ -11,7 +11,7 @@ angular.module('takhshilaApp')
   		Upload.currentVideo = null;
   	}
 
-    $scope.rating = 3;
+    $scope.averageRating = 0;
 
     $scope.edit = {
       basicInfo: {
@@ -548,6 +548,18 @@ angular.module('takhshilaApp')
       });
     };
 
+    $scope.getReviews = function() {
+      $http.get('/api/v1/reviews/'+$rootScope.currentUser._id)
+      .then(function(response){
+        $scope.reviews = response.data;
+        var totalRating = 0;
+        for(var j = 0; j < $scope.reviews.length; j++){
+          totalRating += $scope.reviews[j].rating;
+        }
+        $scope.averageRating = (totalRating/$scope.reviews.length);
+      });
+    };
+
     $rootScope.$on('videoDataSaved', function(data){
       $scope.getUserVideos();
     });
@@ -555,6 +567,7 @@ angular.module('takhshilaApp')
     $rootScope.$watch('loggedIn', function(status){
       if(status === true){
         $scope.getUserVideos();
+        $scope.getReviews();
       }
     });
 

@@ -18,18 +18,23 @@ angular.module('takhshilaApp')
 					$scope.reviewDialogData = $rootScope.reviewDialogData;
 					$scope.currentUser = $rootScope.currentUser;
 					$scope.rateUser = function(){
-						$scope.ratingProcessing = true;
-						$http.post('/api/v1/reviews/' + $rootScope.reviewDialogData._id, {
-							rating: $rootScope.reviewDialogData.ratingValue
-						}).then(function(response){
-							$rootScope.reviewDialogData = {};
-							$rootScope.showReviewDialog = false;
-							$mdDialog.hide();
-						}, function(err){
-							$rootScope.reviewDialogData = {};
-							$rootScope.showReviewDialog = false;
-							$mdDialog.hide();
-						})
+						if($rootScope.reviewDialogData.ratingValue){
+							$scope.ratingProcessing = true;
+							$http.post('/api/v1/reviews/' + $rootScope.reviewDialogData._id, {
+								rating: $rootScope.reviewDialogData.ratingValue,
+								review: $rootScope.reviewDialogData.review
+							}).then(function(response){
+								$rootScope.reviewDialogData = {};
+								$rootScope.showReviewDialog = false;
+								$mdDialog.hide();
+							}, function(err){
+								$rootScope.reviewDialogData = {};
+								$rootScope.showReviewDialog = false;
+								$mdDialog.hide();
+							})
+						}else{
+							$scope.error = "Please select rating!"
+						}
 					}
 				},
 				disableParentScroll: true,

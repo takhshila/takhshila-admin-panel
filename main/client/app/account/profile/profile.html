@@ -14,7 +14,7 @@
         <div class="content">
           <a class="header">{{currentUser.name.firstName}}&nbsp;{{currentUser.name.lastName}}</a>
           <div class="meta">
-            <span class="date">Joined in 2013</span>
+            <span class="date">Joined on {{currentUser.joinedOn | amDateFormat:'dddd, MMMM Do \'YY'}}</span>
           </div>
           <div class="description">
             <div class="price-container">
@@ -61,7 +61,7 @@
             <i class="icon active"></i>
             <i class="icon "></i>
           </div> -->
-          <star-rating ng-model="rating" readonly="true"></star-rating>
+          <star-rating ng-model="averageRating" readonly="true"></star-rating>
         </div>
       </div>
 
@@ -246,7 +246,7 @@
               <input type="button" name="removeSpecialization" ng-click="removeSpecialization($index)" value="Remove" ng-if="$index !== 0 && ($index + 1) === edit.specialization.data.length"> -->
             </div>
           </div>
-          <ul class="specialization-container" ng-if="!currentUser.specialization.length">
+          <ul class="specialization-container" ng-if="currentUser.specialization.length">
             <li ng-repeat="topic in currentUser.specialization">
               <a href="#" class="topic-name">{{topic.topic.topicName}}</a>
               <a href="#" class="topic-level">{{topic.level}}</a>
@@ -256,7 +256,7 @@
               </a>
             </li>
           </ul>
-          <div class="no-data" ng-if="currentUser.specialization.length" ng-click="uploadVideo()">
+          <div class="no-data" ng-if="!currentUser.specialization.length && !edit.specialization.editing" ng-click="editSpecialization($event)">
             <i class="write icon"></i> Add subject/topics you want to teach
           </div>
         </div>
@@ -359,6 +359,38 @@
             </div>
             <div class="no-data" ng-if="!currentUser.experience.length" ng-click="showAddExperienceModal($event)">
               <i class="plus icon"></i> Add Experience
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="row">
+        <div class="ui attached message">
+          <div class="header" id = "availabilitySelector">
+            Reviews & Ratings
+          </div>
+        </div>
+        <div class="ui segment">
+          <div class="ui items review-container">
+            <div class="item" ng-repeat="review in reviews">
+              <a class="ui tiny image">
+                <img src="{{review.refrenceUserID.profilePhoto.dataURI}}">
+              </a>
+              <div class="content">
+                <a class="header">
+                  {{review.refrenceUserID.name.firstName}} {{review.refrenceUserID.name.lastName}}
+                </a>
+                <star-rating ng-model="averageRating" readonly="true"></star-rating>
+                <p class="date">
+                  {{review.ratedOn | amDateFormat:'dddd, MMMM Do \'YY'}}
+                </p>
+                <div class="description">
+                  <p>
+                    {{review.review}}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

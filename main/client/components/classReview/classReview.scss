@@ -1,7 +1,7 @@
-.rating-modal{
-	.ui{
-		border-bottom: 0px !important;
-	}
+#class-review{
+  height: auto;
+  width: 550px;
+  background: #fff;
 	.rating-container{
 		star-rating{
 			text-align: center;
@@ -20,4 +20,103 @@
 			}
 		}
 	}
+  .modal-header{
+    width: 100%;
+    text-align: center;
+    background: #00918b;
+    padding: 15px;
+    .title{
+      font-size: 18px;
+      color: #fff;
+    }
+    i{
+      float: left;
+      margin-right: 10px;
+      font-size: 30px;
+      font-weight: 100;
+      line-height: 18px;
+      margin-left: -10px;
+      &.remove{
+        position: absolute;
+        right: 0px;
+        top: 15px;
+        z-index: 999;
+        font-size: 20px;
+        cursor: pointer;
+        color: #fff;
+      }
+    }
+  }
+  .modal-content{
+    padding: 0px 15px 0px 15px;
+    width: 100%;
+	.ui{
+		margin: 0px;
+	    border-radius: 0px;
+	    box-shadow: none;
+	    border: 0px;
+	    border-bottom: 0px;
+	    .error{
+		    text-align: center;
+		    color: #b21e1e;
+	    }
+    	.data-header{
+    		display: block;
+    		width: 100%;
+    		margin-bottom: 15px;
+    	}
+	    .data-content{
+	    	display: table;
+	    	width: 100%;
+	    	.data-item{
+	    		display: table-cell;
+	    		width: 20%;
+	    		vertical-align: middle;
+	    		padding: 5px;
+	    		.education-icon{
+					font-size: 50px;
+				    color: #00B5AD;
+				    line-height: 1;
+	    		}
+				.thumbnailContainer{
+					height: 100px;
+					padding: 0px;
+					.thumbnail{
+						position: absolute;
+						width: 100%;
+						height: 100%;
+						background-size: cover;
+						background-position: center;
+					}
+				}
+	    	}
+	    	.data-details{
+	    		display: table-cell;
+	    		width: 80%;
+	    		padding: 5px;
+	    		&.data-middle{
+	    			vertical-align: middle;
+	    		}
+	    		p{
+	    			text-transform: capitalize;
+	    			margin: 0px;
+	    			line-height: 1.4285em;
+				    color: #5D5D5D;
+				    font-size: 14px;
+		    		&.data-title{
+		    			line-height: 1.4285em;
+					    font-size: 16px;
+					    color: #1D1D1D;
+		    		}
+	    		}
+	    	}
+	    }
+	}
+}
+  .modal-footer{
+    position: relative;
+    top: 15px;
+    text-align: center;
+    width: 100%;
+  }
 }

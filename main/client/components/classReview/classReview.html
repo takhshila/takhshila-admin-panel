@@ -1,4 +1,4 @@
-<modal id = "confirm-modal" class="rating-modal">
+<modal id = "class-review" class="rating-modal">
   <div class = "modal-header">
     <div class = "title">{{modalOptions.headerText}}</div>
   </div>
@@ -8,6 +8,9 @@
 
       <div class="col-md-12 col-sm-12">
 		<div class="ui segment">
+			<div ng-if="error" class="error">
+				{{error}}
+			</div>
 			<div class="data-header">
 				<p class="text-center">{{modalOptions.contentTitle}}</p>
 			</div>
@@ -44,6 +47,10 @@
 			</div>
 			<div class="rating-container">
 				<star-rating ng-model="rating" readonly="false"></star-rating>
+				<md-input-container class="md-block">
+					<label>Review</label>
+					<textarea ng-model="reviewDialogData.review" md-maxlength="150" rows="2" md-select-on-focus></textarea>
+				</md-input-container>
 			</div>
 		</div>
       </div>

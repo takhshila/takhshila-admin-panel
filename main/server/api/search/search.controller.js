@@ -4,6 +4,7 @@ var _ = require('lodash');
 var Search = require('./search.model');
 var User = require('../user/user.model');
 var Video = require('../video/video.model');
+var Review = require('../review/review.model');
 
 // Get list of searchs
 exports.searchTeacher = function(req, res) {
@@ -25,14 +26,36 @@ exports.searchTeacher = function(req, res) {
             }
           });
           if(found && user.ratePerHour.value){
+            var userData = {
+              userDetails: user,
+              videos: [],
+              reviews: []
+            }
             getUserVideos(user._id)
             .then(function(response){
-              selectedUsers.push({userDetails: user, videos: response});
-              resolve(selectedUsers);
+              userData.videos = response;
+              getUserReviews(user._id)
+              .then(function(response){
+                userData.reviews = response;
+                selectedUsers.push(userData);
+                resolve(selectedUsers);
+              })
+              .catch(function(err){
+                selectedUsers.push(userData);
+                resolve(selectedUsers);
+              })
             })
             .catch(function(err){
-              selectedUsers.push({userDetails: user, videos: response});
-              resolve(selectedUsers);
+              getUserReviews(user._id)
+              .then(function(response){
+                userData.reviews = response;
+                selectedUsers.push(userData);
+                resolve(selectedUsers);
+              })
+              .catch(function(err){
+                selectedUsers.push(userData);
+                resolve(selectedUsers);
+              })
             })
           }
         })
@@ -42,6 +65,15 @@ exports.searchTeacher = function(req, res) {
     Promise.all(promiseList)
     .then(function(data){
       console.log(selectedUsers[0].videos);
+      for(var i = 0; i < selectedUsers.length; i++){
+        var totalRating = 0;
+        for(var j = 0; j < selectedUsers[i].reviews.length; j++){
+          totalRating += selectedUsers[i].reviews[j].rating;
+        }
+        var averageRating = (totalRating/selectedUsers[i].reviews.length);
+        selectedUsers[0].averageRating = averageRating;
+        selectedUsers[0].totalRating = selectedUsers[i].reviews.length;
+      }
       return res.status(200).json(selectedUsers);
     })
     .catch(function(err){
@@ -104,6 +136,17 @@ function getUserVideos(userId) {
     .exec(function (err, videos) {
       if(err) { reject("No Videos Found"); }
       resolve(videos);
+    });
+  });
+}
+
+function getUserReviews(userId) {
+  return new Promise(function(resolve, reject){
+    Review
+    .find({ refrenceUserID: userId })
+    .exec(function (err, reviews) {
+      if(err) { reject("No reviews found"); }
+      resolve(reviews);
     });
   });
 }

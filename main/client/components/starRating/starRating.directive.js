@@ -13,7 +13,9 @@ angular.module('takhshilaApp')
       restrict: 'EA',
       link: function (scope, element, attrs) {
         scope.max = 5;
-        scope.ratingValue = 0;
+        if(!scope.ratingValue){
+        	scope.ratingValue = 0;
+        }
         function updateStars() {
           scope.stars = [];
           for (var i = 0; i < scope.max; i++) {
@@ -24,7 +26,6 @@ angular.module('takhshilaApp')
         };
         scope.toggle = function($event, index) {
         	// angular.element(element).addClass('ng-hide');
-        	console.log($rootScope.reviewDialogData);
 			if (scope.readonly == undefined || scope.readonly === false){
 				scope.ratingValue = index + 1;
 				$rootScope.reviewDialogData.ratingValue = index + 1;

@@ -89,6 +89,7 @@ var UserSchema = new Schema({
   },
   hashedPassword: { type:String, required: true },
   provider: { type:String, required: true },
+  joinedOn: {type: Date, default: Date.now},
   salt: String,
   facebook: {},
   twitter: {},

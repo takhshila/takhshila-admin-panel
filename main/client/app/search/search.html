@@ -74,13 +74,7 @@
 							{{user.userDetails.name.firstName}}&nbsp;{{user.userDetails.name.lastName}}
 						</div>
 						<div class="meta">
-				          <div class="ui star rating">
-				            <i class="icon active"></i>
-				            <i class="icon active"></i>
-				            <i class="icon active"></i>
-				            <i class="icon active"></i>
-				            <i class="icon "></i>
-				          </div>
+				          <star-rating ng-model="user.averageRating" readonly="true"></star-rating>
 						</div>
 						<div class="action">
 							<button ng-click="!loggedIn && showLoginModal($event)" class = "ui button primary">Book Class Now</button>

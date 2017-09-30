@@ -4,6 +4,19 @@
     border-radius: 0px;
     box-shadow: none;
     border: 1px solid rgba(34, 36, 38, 0.15);
+    &.review-container{
+      border: 0px;
+      border-bottom: 1px solid rgba(34, 36, 38, 0.15);
+      .star{
+        width: 100px;
+        font-size: 1.2em;
+        margin-left: 10px;
+      }
+      .date{
+        font-size: 0.9em;
+        color: rgba(34, 36, 38, 0.65);
+      }
+    }
   }
   .ui.card{
     .image{

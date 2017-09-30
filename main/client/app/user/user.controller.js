@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('takhshilaApp')
-.controller('UserCtrl', function ($rootScope, $scope, $state, $stateParams, $timeout, $compile, $mdDialog, uiCalendarConfig, userFactory, userClassFactory, videoFactory, cart) {
+.controller('UserCtrl', function ($rootScope, $scope, $state, $stateParams, $timeout, $compile, $http, $mdDialog, uiCalendarConfig, userFactory, userClassFactory, videoFactory, cart) {
   $rootScope.isLoading = true;
 
   // var weekDays = ['sunday', 'monday', 'tuesday', 'wednessday', 'thursday', 'friday', 'saturday'];
@@ -338,11 +338,26 @@ angular.module('takhshilaApp')
     $scope.$apply();
   }
 
+  $scope.getReviews = function() {
+    $http.get('/api/v1/reviews/' + $stateParams.ID)
+    .then(function(response){
+      $scope.reviews = response.data;
+      var totalRating = 0;
+      for(var j = 0; j < $scope.reviews.length; j++){
+        totalRating += $scope.reviews[j].rating;
+      }
+      $scope.averageRating = (totalRating/$scope.reviews.length);
+    });
+  };
+
   userFactory.getUserDetails($stateParams.ID)
   .success(function(response){
     $rootScope.isLoading = false;
     $scope.user = response;
     $scope.gerUserVideos();
+    if($scope.user.isTeacher){
+      $scope.getReviews();
+    }
     $(function () {
       setTimeout(function(){
         $('#availabilityCalendar').fullCalendar({
