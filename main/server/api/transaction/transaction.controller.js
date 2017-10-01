@@ -6,16 +6,17 @@ var _ = require('lodash'),
     request = require('request'),
     crypto = require('crypto'),
     moment = require('moment'),
+    schedule = require('node-schedule'),
     querystring = require('querystring'),
+    User = require('../user/user.model'),
+    Wallet = require('../wallet/wallet.model'),
     config = require('../../config/environment'),
     Transaction = require('./transaction.model'),
-    User = require('../user/user.model'),
     Userclass = require('../userclass/userclass.model'),
-    Wallet = require('../wallet/wallet.model'),
+    Scheduler = require('../scheduler/scheduler.model'),
     Notification = require('../notification/notification.model'),
     Transactionhistory = require('../transactionhistory/transactionhistory.model'),
     transactionHistoryController = require('../transactionhistory/transactionhistory.controller'),
-    schedule = require('node-schedule'),
     hashSequence = "key|txnid|amount|productinfo|firstname|email|udf1|udf2|udf3|udf4|udf5|udf6|udf7|udf8|udf9|udf10",
     tempClassData = [],
     payu = {
@@ -28,6 +29,13 @@ var _ = require('lodash'),
         paymentResponse: '/payment/op/getPaymentResponse'
       }
     };
+
+var eventEmitter;
+
+exports.setEvenetEmitter = function(emitter){
+  eventEmitter = emitter;
+  bindEvents();
+};
 
 
 // Get list of transactionhistorys
@@ -174,11 +182,24 @@ exports.initiatePayment = function(req, res) {
                 }
 
                 var validateTransactionTime = moment().add(5, 'm').valueOf();
-                // var validateTransactionTime = moment().add(10, 's').valueOf();
+                // var validateTransactionTime = moment().add(15, 's').valueOf();
 
                 var j = schedule.scheduleJob(validateTransactionTime, function(transactionId){
                   validateTransaction(transactionId);
                 }.bind(null,transaction._id));
+
+                var schedulerData = [{
+                  jobName:'scheduleValidateTransaction',
+                  jobTime: validateTransactionTime,
+                  jobData: JSON.stringify({transactionId: transaction._id}),
+                  emitEvent: false,
+                  callback: true,
+                  callbackFunction: validateTransaction
+                }];
+
+                Scheduler.create(schedulerData, function(err, scheduler){
+                  console.log("Scheduler job created");
+                });
 
                 resolve({
                   paymentRequired: true,
@@ -324,8 +345,10 @@ function hashAfterTransaction(data, transactionStatus) {
 }
 
 function validateTransaction(transactionId){
+  console.log("Validating transaction with ID: " + transactionId);
   Transaction.findById(transactionId, function (err, transaction){
     if(transaction.status === 'pending'){
+      console.log("Transaction found and status is pending");
       getTransactionResponse(
         config.payu.host, 
         config.payu.path.paymentResponse, 
@@ -337,6 +360,7 @@ function validateTransaction(transactionId){
         config.payu.authorizationHeader
       )
       .then(function(transactionData){
+        console.log("Transaction response received from API");
         processPaymentResponse(transactionData)
         .then(function(walletData){
           var classData = tempClassData[transactionData.txnid];
@@ -354,19 +378,31 @@ function validateTransaction(transactionId){
           }
         })
         .catch(function(err){
+          console.log("Transaction error received from API");
           console.log(err);
-        });
-      })
-      .catch(function(err){
-        console.log(err);
-        Transaction.findById(transactionId, function (err, transaction){
-          if(!transaction) { console.log('Transaction Not Found'); }
           transaction.status = 'Failed';
           transaction.transactionData = err;
           transaction.save(function(err){
             console.log('Transaction failed');
           });
         });
+      })
+      .catch(function(err){
+        console.log("An err received");
+        console.log(err);
+        transaction.status = 'Failed';
+        transaction.transactionData = err;
+        transaction.save(function(err){
+          console.log('Transaction failed');
+        });
+        // Transaction.findById(transactionId, function (err, transaction){
+        //   if(!transaction) { console.log('Transaction Not Found'); }
+        //   transaction.status = 'Failed';
+        //   transaction.transactionData = err;
+        //   transaction.save(function(err){
+        //     console.log('Transaction failed');
+        //   });
+        // });
       })
     }
   })
@@ -393,7 +429,12 @@ function getTransactionResponse(host, path, queryParams, method, authorizationHe
     request(options, function (error, response, body) {
       if (!error && response.statusCode == 200) {
           // Print out the response body
-          console.log(body)
+          var jsonResponse = JSON.parse(body);
+          if(jsonResponse.status !== -1){
+            reject(jsonResponse);
+          }else{
+            resolve(jsonResponse);
+          }
       }else{
         reject(error);
       }
@@ -516,5 +557,16 @@ function processPaymentResponse(transactionData, transactionType){
     }else{
       reject('Invalid hash');
     }
+  });
+}
+
+
+function bindEvents(){
+  eventEmitter.on('scheduleValidateTransaction', function(data){
+    console.log("event scheduleValidateTransaction received for " + parseInt(data.time));
+    console.log("event scheduleValidateTransaction received " + data.data.transactionId);
+    var j = schedule.scheduleJob(parseInt(data.time), function(transactionId){
+      validateTransaction(transactionId);
+    }.bind(null,data.data.transactionId));
   });
 }

@@ -2,15 +2,17 @@
 
 var _ = require('lodash');
 var moment = require('moment');
+var schedule = require('node-schedule');
 var Userclass = require('./userclass.model');
 var Wallet = require('../wallet/wallet.model');
-var Notification = require('../notification/notification.model');
 var Review = require('../review/review.model');
-var schedule = require('node-schedule');
+var Scheduler = require('../scheduler/scheduler.model');
+var Notification = require('../notification/notification.model');
 var eventEmitter;
 
 exports.setEvenetEmitter = function(emitter){
   eventEmitter = emitter;
+  bindEvents();
 };
 
 // Get list of userclasss
@@ -149,8 +151,28 @@ exports.confirmClassRequest = function(req, res) {
         //   notifyUser(classId);
         // }.bind(null,userclass._id));
 
+        var schedulerData = [{
+          jobName:'schedulePriorClassNotification',
+          jobTime: notifyUserTime,
+          jobData: JSON.stringify({classId: userclass._id}),
+          emitEvent: true,
+          eventName: 'notifyUser',
+          callback: false
+        }, {
+          jobName:'scheduleEndClass',
+          jobTime: endClassTime,
+          jobData: JSON.stringify({classId: userclass._id}),
+          emitEvent: true,
+          eventName: 'endClass',
+          callback: true,
+          callbackFunction: processEndClass
+        }];
+
+        Scheduler.create(schedulerData, function(err, scheduler){
+          console.log("Scheduler job created");
+        });
+
         var priorNotificationJob = schedule.scheduleJob(notifyUserTime, function(classId){
-          console.log('Notifying user');
           eventEmitter.emit('notifyUser', {
             classId: classId
           });
@@ -267,4 +289,23 @@ function handleError(res, err) {
 
 function processEndClass(classId){
   
+}
+
+function bindEvents(){
+  eventEmitter.on('scheduleEndClass', function(data){
+    schedule.scheduleJob(parseInt(data.time), function(classId){
+      eventEmitter.emit('endClass', {
+        classId: classId
+      });
+      processEndClass(classId);
+    }.bind(null,data.data.classId));
+  });
+
+  eventEmitter.on('schedulePriorClassNotification', function(data){
+    schedule.scheduleJob(parseInt(data.time), function(classId){
+      eventEmitter.emit('notifyUser', {
+        classId: classId
+      });
+    }.bind(null,data.data.classId));
+  });
 }

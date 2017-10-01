@@ -10,7 +10,7 @@ angular.module('takhshilaApp')
         amountToPay: 0.00
     }
 
-    console.log($scope.cartData);
+    $scope.processingCheckout = false;
 
     $scope.getWalletBalance = function(){
         $http.get('/api/v1/wallets/balance/')
@@ -27,6 +27,7 @@ angular.module('takhshilaApp')
     }
 
     $scope.checkout = function(){
+        $scope.processingCheckout = true;
         for(var i = 0; i < $scope.cartData.classData.length; i++){
             $scope.cartData.classData[i].start = moment($scope.cartData.classData[i].start, 'MMM DD, YYYY HH:mm').format();
             $scope.cartData.classData[i].end = moment($scope.cartData.classData[i].end, 'MMM DD, YYYY HH:mm').format();
@@ -49,6 +50,7 @@ angular.module('takhshilaApp')
     		// paymentForm.triggerHandler('submit');
     	})
     	.error(function(err){
+            $scope.processingCheckout = false;
     		console.log("error");
     		console.log(err);
     	})

@@ -4,17 +4,24 @@
 
 'use strict';
 
+var events = require('events');
+var moment = require('moment');
 var config = require('./environment');
 var User = require('../api/user/user.model');
 var Userclass = require('../api/userclass/userclass.model');
 var Wallet = require('../api/wallet/wallet.model');
-var events = require('events');
+var Scheduler = require('../api/scheduler/scheduler.model');
 var eventEmitter = new events.EventEmitter();
 
 var liveClassList = [];
 // var userSockets = [];
 var liveClassUsers = [];
 var onlineUsers = [];
+
+
+// Pass eventEmitter to api controllers
+require('../api/userclass/userclass.controller').setEvenetEmitter(eventEmitter);
+require('../api/transaction/transaction.controller').setEvenetEmitter(eventEmitter);
 
 // When the user disconnects.. perform this
 function onDisconnect(socket) {
@@ -49,9 +56,10 @@ function onConnect(socket) {
   });
 
   // Insert sockets below
-  require('../api/review/review.socket').register(socket);
-  require('../api/bankAccount/bankAccount.socket').register(socket);
-  require('../api/bank/bank.socket').register(socket);
+  // require('../api/scheduler/scheduler.socket').register(socket);
+  // require('../api/review/review.socket').register(socket);
+  // require('../api/bankAccount/bankAccount.socket').register(socket);
+  // require('../api/bank/bank.socket').register(socket);
 
   // require('../api/classDetails/classDetails.socket').register(socket);
   // require('../api/company/company.socket').register(socket);
@@ -68,9 +76,6 @@ function onConnect(socket) {
   // require('../api/video/video.socket').register(socket);
   // require('../api/topic/topic.socket').register(socket);
   // require('../api/thing/thing.socket').register(socket);
-
-  // Pass eventEmitter to api controllers
-  require('../api/userclass/userclass.controller').setEvenetEmitter(eventEmitter);
 
   socket.on('joinClass', function(data,  callback){
     var output = {
@@ -278,3 +283,25 @@ function sendTextMessage(phone, message){
   console.log('Message sent to ' + phone);
   console.log('Message text is ' + message);
 }
+
+
+function reInitializeScheduler(){
+  console.log("reInitializeScheduler called");
+  var _currentTime = moment().valueOf();
+  Scheduler
+  .find({
+    jobTime: {$gte: _currentTime}
+  })
+  .exec(function (err, schedulers) {
+    for(var i = 0; i < schedulers.length; i++){
+      var eventName = schedulers[i].jobName;
+      var eventData = {
+        time: schedulers[i].jobTime,
+        data: JSON.parse(schedulers[i].jobData)
+      }
+      eventEmitter.emit(eventName, eventData);
+    }
+  });
+}
+
+reInitializeScheduler();

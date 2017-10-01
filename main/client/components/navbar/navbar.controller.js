@@ -27,15 +27,17 @@ angular.module('takhshilaApp')
         $rootScope.getLastClass()
         .then(function(response){
           var classData = response.data;
-          $rootScope.getUserClassReview(classData._id)
-          .then(function(reviews){
-            if(reviews.data.length === 0){
-              $rootScope.showReviewDialog = true;
-              $rootScope.reviewDialogData = classData;
-            }
-          }, function(err){
-            console.log(err);
-          })
+          if(classData.status === 'completed'){
+            $rootScope.getUserClassReview(classData._id)
+            .then(function(reviews){
+              if(reviews.data.length === 0){
+                $rootScope.showReviewDialog = true;
+                $rootScope.reviewDialogData = classData;
+              }
+            }, function(err){
+              console.log(err);
+            })
+          }
         }, function(err){
           console.log(err);
         });

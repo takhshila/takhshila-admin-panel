@@ -104,13 +104,197 @@
 
       <md-tab label="Upcoming Classes" ng-click="loadClasses('upcoming')">
         <md-content class="md-padding">
-          <h1 class="md-display-2">Upcoming Classes</h1>
+			<div class="ui items">
+			  <div class="item" ng-repeat="class in classList">
+			    <div class="ui tiny image" ng-if="class.teacherID._id !== currentUser._id">
+			      <img ng-src="{{class.teacherID.profilePhoto.dataURI}}">
+			    </div>
+
+			    <div class="ui tiny image" ng-if="class.studentID._id !== currentUser._id">
+			      <img ng-src="{{class.studentID.profilePhoto.dataURI}}">
+			    </div>
+		  		
+			    <div class="content" ng-if="class.studentID._id !== currentUser._id">
+			      <div ng-if="class.status === 'requested'">
+					<span class="header">
+						{{class.studentID.name.firstName}} {{class.studentID.name.lastName}}
+					</span>
+					has requested for a class.
+			      </div>
+			      <div ng-if="class.status === 'confirmed'">
+			      	You have confirmed a class requestetd by 
+					<span class="header">
+						{{class.studentID.name.firstName}} {{class.studentID.name.lastName}}
+					</span>
+			      </div>
+			      <div ng-if="class.status === 'cancelled'">
+			      	
+			      </div>
+			      <div ng-if="class.status === 'completed'">
+			      	
+			      </div>
+			      <div class="meta">
+			        <span class="meta-item">
+			        	<span class="header">Date & Time:</span>
+			        	{{class.requestedTime.start | amDateFormat:'dddd, MMMM Do \'YY'}}
+			        </span>
+			        <span class="meta-item">
+			        	<span class="header">Live Class Link:</span>
+			        	{{class.liveClassLink || 'NA'}}
+			        </span>
+			        <span class="action-container">
+			        	
+			        </span>
+			      </div>
+			      <div class="description">
+			        <p></p>
+			      </div>
+			    </div>
+
+			    <div class="content" ng-if="class.teacherID._id !== currentUser._id">
+			      <div ng-if="class.status === 'requested'">
+			      	You have requested a class with
+					<span class="header">
+						{{class.teacherID.name.firstName}} {{class.teacherID.name.lastName}}
+					</span>
+			      </div>
+			      <div ng-if="class.status === 'confirmed'">
+					<span class="header">
+						{{class.teacherID.name.firstName}} {{class.teacherID.name.lastName}}
+					</span>
+					has confirmed your request for a class.
+			      </div>
+			      <div ng-if="class.status === 'cancelled'">
+			      	
+			      </div>
+			      <div ng-if="class.status === 'completed'">
+			      	
+			      </div>
+			      <div class="meta">
+			        <span class="meta-item">
+			        	<span class="header">Date & Time:</span>
+			        	{{class.requestedTime.start | amDateFormat:'dddd, MMMM Do \'YY'}}
+			        </span>
+			        <span class="meta-item">
+			        	<span class="header">Live Class Link:</span>
+			        	{{class.liveClassLink || 'NA'}}
+			        </span>
+			      </div>
+			      <div class="description">
+			        <p></p>
+			      </div>
+			    </div>
+			  </div>
+	          	<div class="row" ng-if="classList.length == 0">
+	          		<div class="no-data">
+	          			No Classes Found
+	          		</div>	          		
+	          	</div>
+			</div>
+
+            <div class="action-container centered" ng-if="hasMoreData">
+              <div class="ui buttons">
+                <button ng-class = "{'loading': loading}" ng-disabled="loading" ng-click="getClasses()" class = "ui button basic primary">Load More</button>
+              </div>
+            </div>
         </md-content>
       </md-tab>
 
       <md-tab label="Previous Classes" ng-click="loadClasses('past')">
         <md-content class="md-padding">
-          <h1 class="md-display-2">Previous Classes</h1>
+			<div class="ui items">
+			  <div class="item" ng-repeat="class in classList">
+			    <div class="ui tiny image" ng-if="class.teacherID._id !== currentUser._id">
+			      <img ng-src="{{class.teacherID.profilePhoto.dataURI}}">
+			    </div>
+
+			    <div class="ui tiny image" ng-if="class.studentID._id !== currentUser._id">
+			      <img ng-src="{{class.studentID.profilePhoto.dataURI}}">
+			    </div>
+		  		
+			    <div class="content" ng-if="class.studentID._id !== currentUser._id">
+			      <div ng-if="class.status === 'requested'">
+					<span class="header">
+						{{class.studentID.name.firstName}} {{class.studentID.name.lastName}}
+					</span>
+					has requested for a class.
+			      </div>
+			      <div ng-if="class.status === 'confirmed'">
+			      	You have confirmed a class requestetd by 
+					<span class="header">
+						{{class.studentID.name.firstName}} {{class.studentID.name.lastName}}
+					</span>
+			      </div>
+			      <div ng-if="class.status === 'cancelled'">
+			      	
+			      </div>
+			      <div ng-if="class.status === 'completed'">
+			      	
+			      </div>
+			      <div class="meta">
+			        <span class="meta-item">
+			        	<span class="header">Date & Time:</span>
+			        	{{class.requestedTime.start | amDateFormat:'dddd, MMMM Do \'YY'}}
+			        </span>
+			        <span class="meta-item">
+			        	<span class="header">Live Class Link:</span>
+			        	{{class.liveClassLink || 'NA'}}
+			        </span>
+			        <span class="action-container">
+			        	
+			        </span>
+			      </div>
+			      <div class="description">
+			        <p></p>
+			      </div>
+			    </div>
+
+			    <div class="content" ng-if="class.teacherID._id !== currentUser._id">
+			      <div ng-if="class.status === 'requested'">
+			      	You have requested a class with
+					<span class="header">
+						{{class.teacherID.name.firstName}} {{class.teacherID.name.lastName}}
+					</span>
+			      </div>
+			      <div ng-if="class.status === 'confirmed'">
+					<span class="header">
+						{{class.teacherID.name.firstName}} {{class.teacherID.name.lastName}}
+					</span>
+					has confirmed your request for a class.
+			      </div>
+			      <div ng-if="class.status === 'cancelled'">
+			      	
+			      </div>
+			      <div ng-if="class.status === 'completed'">
+			      	
+			      </div>
+			      <div class="meta">
+			        <span class="meta-item">
+			        	<span class="header">Date & Time:</span>
+			        	{{class.requestedTime.start | amDateFormat:'dddd, MMMM Do \'YY'}}
+			        </span>
+			        <span class="meta-item">
+			        	<span class="header">Live Class Link:</span>
+			        	{{class.liveClassLink || 'NA'}}
+			        </span>
+			      </div>
+			      <div class="description">
+			        <p></p>
+			      </div>
+			    </div>
+			  </div>
+	          	<div class="row" ng-if="classList.length == 0">
+	          		<div class="no-data">
+	          			No Classes Found
+	          		</div>	          		
+	          	</div>
+			</div>
+
+            <div class="action-container centered" ng-if="hasMoreData">
+              <div class="ui buttons">
+                <button ng-class = "{'loading': loading}" ng-disabled="loading" ng-click="getClasses()" class = "ui button basic primary">Load More</button>
+              </div>
+            </div>
         </md-content>
       </md-tab>
     </md-tabs>
