@@ -38,7 +38,7 @@ var UserSchema = new Schema({
   status: { type: String, default: 'pending'},
   specialization: [{
     topic: {type: String, ref: 'Topic', required: true},
-    level: {type: String, enum : ["Basic", "Intermediate", "Advanced", "Expert"], required: true},
+    level: [{type: String, enum : ["Basic", "Intermediate", "Advanced", "Expert", "Others"], required: true}],
     addedOn: {type: Date, default: Date.now}
   }],
   education: [{

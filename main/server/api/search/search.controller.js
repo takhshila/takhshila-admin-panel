@@ -8,7 +8,7 @@ var Review = require('../review/review.model');
 
 // Get list of searchs
 exports.searchTeacher = function(req, res) {
-  var levelMap = ['basic', 'intermediate', 'advanced', 'expert'];
+  var levelMap = ['basic', 'intermediate', 'advanced', 'expert', 'others'];
   User
   .find({ isTeacher: true })
   .select('-hashedPassword -salt')
@@ -21,8 +21,13 @@ exports.searchTeacher = function(req, res) {
       var promiseList = users.map(function(user, index){
         return new Promise(function(resolve, reject){
           var found = _.find(user.specialization, function(obj){
-            if(obj.topic.topicName.toLowerCase() === req.query.topic.toLowerCase() && (levelMap.indexOf(obj.level.toLowerCase()) >= levelMap.indexOf(req.query.level.toLowerCase()))){
-              return true;
+            if(obj.topic.topicName.toLowerCase() === req.query.topic.toLowerCase()){
+              var queryLevel = req.query.level.toLowerCase().split(',');
+              for(var i = 0; i < obj.level.length; i++){
+                if(queryLevel.indexOf(obj.level[i].toLowerCase()) !== -1){
+                  return true;
+                }
+              }
             }
           });
           if(found && user.ratePerHour.value){

@@ -11,10 +11,10 @@
           <input type="text" ng-model="search.topic" placeholder="Enter topic or subject..." uib-typeahead="topic for topic in getTopicList($viewValue)" typeahead-loading="loading" typeahead-no-results="noResults">
         </div>
 			  <select class="ui compact selection dropdown" name="level" ng-model="search.level">
-			    <option value="basic" ng-selected="true">Basic</option>
-			    <option value="intermediate">Intermediate</option>
-          <option value="advanced">Advanced</option>
-			    <option value="expert">Expert</option>
+			    <option value="Basic" ng-selected="true">Class 6-8</option>
+			    <option value="Intermediate">Class 9-10</option>
+          <option value="Advanced">Class 11-12</option>
+			    <option value="Others">Non-Academic</option>
 			  </select>
 			  <div type="submit" class="ui green button" ng-click="processSearch($event)">
 			  	<i class="search icon"></i> Search

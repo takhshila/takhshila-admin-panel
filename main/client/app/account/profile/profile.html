@@ -133,118 +133,67 @@
         <div class="ui segment">
           <div ng-show="edit.specialization.editing">
 
-
-<!--     <div class="autocompletedemoFloatingLabel" layout="column" ng-cloak="">
-        <form name="searchForm" ng-submit="$event.preventDefault()">
-            <div layout-gt-sm="row">
-            <md-autocomplete md-floating-label="Academic Topic" 
-                            md-item-text="item.Title"
-                            md-items="item in ctrl.data" 
-                            md-search-text-change="ctrl.querySearch(ctrl.searchText)"
-                            md-search-text="ctrl.searchText" 
-                            md-selected-item="ctrl.selectedItem" 
-                            md-no-cache="ctrl.noCache" 
-                            md-input-maxlength="30" 
-                            md-input-minlength="2" 
-                            md-input-name="autocompleteField" 
-                            required=""
-                            class="md-block"
-                            flex-gt-sm="55">
-              <md-item-template>
-                <span md-highlight-text="ctrl.searchText">{{item.Title}}</span>
-              </md-item-template>
-              <div ng-messages="searchForm.autocompleteField.$error" ng-if="searchForm.autocompleteField.$touched">
-                <div ng-message="required">Please enter a topic you want to teach.</div>
-                <div ng-message="minlength">Your topic is not long enough.</div>
-                <div ng-message="maxlength">Your topic is too long.</div>
-              </div>
-            </md-autocomplete>
-
-          <md-input-container class="md-block" flex-gt-sm="30">
-            <label>Level</label>
-            <md-select ng-model="user.state">
-              <md-option value="Basic">Basic</md-option>
-              <md-option value="Intermediate">Intermediate</md-option>
-              <md-option value="Advanced">Advanced</md-option>
-              <md-option value="Expert">Expert</md-option>
-            </md-select>
-          </md-input-container>
-
-          <md-input-container class="md-block" flex-gt-sm="15">
-            <md-button type="button" class="md-raised md-primary"><i class="plus icon"></i></md-button>
-            <md-button type="button" class="md-raised md-warn"><i class="minus icon"></i></md-button>
-          </md-input-container>
-
-          </div>
-        </form>
-    </div> -->
-
-
-            <div ng-repeat="specialization in edit.specialization.data" class="ui fluid input" id="addSpecializationContainer">
-            <div class="ui search">
-              <!-- <div class="results" auto-close="specialization.status.searchResultsOpen" ng-show="specialization.status.searchResultsOpen" ng-click="specialization.status.searchResultsOpen = false">
-                <a class="result">
-                  <div class="content">
-                    <div class="title">United Arab Emirates</div>
+            <div id="addSpecializationContainer">
+              <div layout="row" layout-align="start" flex ng-repeat="specialization in edit.specialization.data" class="add-item">
+                <md-input-container flex="65">
+                  <label>Enter subject or topic you want to teach.</label>
+                  <div class="search">
+                    <div class="icon input topic" ng-class="{'loading': specialization.loadingResults}">
+                      <input type="text" ng-model="specialization.topicName" uib-typeahead="topic for topic in getLocation($index, $viewValue)" typeahead-loading="loading" typeahead-no-results="noResults">
+                      <i class="icon"></i>
+                    </div>
                   </div>
-                </a>
-                <a class="result">
-                  <div class="content">
-                    <div class="title">United States</div>
+                </md-input-container>
+
+                <md-input-container flex="20">
+                  <label>Select Segment</label>
+                  <md-select name="level" ng-model="specialization.level" required multiple>
+                    <md-option value="Basic">Class 6-8</md-option>
+                    <md-option value="Intermediate">Class 9-10</md-option>
+                    <md-option value="Advanced">Class 11-12</md-option>
+                    <md-option value="Others">Non-Academic</md-option>
+                  </md-select>
+                  <div class="errors" ng-messages="myForm.favoriteColor.$error">
+                    <div ng-message="required">Required</div>
                   </div>
-                </a>
-                <a class="result">
-                  <div class="content">
-                    <div class="title">Burundi</div>
-                  </div>
-                </a>
+                </md-input-container>
+
+                <md-input-container flex="20">
+                  <button class="ui green button" name="addSpecialization" ng-click="addSpecialization()" value="Add" ng-class="{'hidden-visibility': ($index + 1) !== edit.specialization.data.length}">
+                    <i class="plus icon"></i>
+                  </button>
+                  <button class="ui red button" name="removeSpecialization" ng-click="removeSpecialization($index)" value="Remove" ng-class="{'hidden-visibility': $index === 0 || ($index + 1) !== edit.specialization.data.length}">
+                    <i class="minus icon"></i>
+                  </button>
+                </md-input-container>
               </div>
-              <input type="text" name="topic" placeholder="Enter topic you want to teach..." ng-model="specialization.topic" ng-change="specialization.status.searchResultsOpen = true"> -->
-              <div class="ui icon input topic" ng-class="{'loading': specialization.loadingResults}">
-                <input type="text" ng-model="specialization.topicName" placeholder="Enter topic you want to teach..." uib-typeahead="topic for topic in getLocation($index, $viewValue)" typeahead-loading="loading" typeahead-no-results="noResults" class="form-control">
-                <i class="icon"></i>
-              </div>
-<!--     <i ng-show="specialization.loadingResults" class="glyphicon glyphicon-refresh"></i>
-    <div ng-show="true">
-      <i class="glyphicon glyphicon-remove"></i> No Results Found
-    </div> -->
             </div>
-<!--               <select name="level" ng-model="specialization.level">
-                <option selected=selected>Basic</option>
-                <option>Intermediate</option>
-                <option>Advanced</option>
-                <option>Expert</option>
-              </select> -->
-<!--               <div class="ui dropdown label" auto-close="specialization.status.levelOpen" ng-click="specialization.status.levelOpen = !specialization.status.levelOpen">
-                <div class="text">Basic</div>
-                <i class="dropdown icon"></i>
-                <div class="menu" ng-show="specialization.status.levelOpen">
-                  <div class="item">Basic</div>
-                  <div class="item">Intermediate</div>
-                  <div class="item">Advanced</div>
-                  <div class="item">Expert</div>
+
+<!--             <div ng-repeat="specialization in edit.specialization.data" class="ui fluid input" id="addSpecializationContainer">
+              <div class="ui search">
+                <div class="ui icon input topic" ng-class="{'loading': specialization.loadingResults}">
+                  <input type="text" ng-model="specialization.topicName" placeholder="Enter topic you want to teach..." uib-typeahead="topic for topic in getLocation($index, $viewValue)" typeahead-loading="loading" typeahead-no-results="noResults" class="form-control">
+                  <i class="icon"></i>
                 </div>
-              </div> -->
-              <div class="btn-group" uib-dropdown>
-                <button id="single-button" type="button" class="btn btn-default" uib-dropdown-toggle>
-                  {{specialization.level !== "" ? specialization.level : "Level" }} <i class="caret"></i>
-                </button>
-                <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                  <li role="menuitem"><a href="#" ng-click="setLevel($index, 'Basic')">Basic</a></li>
-                  <li role="menuitem"><a href="#" ng-click="setLevel($index, 'Intermediate')">Intermediate</a></li>
-                  <li role="menuitem"><a href="#" ng-click="setLevel($index, 'Advanced')">Advanced</a></li>
-                  <li role="menuitem"><a href="#" ng-click="setLevel($index, 'Expert')">Expert</a></li>
-                </ul>
               </div>
-              <button class="ui green button" name="addSpecialization" ng-click="addSpecialization()" value="Add" ng-class="{'hidden-visibility': ($index + 1) !== edit.specialization.data.length}">
-                <i class="plus icon"></i>
-              </button>
-              <button class="ui red button" name="removeSpecialization" ng-click="removeSpecialization($index)" value="Remove" ng-class="{'hidden-visibility': $index === 0 || ($index + 1) !== edit.specialization.data.length}">
-                <i class="minus icon"></i>
-              </button>
-              <!-- <input type="button" name="addSpecialization" ng-click="addSpecialization()" value="Add" ng-if="($index + 1) === edit.specialization.data.length">
-              <input type="button" name="removeSpecialization" ng-click="removeSpecialization($index)" value="Remove" ng-if="$index !== 0 && ($index + 1) === edit.specialization.data.length"> -->
-            </div>
+                <div class="btn-group" uib-dropdown>
+                  <button id="single-button" type="button" class="btn btn-default" uib-dropdown-toggle>
+                    {{specialization.level !== "" ? specialization.level : "Level" }} <i class="caret"></i>
+                  </button>
+                  <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                    <li role="menuitem"><a href="#" ng-click="setLevel($index, 'Basic')">Basic</a></li>
+                    <li role="menuitem"><a href="#" ng-click="setLevel($index, 'Intermediate')">Intermediate</a></li>
+                    <li role="menuitem"><a href="#" ng-click="setLevel($index, 'Advanced')">Advanced</a></li>
+                    <li role="menuitem"><a href="#" ng-click="setLevel($index, 'Expert')">Expert</a></li>
+                  </ul>
+                </div>
+                <button class="ui green button" name="addSpecialization" ng-click="addSpecialization()" value="Add" ng-class="{'hidden-visibility': ($index + 1) !== edit.specialization.data.length}">
+                  <i class="plus icon"></i>
+                </button>
+                <button class="ui red button" name="removeSpecialization" ng-click="removeSpecialization($index)" value="Remove" ng-class="{'hidden-visibility': $index === 0 || ($index + 1) !== edit.specialization.data.length}">
+                  <i class="minus icon"></i>
+                </button>
+            </div> -->
           </div>
           <ul class="specialization-container" ng-if="currentUser.specialization.length">
             <li ng-repeat="topic in currentUser.specialization">

@@ -5,7 +5,7 @@ angular.module('takhshilaApp')
     $rootScope.isLoading = false;
     $rootScope.search = {
     	topic: null,
-    	level: 'basic'
+    	level: 'Basic'
     }
     $scope.loadingResults = false;
     $rootScope.processSearch = function(evt){

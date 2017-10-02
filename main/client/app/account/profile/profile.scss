@@ -4,6 +4,16 @@
     border-radius: 0px;
     box-shadow: none;
     border: 1px solid rgba(34, 36, 38, 0.15);
+    md-input-container{
+      button{
+        &.ui{
+          padding: 8px;
+          i.icon{
+            margin: 0px;
+          }
+        }
+      }
+    }
     &.review-container{
       border: 0px;
       border-bottom: 1px solid rgba(34, 36, 38, 0.15);
@@ -150,6 +160,20 @@
   }
   #addSpecializationContainer{
     margin-bottom: 10px;
+    label{
+      font-weight: normal;
+    }
+    .add-item{
+      md-input-container{
+        margin: 0px;
+        padding: 0px;
+      }
+      &:first-child{
+        md-input-container{
+          margin-top: 10px;
+        }
+      }
+    }
     &.ui{
       border: 0px;
       input{
@@ -185,54 +209,52 @@
         }
       }
     }
-    .ui{
-      &.input{
-        &.topic{
-          border: 0px;
-          width: 100%;
-          [uib-typeahead-popup].dropdown-menu{
-            position: absolute;
-            width: 100%;
-            margin: 0px;
-            padding: 0;
-          }
-        }
-      }
-      &.search{
+    .input{
+      &.topic{
         border: 0px;
         width: 100%;
-        .results{
+        [uib-typeahead-popup].dropdown-menu{
+          position: absolute;
           width: 100%;
-          top: 80%;
-          border-radius: 0px;
-          border-top: 0px;
-          box-shadow: none;
-          display: block;
-        }
-      }
-      &.dropdown{
-        width: 150px;
-        font-size: 1.12em;
-        .menu{
-          display: block;
-        }
-        i{
-          &.icon{
-            position: absolute;
-            right: 5px;
-            line-height: 1.12em;
-          }
-        }
-      }
-      &.button{
-        padding: 8px;
-        margin: 0px 5px;
-        &.hidden-visibility{
-          visibility: hidden;
-        }
-        i{
           margin: 0px;
+          padding: 0;
         }
+      }
+    }
+    .search{
+      border: 0px;
+      width: 100%;
+      .results{
+        width: 100%;
+        top: 80%;
+        border-radius: 0px;
+        border-top: 0px;
+        box-shadow: none;
+        display: block;
+      }
+    }
+    .dropdown{
+      width: 150px;
+      font-size: 1.12em;
+      .menu{
+        display: block;
+      }
+      i{
+        &.icon{
+          position: absolute;
+          right: 5px;
+          line-height: 1.12em;
+        }
+      }
+    }
+    .button{
+      padding: 8px;
+      margin: 0px 5px;
+      &.hidden-visibility{
+        visibility: hidden;
+      }
+      i{
+        margin: 0px;
       }
     }
   }
