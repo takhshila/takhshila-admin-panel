@@ -22,6 +22,11 @@ angular.module('takhshilaApp')
             }
         }
     };
+
+    $scope.$watch(function(){ return $scope.slider_draggable_range.maxValue; }, function(val){
+        console.log(val);
+        // $scope.processSearch();
+    });
     
     $scope.searchTerm;
 
@@ -49,15 +54,25 @@ angular.module('takhshilaApp')
     	level: $stateParams.level
     }
 
-    searchFactory.search(searchdata)
-    .success(function(response){
-    	if(response.length){
-    		$scope.searchResults = response;
-    	}
-    })
-    .error(function(err){
-    	console.log(err);
-    });
+    $scope.processSearch = function(){
+        if($scope.slider_draggable_range.maxValue){
+            searchdata.maxPrice = $scope.slider_draggable_range.maxValue;
+        }
+        if($scope.slider_draggable_range.minValue){
+            searchdata.minPrice = $scope.slider_draggable_range.minValue;
+        }
+        searchFactory.search(searchdata)
+        .success(function(response){
+            if(response.length){
+                $scope.searchResults = response;
+            }
+        })
+        .error(function(err){
+            console.log(err);
+        });
+    }
+
+    $scope.processSearch();
 
     $rootScope.populateCountries();
 

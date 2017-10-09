@@ -3,6 +3,7 @@
 angular.module('takhshilaApp')
   .controller('InitCtrl', function ($rootScope, $scope, $state, $mdDialog, $q, $http, Auth) {
     $rootScope.countries = [];
+    $rootScope.isProfileLive = true;
     $rootScope.showReviewDialog = false;
     $rootScope.reviewDialogData = {};
 

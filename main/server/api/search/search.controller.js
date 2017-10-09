@@ -30,7 +30,19 @@ exports.searchTeacher = function(req, res) {
               }
             }
           });
-          if(found && user.ratePerHour.value){
+          var minPriceConditionFulfilled = true;
+          var maxPriceConditionFulfilled = true;
+          if(req.query.maxPrice){
+            if(user.ratePerHour.value > req.query.maxPrice){
+              maxPriceConditionFulfilled = false;
+            }
+          }
+          if(req.query.minPrice){
+            if(user.ratePerHour.value < req.query.minPrice){
+              minPriceConditionFulfilled = false;
+            }
+          }
+          if(found && user.ratePerHour.value && minPriceConditionFulfilled && maxPriceConditionFulfilled){
             var userData = {
               userDetails: user,
               videos: [],
