@@ -9,3 +9,10 @@
 .margin-top{
 	margin-top: 45px;
 }
+.notification{
+	.md-toast-content{
+		position: fixed;
+	    right: 20px;
+	    top: 50px;
+	}	
+}

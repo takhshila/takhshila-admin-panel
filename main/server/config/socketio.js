@@ -17,6 +17,7 @@ var liveClassList = [];
 // var userSockets = [];
 var liveClassUsers = [];
 var onlineUsers = [];
+var classSessions = {};
 
 
 // Pass eventEmitter to api controllers
@@ -30,7 +31,6 @@ function onDisconnect(socket) {
 
     var userID = socket.decoded_token._id;
     var userClassID = liveClassUsers[userID].classID;
-    var liveClassUserIndex = liveClassList[userClassID].connectedUser.indexOf(userID);
     
     if(liveClassList[userClassID] !== undefined){
       for(var i = 0; i < liveClassList[userClassID].connectedUser.length; i++){
@@ -38,44 +38,20 @@ function onDisconnect(socket) {
           liveClassUsers[liveClassList[userClassID].connectedUser[i]].emit('userLeftClass', {});
         }
       }
+      var liveClassUserIndex = liveClassList[userClassID].connectedUser.indexOf(userID);
+      delete liveClassList[userClassID].connectedUser.splice(liveClassUserIndex, 1);
+      endSession(userClassID, userID);
     }
     
     delete liveClassUsers[userID];
-    delete liveClassList[userClassID].connectedUser.splice(liveClassUserIndex, 1);
   }
+  delete onlineUsers[userID];
 }
 
 // When the user connects.. perform this
 function onConnect(socket) {
   var userID = socket.decoded_token._id;
   onlineUsers[userID] = socket;
-
-  // When the client emits 'info', this listens and executes
-  socket.on('info', function (data) {
-    console.info('[%s] %s', socket.address, JSON.stringify(data, null, 2));
-  });
-
-  // Insert sockets below
-  // require('../api/scheduler/scheduler.socket').register(socket);
-  // require('../api/review/review.socket').register(socket);
-  // require('../api/bankAccount/bankAccount.socket').register(socket);
-  // require('../api/bank/bank.socket').register(socket);
-
-  // require('../api/classDetails/classDetails.socket').register(socket);
-  // require('../api/company/company.socket').register(socket);
-  // require('../api/language/language.socket').register(socket);
-  // require('../api/countries/countries.socket').register(socket);
-  // require('../api/transactionhistory/transactionhistory.socket').register(socket);
-  // require('../api/wallet/wallet.socket').register(socket);
-  // require('../api/transaction/transaction.socket').register(socket);
-  // require('../api/search/search.socket').register(socket);
-  // require('../api/degree/degree.socket').register(socket);
-  // require('../api/school/school.socket').register(socket);
-  // require('../api/notification/notification.socket').register(socket);
-  // require('../api/userclass/userclass.socket').register(socket);
-  // require('../api/video/video.socket').register(socket);
-  // require('../api/topic/topic.socket').register(socket);
-  // require('../api/thing/thing.socket').register(socket);
 
   socket.on('joinClass', function(data,  callback){
     var output = {
@@ -122,13 +98,30 @@ function onConnect(socket) {
       callback(output);
     }
   })
-  
+
+  socket.on('endClass', function(data,  callback){
+    var output = {
+          success : false
+        },
+        classID = data.classID,
+        peerID = data.peerID,
+        userID = socket.decoded_token._id;
+
+    if(liveClassUsers[userID].classID === classID){
+      endClass(classID, userID);
+      output.success = true
+    }
+    callback(output);
+  });  
 }
 
 function startLiveClass(classID){
   if(liveClassList[classID] !== undefined){
     if(liveClassList[classID].connectedUser.length === 2){
       console.log("Requesting start class");
+      liveClassList[classID].status = "ongoing";
+      liveClassList[classID].startTime = moment().valueOf();
+
       for(var i = 0; i < liveClassList[classID].connectedUser.length; i++){
         liveClassUsers[liveClassList[classID].connectedUser[i]].emit('startClass', {
           'caller'    : {
@@ -141,6 +134,102 @@ function startLiveClass(classID){
           }
         });
       }
+
+      startSession(classID);
+    }
+  }
+}
+
+function startSession(classID){
+  if(liveClassList[classID].status === "ongoing"){
+    if(classSessions[classID] === undefined){
+      classSessions[classID] = [];
+    }
+    classSessions[classID].push({
+      start: moment().valueOf(),
+      end: null,
+      disconnectedBy: null,
+      totalDuration: null
+    });
+  }
+}
+
+function endSession(classID, userID){
+  if(liveClassList[classID].status === "ongoing"){
+    classSessions[classID][classSessions[classID].length - 1].end = moment().valueOf();
+    classSessions[classID][classSessions[classID].length - 1].disconnectedBy = userID;
+    classSessions[classID][classSessions[classID].length - 1].totalDuration = classSessions[classID][classSessions[classID].length - 1].end - classSessions[classID][classSessions[classID].length - 1].start;
+  }
+}
+
+function endClass(classID, endedBy){
+  if(liveClassList[classID] !== undefined){
+    if(liveClassList[classID].connectedUser.length > 0){
+      console.log("Requesting end class");
+      if([classSessions[classID].length - 1].end === null){
+        endSession(classID, endedBy);
+      }
+      for(var i = 0; i < liveClassList[classID].connectedUser.length; i++){
+        liveClassUsers[liveClassList[classID].connectedUser[i]].emit('endClass');
+        var userID = liveClassList[userClassID].connectedUser[i];
+        delete liveClassUsers[userID];
+      }
+
+      var totalRunTime = 0;
+      for(var i = 0; i < classSessions[classID].length; i++){
+        totalRunTime += classSessions[classID].totalDuration;
+      }
+
+      Userclass
+      .findById(classID, function (err, userclass){
+        // Transfer money from student wallet to  teacher's wallet
+        var studentID = liveClassList[classID].classDetails.studentID;
+        var teacherID = liveClassList[classID].classDetails.teacherID;
+        var totalCost = liveClassList[classID].classDetails.amount.totalCost;
+        var paidToTeacher = parseFloat(liveClassList[classID].classDetails.amount.paidToTeacher);
+        var commission = parseFloat(totalCost - paidToTeacher);
+        userclass.status = "completed";
+        if(totalRunTime < 0 && endedBy !== teacherID){
+         userclass.status = "preEnded";
+        }
+        userclass.save(function (err, updateduserclass){
+          if(updateduserclass.status === 'completed'){
+            var transactionDataForTeacher = {
+              userID: teacherID,
+              transactionType: 'Credit',
+              transactionIdentifier: 'walletCashReceived',
+              transactionDescription: 'Wallet cash for INR ' + paidToTeacher + ' received',
+              transactionAmount: paidToTeacher,
+              classRefrence: userclass._id,
+              status: 'completed'
+            }
+
+            Transaction.create(transactionDataForTeacher, function(err){
+              Wallet.findOne({
+                userID: teacherID
+              }, function(err, walletData){
+                walletData.withdrawBalance = parseFloat(walletData.withdrawBalance + paidToTeacher);
+                walletData.totalBalance = parseFloat(walletData.totalBalance + paidToTeacher);
+                walletData.save(function(err){
+                  var transactionDataForTakhshila = {
+                    transactionType: 'Credit',
+                    transactionIdentifier: 'commissionReceived',
+                    transactionDescription: 'Commission for INR ' + commission + ' received',
+                    transactionAmount: commission,
+                    classRefrence: userclass._id,
+                    status: 'completed'
+                  }
+
+                  Transaction.create(transactionDataForTakhshila, function(err){
+                    console.log('Transaction after completion of class has been completed');
+                  });
+                });
+              });
+            });
+          }
+          delete liveClassList[classID];
+        });
+      });
     }
   }
 }
@@ -156,6 +245,7 @@ module.exports = function (socketio) {
   // 1. You will need to send the token in `client/components/socket/socket.service.js`
   //
   // 2. Require authentication here:
+
   socketio.use(require('socketio-jwt').authorize({
     secret: config.secrets.session,
     handshake: true
@@ -221,60 +311,7 @@ eventEmitter.on('notifyUser', function(data){
 eventEmitter.on('endClass', function(data){
   console.log('Received event: End class');
   var classID = data.classId;
-  if(liveClassList[classID] !== undefined){
-    if(liveClassList[classID].connectedUser.length > 0){
-      console.log("Requesting end class");
-      for(var i = 0; i < liveClassList[classID].connectedUser.length; i++){
-        liveClassUsers[liveClassList[classID].connectedUser[i]].emit('endClass');
-      }
-
-      Userclass
-      .findById(classID, function (err, userclass){
-        userclass.status = "completed";
-        userclass.save(function (err, updateduserclass){
-          // Transfer money from student wallet to  teacher's wallet
-          var studentID = liveClassList[classID].classDetails.studentID;
-          var teacherID = liveClassList[classID].classDetails.teacherID;
-          var totalCost = liveClassList[classID].classDetails.amount.totalCost;
-          var paidToTeacher = parseFloat(liveClassList[classID].classDetails.amount.paidToTeacher);
-          var commission = parseFloat(totalCost - paidToTeacher);
-
-          var transactionDataForTeacher = {
-            userID: teacherID,
-            transactionType: 'Credit',
-            transactionIdentifier: 'walletCashReceived',
-            transactionDescription: 'Wallet cash for INR ' + paidToTeacher + ' received',
-            transactionAmount: paidToTeacher,
-            classRefrence: userclass._id,
-            status: 'completed'
-          }
-
-          Transaction.create(transactionDataForTeacher, function(err){
-            Wallet.findOne({
-              userID: teacherID
-            }, function(err, walletData){
-              walletData.withdrawBalance = parseFloat(walletData.withdrawBalance + paidToTeacher);
-              walletData.totalBalance = parseFloat(walletData.totalBalance + paidToTeacher);
-              walletData.save(function(err){
-                var transactionDataForTakhshila = {
-                  transactionType: 'Credit',
-                  transactionIdentifier: 'commissionReceived',
-                  transactionDescription: 'Commission for INR ' + commission + ' received',
-                  transactionAmount: commission,
-                  classRefrence: userclass._id,
-                  status: 'completed'
-                }
-
-                Transaction.create(transactionDataForTakhshila, function(err){
-                  console.log('Transaction after completion of class has been completed');
-                });
-              });
-            });
-          });
-        });
-      });
-    }
-  }
+  endClass(classID, null);
 })
 
 
