@@ -65,10 +65,10 @@ angular.module('takhshilaApp')
       .highlightClass('md-accent')// Accent is used by default, this just demonstrates the usage.
       .position('top right');
 
-    $mdToast.show(toast).then(function(response) {
-      if ( response == 'ok' ) {
-        alert('You clicked the \'Link\' action.');
-      }
-    });
+    // $mdToast.show(toast).then(function(response) {
+    //   if ( response == 'ok' ) {
+    //     alert('You clicked the \'Link\' action.');
+    //   }
+    // });
 
   });
