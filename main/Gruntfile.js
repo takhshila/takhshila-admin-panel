@@ -279,6 +279,11 @@ module.exports = function (grunt) {
             [/(assets\/images\/.*?\.(?:gif|jpeg|jpg|png|webp|svg))/gm, 'Update the JS to reference our revved images'],
             [/(assets\/icons\/.*?\.(?:gif|jpeg|jpg|png|webp|svg))/gm, 'Update the JS to reference our revved icons'],
             [/(assets\/iconsets\/.*?\.(?:gif|jpeg|jpg|png|webp|svg))/gm, 'Update the JS to reference our revved iconsets']
+          ],
+          css: [
+            [/(assets\/images\/.*?\.(?:gif|jpeg|jpg|png|webp|svg))/gm, 'Update the css to reference our revved images'],
+            [/(assets\/icons\/.*?\.(?:gif|jpeg|jpg|png|webp|svg))/gm, 'Update the css to reference our revved icons'],
+            [/(assets\/iconsets\/.*?\.(?:gif|jpeg|jpg|png|webp|svg))/gm, 'Update the css to reference our revved iconsets']
           ]
         }
       }
@@ -378,6 +383,11 @@ module.exports = function (grunt) {
           cwd: '.tmp/images',
           dest: '<%= yeoman.dist %>/public/assets/images',
           src: ['generated/*']
+        }, {
+          expand: true,
+          cwd: '<%= yeoman.client %>',
+          dest: '<%= yeoman.dist %>/public/app',
+          src: ['fonts/**/*']
         }, {
           expand: true,
           dest: '<%= yeoman.dist %>',
