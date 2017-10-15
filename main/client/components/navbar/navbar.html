@@ -1,7 +1,7 @@
 <script src='http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js'></script>
-<div class="announcement ui warning message" ng-if="!isProfileLive">
+<!-- <div class="announcement ui warning message" ng-if="!isProfileLive">
   Your profile is not live.
-</div>
+</div> -->
 <nav ng-controller = "NavbarCtrl" role="navigation" class="navbar" ng-class = "{'navbar-inverse navbar-fixed-top' : navStick, 'navbar-default' : !navStick, 'margin-top' : !isProfileLive}">
   <div class="col-md-12">
     <!-- Brand and toggle get grouped for better mobile display -->
@@ -41,4 +41,4 @@
   </div>
 </nav>
 
-<!-- <class-review ng-if = "loggedIn && showReviewDialog"></class-review> -->
+<class-review ng-if = "loggedIn && showReviewDialog"></class-review>
