@@ -9,7 +9,7 @@ module.exports = {
 
   // Server port
   port:     process.env.PORT ||
-            8080,
+            443,
 
   // MongoDB connection options
   mongo: {
@@ -17,6 +17,8 @@ module.exports = {
             process.env.MONGOHQ_URL ||
             'mongodb://takhshila-staging:takhshilaStaging123@localhost/takhshila-staging'
   },
+
+  sslServer: true,
   
   payu: {
     merchantID: 4934580,

@@ -32,7 +32,20 @@ if(config.seedDB) { require('./config/seed'); }
 
 // Setup server
 var app = express();
-var server = require('http').createServer(app);
+var fs = require('fs');
+
+var server = null;
+
+if(config.sslServer){
+	var options = {
+	  key: fs.readFileSync(config.root + '/server/cert/key.pem'),
+	  cert: fs.readFileSync(config.root + '/server/cert/cert.pem')
+	};
+	server = require('https').createServer(options, app);
+}else{
+	server = require('http').createServer(app);
+}
+
 var socketio = require('socket.io')(server, {
   serveClient: config.env !== 'production',
   path: '/socket.io-client'
