@@ -13,7 +13,22 @@ angular.module('takhshilaApp')
 		                       navigator.webkitGetUserMedia ||
 		                       navigator.mozGetUserMedia ||
 		                       navigator.msGetUserMedia);
-		navigator.getUserMedia({audio: false, video: true}, function(stream){
+		// var constraints = {
+		// 	video: {
+		// 		mandatory: {
+		// 			googLeakyBucket: true,
+		// 			maxWidth: window.screen.width,
+		// 			maxHeight: window.screen.height,
+		// 			minFrameRate: 3,
+		// 			maxFrameRate: 3,
+		// 			chromeMediaSource: 'screen'
+		// 		}
+		// 	},
+		// 	audio: false
+		// };
+		// return navigator.mediaDevices.getUserMedia(constraints);
+
+		navigator.getUserMedia({audio: true, video: true}, function(stream){
 			deferred.resolve(stream);
 		}, function(err){ 
 			deferred.reject(err);
@@ -86,6 +101,12 @@ angular.module('takhshilaApp')
 	    peer.on('call', function(call){
 	    	console.log("Incoming Call");
 			call.answer(window.localStream);
+			call.on('stream', function(stream) {
+				console.log("Started receiving stream");
+			  // `stream` is the MediaStream of the remote peer.
+			  // Here you'd add it to an HTML video/canvas element.
+			  $('#their-video').prop('src', URL.createObjectURL(stream));
+			});			
 			// step3(call);
 	    });
 
@@ -98,8 +119,14 @@ angular.module('takhshilaApp')
 
     socket.socket.on('startClass', function(response){
     	if(response.caller.userID === $rootScope.currentUser._id){
-    		console.log("Making Call");
+    		console.log("Making Call to -> " + response.receiver.peerID);
     		call = peer.call(response.receiver.peerID, window.localStream);
+			call.on('stream', function(stream) {
+				console.log("Started receiving stream");
+			  // `stream` is the MediaStream of the remote peer.
+			  // Here you'd add it to an HTML video/canvas element.
+			  $('#their-video').prop('src', URL.createObjectURL(stream));
+			});			
     	}
     })
 
