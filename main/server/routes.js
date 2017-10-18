@@ -4,10 +4,27 @@
 
 'use strict';
 
+var ExpressPeerServer = require('peer').ExpressPeerServer;
 var errors = require('./components/errors');
 var path = require('path');
 
-module.exports = function(app) {
+module.exports = function(app, server) {
+  //Create peerserver
+  var peerOptions = {
+    debug: true
+  }
+
+  var peerServer = ExpressPeerServer(server, peerOptions);
+
+  app.use('/peerconnection', peerServer);
+
+  peerServer.on('connection', function(id) {
+    console.log(id)
+  });
+
+  server.on('disconnect', function(id) {
+      console.log(id + "deconnected")
+  });
 
   // Insert routes below
   app.use('/api/v1/reviews', require('./api/review'));
