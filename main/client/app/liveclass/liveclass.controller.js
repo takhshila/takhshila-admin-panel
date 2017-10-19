@@ -4,9 +4,10 @@ angular.module('takhshilaApp')
   .controller('LiveclassCtrl', function ($rootScope, $stateParams, $q, $window, socket) {
 	var classID = $stateParams.classID,
 		peer = null,
+		peerID = null,
 		call = null;
 
-	var getCurrentUserVideo = function(){
+	var getCurrentUserVideo = function(sourceId){
 		var deferred = $q.defer();
 
 		navigator.getUserMedia = ( navigator.getUserMedia ||
@@ -14,7 +15,7 @@ angular.module('takhshilaApp')
 		                       navigator.mozGetUserMedia ||
 		                       navigator.msGetUserMedia);
 		var constraints = {
-			audio: true,
+			audio: false,
 			video: {
 				mandatory: {
 					chromeMediaSource: 'desktop',
@@ -84,8 +85,21 @@ angular.module('takhshilaApp')
 		});
 
 	    peer.on('open', function(peerID){
+	    	peerID = peerID;
 			$('#my-id').text(peerID);
-			// $window.postMessage('requestScreenSourceId', '*' );
+			$window.postMessage('requestScreenSourceId', '*' );
+			// getCurrentUserVideo()
+			// .then(function(stream){
+			// 	window.localStream = stream;
+			// 	connectToClass(peerID)
+			// 	.then(function(response){
+			// 		$('#my-video').prop('src', URL.createObjectURL(window.localStream));
+			// 	}, function(err){
+			// 		console.log(err.description);
+			// 	})
+			// }, function(err){
+			// 	console.log("Strem Error: ", err);
+			// });
 	    });
 
 	    peer.on('call', function(call){
@@ -121,6 +135,7 @@ angular.module('takhshilaApp')
     })
 
 	$window.addEventListener("message", function(msg){
+		console.log("Message Received");
 		if( !msg.data ) {
 			return;
 		} else if ( msg.data.sourceId ) {
