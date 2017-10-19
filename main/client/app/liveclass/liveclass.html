@@ -2,8 +2,10 @@
 	<div class="row">
 		<div class="col-md-3 col-sm-3">
 			<div class="pure-u-2-3" id="video-container">
-				<video id="their-video" autoplay></video>
-				<video id="my-video" autoplay muted="true" volume="0"></video>
+				<video id="self-video" class="self-video" autoplay muted="true" volume="0"></video>
+				<video id="peer-video" class="peer-video" autoplay></video>
+				<video id="peer-screen-video" class="peer-screen-video" autoplay muted="true" volume="0"></video>
+				<button id = "shareScreen" ng-click="shareScreen()">Share Screen</button>
 			</div>
 		</div>
 

@@ -1,11 +1,15 @@
 'use strict';
 
 angular.module('takhshilaApp')
-  .controller('LiveclassCtrl', function ($rootScope, $stateParams, $q, $window, socket) {
+  .controller('LiveclassCtrl', function ($rootScope, $scope, $stateParams, $q, $window, socket) {
 	var classID = $stateParams.classID,
 		peer = null,
 		peerID = null,
-		call = null;
+		receiverPeerID = null,
+		call = null,
+		screenCall = null,
+		extensionInstalled = false,
+		screenSourceID = null;
 
 	var getCurrentUserVideo = function(sourceId){
 		var deferred = $q.defer();
@@ -14,23 +18,8 @@ angular.module('takhshilaApp')
 		                       navigator.webkitGetUserMedia ||
 		                       navigator.mozGetUserMedia ||
 		                       navigator.msGetUserMedia);
-		var constraints = {
-			audio: false,
-			video: {
-				mandatory: {
-					chromeMediaSource: 'desktop',
-					maxWidth: screen.width > 1920 ? screen.width : 1920,
-					maxHeight: screen.height > 1080 ? screen.height : 1080,
-					chromeMediaSourceId: sourceId
-				},
-				optional: [
-					{ googTemporalLayeredScreencast: true }
-				]
-			}
-		};
 
-		// navigator.getUserMedia({audio: false, video: true}, function(stream){
-		navigator.getUserMedia(constraints, function(stream){
+		navigator.getUserMedia({audio: true, video: true}, function(stream){
 			deferred.resolve(stream);
 		}, function(err){ 
 			deferred.reject(err);
@@ -87,19 +76,18 @@ angular.module('takhshilaApp')
 	    peer.on('open', function(peerID){
 	    	peerID = peerID;
 			$('#my-id').text(peerID);
-			$window.postMessage('requestScreenSourceId', '*' );
-			// getCurrentUserVideo()
-			// .then(function(stream){
-			// 	window.localStream = stream;
-			// 	connectToClass(peerID)
-			// 	.then(function(response){
-			// 		$('#my-video').prop('src', URL.createObjectURL(window.localStream));
-			// 	}, function(err){
-			// 		console.log(err.description);
-			// 	})
-			// }, function(err){
-			// 	console.log("Strem Error: ", err);
-			// });
+			getCurrentUserVideo()
+			.then(function(stream){
+				window.localStream = stream;
+				connectToClass(peerID)
+				.then(function(response){
+					$('#self-video').prop('src', URL.createObjectURL(window.localStream));
+				}, function(err){
+					console.log(err.description);
+				})
+			}, function(err){
+				console.log("Strem Error: ", err);
+			});
 	    });
 
 	    peer.on('call', function(call){
@@ -109,7 +97,7 @@ angular.module('takhshilaApp')
 				console.log("Started receiving stream");
 			  // `stream` is the MediaStream of the remote peer.
 			  // Here you'd add it to an HTML video/canvas element.
-			  $('#their-video').prop('src', URL.createObjectURL(stream));
+			  $('#peer-video').prop('src', URL.createObjectURL(stream));
 			});			
 			// step3(call);
 	    });
@@ -123,42 +111,66 @@ angular.module('takhshilaApp')
 
     socket.socket.on('startClass', function(response){
     	if(response.caller.userID === $rootScope.currentUser._id){
-    		console.log("Making Call to -> " + response.receiver.peerID);
-    		call = peer.call(response.receiver.peerID, window.localStream);
+    		receiverPeerID = response.receiver.peerID;
+    		call = peer.call(receiverPeerID, window.localStream);
+			if(receiverPeerID){
+				screenCall = peer.call(response.receiver.peerID, stream);
+			}
 			call.on('stream', function(stream) {
-				console.log("Started receiving stream");
 			  // `stream` is the MediaStream of the remote peer.
 			  // Here you'd add it to an HTML video/canvas element.
-			  $('#their-video').prop('src', URL.createObjectURL(stream));
+			  $('#peer-video').prop('src', URL.createObjectURL(stream));
 			});			
     	}
     })
 
+    $scope.shareScreen = function(){
+    	if(extensionInstalled){
+    		$window.postMessage('requestScreenSourceId', '*' );
+    	}else{
+    		alert("Extension is not installed");
+    	}
+    }
+
 	$window.addEventListener("message", function(msg){
-		console.log("Message Received");
+		console.log("Message received: ", msg);
 		if( !msg.data ) {
 			return;
 		} else if ( msg.data.sourceId ) {
-			getCurrentUserVideo(msg.data.sourceId)
-			.then(function(stream){
-				window.localStream = stream;
-				connectToClass(peerID)
-				.then(function(response){
-					$('#my-video').prop('src', URL.createObjectURL(window.localStream));
-				}, function(err){
-					console.log(err.description);
-				})
-			}, function(err){
-				console.log("Strem Error: ", err);
+			screenSourceID = msg.data.sourceId;
+			var constraints = {
+				audio: false,
+				video: {
+					mandatory: {
+						chromeMediaSource: 'desktop',
+						maxWidth: screen.width > 1920 ? screen.width : 1920,
+						maxHeight: screen.height > 1080 ? screen.height : 1080,
+						chromeMediaSourceId: screenSourceID
+					},
+					optional: [
+						{ googTemporalLayeredScreencast: true }
+					]
+				}
+			};
+
+			navigator.getUserMedia(constraints, function(stream){
+				$('#peer-screen-video').prop('src', URL.createObjectURL(stream));
+				if(receiverPeerID){
+					screenCall = peer.call(response.receiver.peerID, stream);
+				}
+			}, function(err){ 
+				console.log("Stremm error: ", err);
 			});
-		} else if( msg.data.addonInstalled ) {
-			console.log("Plugin not installed");
+		} else if( msg.data === 'addon-installed' ) {
+			extensionInstalled = true;
 		}
 	}, false);
 
 
     $rootScope.$watch('loggedIn', function(status){
       if(status === true){
+      	console.log("Checking if extension is installed");
+      	$window.postMessage('check-addon-installed', '*' );
         $rootScope.isLoading = false;
         connectPeer();
       }
