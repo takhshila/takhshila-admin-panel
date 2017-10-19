@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('takhshilaApp')
-  .controller('LiveclassCtrl', function ($rootScope, $stateParams, $q, socket) {
+  .controller('LiveclassCtrl', function ($rootScope, $stateParams, $q, $window, socket) {
 	var classID = $stateParams.classID,
 		peer = null,
 		call = null;
@@ -13,22 +13,23 @@ angular.module('takhshilaApp')
 		                       navigator.webkitGetUserMedia ||
 		                       navigator.mozGetUserMedia ||
 		                       navigator.msGetUserMedia);
-		// var constraints = {
-		// 	video: {
-		// 		mandatory: {
-		// 			googLeakyBucket: true,
-		// 			maxWidth: window.screen.width,
-		// 			maxHeight: window.screen.height,
-		// 			minFrameRate: 3,
-		// 			maxFrameRate: 3,
-		// 			chromeMediaSource: 'screen'
-		// 		}
-		// 	},
-		// 	audio: false
-		// };
-		// return navigator.mediaDevices.getUserMedia(constraints);
+		var constraints = {
+			audio: true,
+			video: {
+				mandatory: {
+					chromeMediaSource: 'desktop',
+					maxWidth: screen.width > 1920 ? screen.width : 1920,
+					maxHeight: screen.height > 1080 ? screen.height : 1080,
+					chromeMediaSourceId: sourceId
+				},
+				optional: [
+					{ googTemporalLayeredScreencast: true }
+				]
+			}
+		};
 
-		navigator.getUserMedia({audio: true, video: true}, function(stream){
+		// navigator.getUserMedia({audio: false, video: true}, function(stream){
+		navigator.getUserMedia(constraints, function(stream){
 			deferred.resolve(stream);
 		}, function(err){ 
 			deferred.reject(err);
@@ -84,18 +85,7 @@ angular.module('takhshilaApp')
 
 	    peer.on('open', function(peerID){
 			$('#my-id').text(peerID);
-			getCurrentUserVideo()
-			.then(function(stream){
-				window.localStream = stream;
-				connectToClass(peerID)
-				.then(function(response){
-					$('#my-video').prop('src', URL.createObjectURL(window.localStream));
-				}, function(err){
-					console.log(err.description);
-				})
-			}, function(err){
-				console.log("Strem Error: ", err);
-			});
+			// $window.postMessage('requestScreenSourceId', '*' );
 	    });
 
 	    peer.on('call', function(call){
@@ -129,6 +119,27 @@ angular.module('takhshilaApp')
 			});			
     	}
     })
+
+	$window.addEventListener("message", function(msg){
+		if( !msg.data ) {
+			return;
+		} else if ( msg.data.sourceId ) {
+			getCurrentUserVideo(msg.data.sourceId)
+			.then(function(stream){
+				window.localStream = stream;
+				connectToClass(peerID)
+				.then(function(response){
+					$('#my-video').prop('src', URL.createObjectURL(window.localStream));
+				}, function(err){
+					console.log(err.description);
+				})
+			}, function(err){
+				console.log("Strem Error: ", err);
+			});
+		} else if( msg.data.addonInstalled ) {
+			console.log("Plugin not installed");
+		}
+	}, false);
 
 
     $rootScope.$watch('loggedIn', function(status){
