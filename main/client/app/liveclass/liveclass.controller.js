@@ -91,15 +91,27 @@ angular.module('takhshilaApp')
 	    });
 
 	    peer.on('call', function(call){
-	    	console.log("Incoming Call");
-			call.answer(window.localStream);
+	    	console.log("Incoming call for " + call.metadata.streamType);
+	    	if(call.metadata.streamType === 'video'){
+				call.answer(window.localStream);
+	    	}else if(call.metadata.streamType === 'screen'){
+	    		call.answer();
+	    	}
 			call.on('stream', function(stream) {
-				console.log("Started receiving stream");
-			  // `stream` is the MediaStream of the remote peer.
-			  // Here you'd add it to an HTML video/canvas element.
-			  $('#peer-video').prop('src', URL.createObjectURL(stream));
-			});			
-			// step3(call);
+				if(call.metadata.streamType === 'video'){
+					$('#peer-video').prop('src', URL.createObjectURL(stream));
+				}else if(call.metadata.streamType === 'screen'){
+					$('#peer-screen-video').prop('src', URL.createObjectURL(stream));
+				}
+			});
+			// if(receiverPeerID && window.screenStream){
+			// 	screenCall = peer.call(receiverPeerID, window.screenStream, {metadata: {streamType: "screen"}});
+			// 	screenCall.on('stream', function(stream){
+			// 		if(stream){
+			// 			$('#peer-screen-video').prop('src', URL.createObjectURL(stream));
+			// 		}
+			// 	});
+			// }
 	    });
 
 	    peer.on('error', function(err){
@@ -110,18 +122,22 @@ angular.module('takhshilaApp')
     }
 
     socket.socket.on('startClass', function(response){
+    	console.log("Start class request received");
+    	receiverPeerID = response.receiver.peerID;
     	if(response.caller.userID === $rootScope.currentUser._id){
-    		receiverPeerID = response.receiver.peerID;
-    		call = peer.call(receiverPeerID, window.localStream);
-			if(receiverPeerID){
-				screenCall = peer.call(response.receiver.peerID, stream);
-			}
+    		call = peer.call(receiverPeerID, window.localStream, {metadata: {streamType: "video"}});
 			call.on('stream', function(stream) {
-			  // `stream` is the MediaStream of the remote peer.
-			  // Here you'd add it to an HTML video/canvas element.
-			  $('#peer-video').prop('src', URL.createObjectURL(stream));
-			});			
+				$('#peer-video').prop('src', URL.createObjectURL(stream));
+			});
     	}
+		if(receiverPeerID && window.screenStream){
+			screenCall = peer.call(receiverPeerID, window.screenStream, {metadata: {streamType: "screen"}});
+			screenCall.on('stream', function(stream){
+				if(stream){
+					$('#peer-screen-video').prop('src', URL.createObjectURL(stream));
+				}
+			});
+		}
     })
 
     $scope.shareScreen = function(){
@@ -133,7 +149,6 @@ angular.module('takhshilaApp')
     }
 
 	$window.addEventListener("message", function(msg){
-		console.log("Message received: ", msg);
 		if( !msg.data ) {
 			return;
 		} else if ( msg.data.sourceId ) {
@@ -154,9 +169,10 @@ angular.module('takhshilaApp')
 			};
 
 			navigator.getUserMedia(constraints, function(stream){
-				$('#peer-screen-video').prop('src', URL.createObjectURL(stream));
-				if(receiverPeerID){
-					screenCall = peer.call(response.receiver.peerID, stream);
+				window.screenStream = stream;
+				$('#peer-screen-video').prop('src', URL.createObjectURL(window.screenStream));
+				if(receiverPeerID && window.screenStream){
+					screenCall = peer.call(receiverPeerID, window.screenStream, {metadata: {streamType: "screen"}});
 				}
 			}, function(err){ 
 				console.log("Stremm error: ", err);
@@ -169,7 +185,6 @@ angular.module('takhshilaApp')
 
     $rootScope.$watch('loggedIn', function(status){
       if(status === true){
-      	console.log("Checking if extension is installed");
       	$window.postMessage('check-addon-installed', '*' );
         $rootScope.isLoading = false;
         connectPeer();
