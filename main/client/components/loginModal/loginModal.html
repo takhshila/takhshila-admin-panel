@@ -64,7 +64,7 @@
 
             <br>
 
-            <button ng-init = "logging = false" ng-click = "validate(loginForm)" ng-class = "{'loading': logging}" class="ui button primary" lx-ripple>Login</button>
+            <button ng-init = "logging = false" ng-click = "validate(loginForm)" ng-disabled="logging" ng-class = "{'loading': logging}" class="ui button primary" lx-ripple>Login</button>
             <div class = "row">
               <div class = "col-md-12 col-sm-12 col-xs-12 login-modal-additional-link">
                 <a ng-href = "#" ng-click = "current = 'forgot-password'">Forgot Password ?</a>
@@ -181,7 +181,7 @@
               </md-input-container>
             </div>
 
-            <button ng-init = "logging = false" ng-click = "signUp(registerForm)" ng-class = "{'loading': logging}" class="ui button primary" lx-ripple>Sign Up</button>
+            <button ng-init = "logging = false" ng-click = "signUp(registerForm)" ng-disabled="logging" ng-class = "{'loading': logging}" class="ui button primary" lx-ripple>Sign Up</button>
           </form>
         </div>
         <div class = "row">
@@ -219,7 +219,7 @@
               </div>
             </div>
             <br>
-            <button ng-init = "reseting = false" ng-click = "reseting = !reseting" ng-class = "{'loading': reseting}" class="ui button primary" lx-ripple>Reset Password</button>
+            <button ng-init = "reseting = false" ng-click = "reseting = !reseting" ng-disabled="reseting" ng-class = "{'loading': reseting}" class="ui button primary" lx-ripple>Reset Password</button>
         </form>
         </div>
       </div>

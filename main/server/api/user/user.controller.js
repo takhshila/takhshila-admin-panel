@@ -2,6 +2,7 @@
 
 var _ = require('lodash');
 var moment = require('moment');
+var Helper = require('../../common/helper');
 var User = require('./user.model');
 var Userclass = require('../userclass/userclass.model');
 var Wallet = require('../wallet/wallet.model');
@@ -33,28 +34,44 @@ exports.index = function(req, res) {
  * Send verification code for new user
  */
 exports.sendVerificationCode = function (req, res, next) {
-  User.find({
-    phone: req.body.phone,
-    dialCode: req.body.dialCode
-  }, function(err, user){
-    if (err) return next(err);
-    if(user.length > 0){ return res.status(200).json({success: false, error: 'Phone number exists'}); }
-    var userData = {
-      name: req.body.name,
-      password: req.body.password,
-      provider: 'local',
-      role: 'user',
-      dialCode: req.body.dialCode,
-      country: req.body.country,
-      tempPhone: req.body.phone,
-      phoneVerificationCode: 3223,
-      isTeacher: req.body.isTeacher
-    }
-    User.create(userData, function(err, user) {
-      if (err) return validationError(res, err);
-      // var token = jwt.sign({_id: user._id }, config.secrets.session, { expiresInMinutes: 60*5 });
-      res.json({ id: user._id });
-    });
+  var  addUser = new Promise(function(resolve, reject){
+    User.find({
+      phone: req.body.phone,
+      dialCode: req.body.dialCode
+    }, function(err, user){
+      if (err) return next(err);
+      if(user.length > 0){ return res.status(200).json({success: false, error: 'Phone number exists'}); }
+      var userData = {
+        name: req.body.name,
+        password: req.body.password,
+        provider: 'local',
+        role: 'user',
+        dialCode: req.body.dialCode,
+        country: req.body.country,
+        tempPhone: req.body.phone,
+        phoneVerificationCode: Helper.getRandomNuber(4),
+        isTeacher: req.body.isTeacher
+      }
+      User.create(userData, function(err, user) {
+        if (err) { reject(err); }
+        var message = user.phoneVerificationCode + " is your one time code to register on Takhshila. Do not share it with anyone.";
+        Helper.sendTextMessage(user.tempPhone, message)
+        .then(function(response){
+          resolve(user);
+        })
+        .catch(function(err){
+          reject(err);
+        });
+      });
+    })
+  })
+
+  addUser
+  .then(function(response){
+    res.json({ id: response._id });
+  })
+  .catch(function(err){
+    return validationError(res, err);
   })
 };
 
