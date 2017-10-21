@@ -218,8 +218,10 @@ exports.updateSettings = function(req, res, next) {
             if(user.length > 0){ return res.status(200).json({success: false, error: 'Phone number exists'}); }
             if(user.phone !== req.body.phone){
               user.tempPhone = req.body.phone;
-              user.phoneVerificationCode = 3223;
+              user.phoneVerificationCode = Helper.getRandomNuber(4);
               phoneNumberUpdated = true;
+              var message = user.phoneVerificationCode + " is your one time code to update phone number on Takhshila. Do not share it with anyone.";
+              Helper.sendTextMessage(user.tempPhone, message);
             }
             resolve();
         })

@@ -6,6 +6,7 @@
 
 var events = require('events');
 var moment = require('moment');
+var Helper = require('../common/helper')
 var config = require('./environment');
 var User = require('../api/user/user.model');
 var Userclass = require('../api/userclass/userclass.model');
@@ -298,7 +299,8 @@ eventEmitter.on('notifyUser', function(data){
       var user = users[userType];
       if(onlineUsers[user._id.toString()] === undefined){
         var textMessage = 'Hi ' + user.name.firstName + '! Your takhshila class is about to start. Please visit ' + classLink;
-        sendTextMessage(user.phone, textMessage);
+        // sendTextMessage(user.phone, textMessage);
+        Helper.sendTextMessage(user.phone, textMessage);
       }else{
         onlineUsers[user._id.toString()].emit('liveClassLink', {
           classLink: classLink

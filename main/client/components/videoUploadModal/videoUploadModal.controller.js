@@ -69,7 +69,7 @@ angular.module('takhshilaApp')
       Upload.upload({
         url: 'api/v1/videos',
         method: 'POST',
-        file: Upload.currentVideo
+        data: {file: Upload.currentVideo}
       })
       .then(function(data){
         $scope.videoUploaded = true;
@@ -78,7 +78,8 @@ angular.module('takhshilaApp')
       }, function(err){
         console.log("Error: ",err);
       }, function(progress){
-        $scope.percentCompleted = parseInt(progress.loaded / progress.total) * 100;
+        $scope.percentCompleted = parseInt(progress.loaded / progress.total * 100);
+        console.log("Completed: " + $scope.percentCompleted);
       });
     }else{
       $scope.videoData = videoData;
