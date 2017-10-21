@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('takhshilaApp')
-  .controller('NavbarCtrl', function ($rootScope, $scope, $state, $mdToast, Auth) {
+  .controller('NavbarCtrl', function ($rootScope, $scope, $state, $mdToast, socket, Auth) {
     $scope.$watch(function(){
       return $state.current.navStick;
     }, function(stickyNav){
@@ -58,17 +58,21 @@ angular.module('takhshilaApp')
 
     var toast = $mdToast.simple()
       .textContent('Your live class link is active.')
-      .action('Class link')
+      .action('Go to class')
       .hideDelay(10000)
       .highlightAction(true)
       .toastClass('notification')
-      .highlightClass('md-accent')// Accent is used by default, this just demonstrates the usage.
+      .highlightClass('md-accent')
       .position('top right');
 
-    // $mdToast.show(toast).then(function(response) {
-    //   if ( response == 'ok' ) {
-    //     alert('You clicked the \'Link\' action.');
-    //   }
-    // });
+    socket.socket.on('liveClassLink', function(response){
+      var classID = response.classID;
+      
+      $mdToast.show(toast).then(function(response) {
+        if ( response == 'ok' ) {
+          $state.go('main',{classID: classID});
+        }
+      });
+    });
 
   });

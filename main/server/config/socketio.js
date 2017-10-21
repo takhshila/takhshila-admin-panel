@@ -10,6 +10,7 @@ var Helper = require('../common/helper')
 var config = require('./environment');
 var User = require('../api/user/user.model');
 var Userclass = require('../api/userclass/userclass.model');
+var Transaction = require('../api/transaction/transaction.model');
 var Wallet = require('../api/wallet/wallet.model');
 var Scheduler = require('../api/scheduler/scheduler.model');
 var eventEmitter = new events.EventEmitter();
@@ -27,10 +28,9 @@ require('../api/transaction/transaction.controller').setEvenetEmitter(eventEmitt
 
 // When the user disconnects.. perform this
 function onDisconnect(socket) {
+  var userID = socket.decoded_token._id;
   if(liveClassUsers[socket.decoded_token._id] !== undefined && liveClassUsers[socket.decoded_token._id].id === socket.id){
     console.log("User Left Live Class");
-
-    var userID = socket.decoded_token._id;
     var userClassID = liveClassUsers[userID].classID;
     
     if(liveClassList[userClassID] !== undefined){
@@ -64,8 +64,8 @@ function onConnect(socket) {
 
     if(liveClassUsers[userID] === undefined){
       Userclass.findById(classID, function (err, userclass) {
-        //if(err || !userclass) { 
-        if(false) { 
+        if(err || !userclass) { 
+        // if(false) { 
           output.success = false;
           output.error = {
             type: 'invalid_class',
@@ -164,10 +164,11 @@ function endSession(classID, userID){
 }
 
 function endClass(classID, endedBy){
+  var totalRunTime = 0;
   if(liveClassList[classID] !== undefined){
     if(liveClassList[classID].connectedUser.length > 0){
-      console.log("Requesting end class");
-      if([classSessions[classID].length - 1].end === null){
+      console.log("Requesting end class to users");
+      if(classSessions[classID][classSessions[classID].length - 1].end === null){
         endSession(classID, endedBy);
       }
       for(var i = 0; i < liveClassList[classID].connectedUser.length; i++){
@@ -175,64 +176,70 @@ function endClass(classID, endedBy){
         var userID = liveClassList[userClassID].connectedUser[i];
         delete liveClassUsers[userID];
       }
-
-      var totalRunTime = 0;
       for(var i = 0; i < classSessions[classID].length; i++){
         totalRunTime += classSessions[classID].totalDuration;
       }
-
-      Userclass
-      .findById(classID, function (err, userclass){
-        // Transfer money from student wallet to  teacher's wallet
-        var studentID = liveClassList[classID].classDetails.studentID;
-        var teacherID = liveClassList[classID].classDetails.teacherID;
-        var totalCost = liveClassList[classID].classDetails.amount.totalCost;
-        var paidToTeacher = parseFloat(liveClassList[classID].classDetails.amount.paidToTeacher);
-        var commission = parseFloat(totalCost - paidToTeacher);
-        userclass.status = "completed";
-        if(totalRunTime < 0 && endedBy !== teacherID){
-         userclass.status = "preEnded";
-        }
-        userclass.save(function (err, updateduserclass){
-          if(updateduserclass.status === 'completed'){
-            var transactionDataForTeacher = {
-              userID: teacherID,
-              transactionType: 'Credit',
-              transactionIdentifier: 'walletCashReceived',
-              transactionDescription: 'Wallet cash for INR ' + paidToTeacher + ' received',
-              transactionAmount: paidToTeacher,
-              classRefrence: userclass._id,
-              status: 'completed'
-            }
-
-            Transaction.create(transactionDataForTeacher, function(err){
-              Wallet.findOne({
-                userID: teacherID
-              }, function(err, walletData){
-                walletData.withdrawBalance = parseFloat(walletData.withdrawBalance + paidToTeacher);
-                walletData.totalBalance = parseFloat(walletData.totalBalance + paidToTeacher);
-                walletData.save(function(err){
-                  var transactionDataForTakhshila = {
-                    transactionType: 'Credit',
-                    transactionIdentifier: 'commissionReceived',
-                    transactionDescription: 'Commission for INR ' + commission + ' received',
-                    transactionAmount: commission,
-                    classRefrence: userclass._id,
-                    status: 'completed'
-                  }
-
-                  Transaction.create(transactionDataForTakhshila, function(err){
-                    console.log('Transaction after completion of class has been completed');
-                  });
-                });
-              });
-            });
-          }
-          delete liveClassList[classID];
-        });
-      });
     }
   }
+  Userclass
+  .findById(classID, function (err, userclass){
+    // Transfer money from student wallet to  teacher's wallet
+    // var studentID = liveClassList[classID].classDetails.studentID;
+    // var teacherID = liveClassList[classID].classDetails.teacherID;
+    // var totalCost = liveClassList[classID].classDetails.amount.totalCost;
+    // var paidToTeacher = parseFloat(liveClassList[classID].classDetails.amount.paidToTeacher);
+
+    var studentID = userclass.studentID;
+    var teacherID = userclass.teacherID;
+    var totalCost = userclass.amount.totalCost;
+    var paidToTeacher = parseFloat(userclass.amount.paidToTeacher);
+
+    var commission = parseFloat(totalCost - paidToTeacher);
+    userclass.status = "completed";
+    if(totalRunTime < 0 && endedBy !== teacherID){
+     userclass.status = "preEnded";
+    }
+    console.log("Updating class data");
+    userclass.save(function (err, updateduserclass){
+      if(updateduserclass.status === 'completed'){
+        var transactionDataForTeacher = {
+          userID: teacherID,
+          transactionType: 'Credit',
+          transactionIdentifier: 'walletCashReceived',
+          transactionDescription: 'Wallet cash for INR ' + paidToTeacher + ' received',
+          transactionAmount: paidToTeacher,
+          classRefrence: userclass._id,
+          status: 'completed'
+        }
+        console.log("Updating transaction data");
+        Transaction.create(transactionDataForTeacher, function(err){
+          Wallet.findOne({
+            userID: teacherID
+          }, function(err, walletData){
+            walletData.withdrawBalance = parseFloat(walletData.withdrawBalance + paidToTeacher);
+            walletData.totalBalance = parseFloat(walletData.totalBalance + paidToTeacher);
+            console.log("Updating wallet data");
+            walletData.save(function(err){
+              var transactionDataForTakhshila = {
+                transactionType: 'Credit',
+                transactionIdentifier: 'commissionReceived',
+                transactionDescription: 'Commission for INR ' + commission + ' received',
+                transactionAmount: commission,
+                classRefrence: userclass._id,
+                status: 'completed'
+              }
+
+              Transaction.create(transactionDataForTakhshila, function(err){
+                console.log('Transaction after completion of class has been completed');
+              });
+            });
+          });
+        });
+      }
+      delete liveClassList[classID];
+    });
+  });
+
 }
 
 module.exports = function (socketio) {
@@ -297,13 +304,17 @@ eventEmitter.on('notifyUser', function(data){
     }
     for(var userType in users){
       var user = users[userType];
+      console.log("user._id.toString()");
+      console.log(user._id.toString());
+      console.log("onlineUsers");
+      console.log(onlineUsers);
       if(onlineUsers[user._id.toString()] === undefined){
         var textMessage = 'Hi ' + user.name.firstName + '! Your takhshila class is about to start. Please visit ' + classLink;
-        // sendTextMessage(user.phone, textMessage);
         Helper.sendTextMessage(user.phone, textMessage);
       }else{
         onlineUsers[user._id.toString()].emit('liveClassLink', {
-          classLink: classLink
+          classLink: classLink,
+          classID: classID
         });
       }
     }
@@ -338,6 +349,8 @@ function reInitializeScheduler(){
         time: schedulers[i].jobTime,
         data: JSON.parse(schedulers[i].jobData)
       }
+      console.log("eventData");
+      console.log(eventData);
       eventEmitter.emit(eventName, eventData);
     }
   });

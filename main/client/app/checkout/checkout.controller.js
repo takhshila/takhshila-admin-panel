@@ -19,7 +19,13 @@ angular.module('takhshilaApp')
             for(var i = 0; i < $scope.cartData.classData.length; i++){
                 $scope.paymentDetails.totalCost += $scope.cartData.classData[i].cost;
             }
-            $scope.paymentDetails.amountToPay = parseFloat($scope.paymentDetails.totalCost - $scope.paymentDetails.walletBalance);
+            if($scope.paymentDetails.walletBalance > $scope.paymentDetails.totalCost){
+                $scope.paymentDetails.walletBalanceUsed = parseFloat($scope.paymentDetails.totalCost);
+                $scope.paymentDetails.amountToPay = 0;
+            }else{
+                $scope.paymentDetails.walletBalanceUsed = parseFloat($scope.paymentDetails.walletBalance);
+                $scope.paymentDetails.amountToPay = parseFloat($scope.paymentDetails.totalCost - $scope.paymentDetails.walletBalance);
+            }
             $rootScope.isLoading = false;
         }, function(err){
             console.log(err);

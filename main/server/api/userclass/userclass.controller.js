@@ -145,7 +145,8 @@ exports.confirmClassRequest = function(req, res) {
 
         // var notifyUserTimeTemp = moment().add(1, 'm').valueOf();
         var notifyUserTime = moment.unix(userclass.requestedTime.start/1000).subtract(5, 'm').valueOf();
-        var endClassTime = moment.unix(userclass.requestedTime.end/1000).valueOf();
+        var endClassTime = moment.unix(userclass.requestedTime.start/1000).add(10, 'm').valueOf();
+        // var endClassTime = moment.unix(userclass.requestedTime.end/1000).valueOf();
 
         // var jtemp = schedule.scheduleJob(notifyUserTimeTemp, function(classId){
         //   notifyUser(classId);
