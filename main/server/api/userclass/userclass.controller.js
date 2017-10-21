@@ -145,7 +145,8 @@ exports.confirmClassRequest = function(req, res) {
 
         // var notifyUserTimeTemp = moment().add(1, 'm').valueOf();
         var notifyUserTime = moment.unix(userclass.requestedTime.start/1000).subtract(5, 'm').valueOf();
-        var endClassTime = moment.unix(userclass.requestedTime.start/1000).add(10, 'm').valueOf();
+        var checkClassStartTime = moment.unix(userclass.requestedTime.start/1000).add(15, 'm').valueOf();
+        var endClassTime = moment.unix(userclass.requestedTime.start/1000).add(20, 'm').valueOf();
         // var endClassTime = moment.unix(userclass.requestedTime.end/1000).valueOf();
 
         // var jtemp = schedule.scheduleJob(notifyUserTimeTemp, function(classId){
@@ -167,6 +168,14 @@ exports.confirmClassRequest = function(req, res) {
           eventName: 'endClass',
           callback: true,
           callbackFunction: processEndClass
+        }, {
+          jobName:'scheduleCheckClassStart',
+          jobTime: checkClassStartTime,
+          jobData: JSON.stringify({classId: userclass._id}),
+          emitEvent: true,
+          eventName: 'checkClassStart',
+          callback: true,
+          callbackFunction: processEndClass
         }];
 
         Scheduler.create(schedulerData, function(err, scheduler){
@@ -182,6 +191,13 @@ exports.confirmClassRequest = function(req, res) {
 
         var endClassJob = schedule.scheduleJob(endClassTime, function(classId){
           eventEmitter.emit('endClass', {
+            classId: classId
+          });
+          processEndClass(classId);
+        }.bind(null,userclass._id));
+
+        var endClassJob = schedule.scheduleJob(checkClassStartTime, function(classId){
+          eventEmitter.emit('checkClassStart', {
             classId: classId
           });
           processEndClass(classId);
