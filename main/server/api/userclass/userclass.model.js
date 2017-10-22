@@ -24,6 +24,7 @@ var UserclassSchema = new Schema({
     paidToTeacher: {type: Number, required: true}
   },
   requestedOn: {type: Date, default: Date.now},
+  additionalInfo: {type: String, default: null},
   status: {type: String, default: 'pendingPayment'}
 });
 

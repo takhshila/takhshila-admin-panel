@@ -5,6 +5,7 @@ var moment = require('moment');
 var schedule = require('node-schedule');
 var Userclass = require('./userclass.model');
 var Wallet = require('../wallet/wallet.model');
+var Transaction = require('../transaction/transaction.model');
 var Review = require('../review/review.model');
 var Scheduler = require('../scheduler/scheduler.model');
 var Notification = require('../notification/notification.model');
@@ -139,82 +140,89 @@ exports.confirmClassRequest = function(req, res) {
     if (err) { return handleError(res, err); }
     if(!userclass) { return res.status(404).send('Not Found'); }
     if(userclass.status == "requested"){
-      userclass.status = "confirmed";
+      if(moment().valueOf() > moment.unix(userclass.requestedTime.start/1000).subtract(30, 'm').valueOf()){
+        userclass.status = "cancelled";
+      }else{
+        userclass.status = "confirmed";
+      }
       userclass.save(function (err) {
         if (err) { return handleError(res, err); }
+        if(userclass.status === "confirmed"){
+          // var notifyUserTimeTemp = moment().add(1, 'm').valueOf();
+          var notifyUserTime = moment.unix(userclass.requestedTime.start/1000).subtract(5, 'm').valueOf();
+          var checkClassStartTime = moment.unix(userclass.requestedTime.start/1000).add(15, 'm').valueOf();
+          var endClassTime = moment.unix(userclass.requestedTime.start/1000).add(20, 'm').valueOf();
+          // var endClassTime = moment.unix(userclass.requestedTime.end/1000).valueOf();
 
-        // var notifyUserTimeTemp = moment().add(1, 'm').valueOf();
-        var notifyUserTime = moment.unix(userclass.requestedTime.start/1000).subtract(5, 'm').valueOf();
-        var checkClassStartTime = moment.unix(userclass.requestedTime.start/1000).add(15, 'm').valueOf();
-        var endClassTime = moment.unix(userclass.requestedTime.start/1000).add(20, 'm').valueOf();
-        // var endClassTime = moment.unix(userclass.requestedTime.end/1000).valueOf();
+          // var jtemp = schedule.scheduleJob(notifyUserTimeTemp, function(classId){
+          //   notifyUser(classId);
+          // }.bind(null,userclass._id));
 
-        // var jtemp = schedule.scheduleJob(notifyUserTimeTemp, function(classId){
-        //   notifyUser(classId);
-        // }.bind(null,userclass._id));
+          var schedulerData = [{
+            jobName:'schedulePriorClassNotification',
+            jobTime: notifyUserTime,
+            jobData: JSON.stringify({classId: userclass._id}),
+            emitEvent: true,
+            eventName: 'notifyUser',
+            callback: false
+          }, {
+            jobName:'scheduleEndClass',
+            jobTime: endClassTime,
+            jobData: JSON.stringify({classId: userclass._id}),
+            emitEvent: true,
+            eventName: 'endClass',
+            callback: true,
+            callbackFunction: processEndClass
+          }, {
+            jobName:'scheduleCheckClassStart',
+            jobTime: checkClassStartTime,
+            jobData: JSON.stringify({classId: userclass._id}),
+            emitEvent: true,
+            eventName: 'checkClassStart',
+            callback: true,
+            callbackFunction: processEndClass
+          }];
 
-        var schedulerData = [{
-          jobName:'schedulePriorClassNotification',
-          jobTime: notifyUserTime,
-          jobData: JSON.stringify({classId: userclass._id}),
-          emitEvent: true,
-          eventName: 'notifyUser',
-          callback: false
-        }, {
-          jobName:'scheduleEndClass',
-          jobTime: endClassTime,
-          jobData: JSON.stringify({classId: userclass._id}),
-          emitEvent: true,
-          eventName: 'endClass',
-          callback: true,
-          callbackFunction: processEndClass
-        }, {
-          jobName:'scheduleCheckClassStart',
-          jobTime: checkClassStartTime,
-          jobData: JSON.stringify({classId: userclass._id}),
-          emitEvent: true,
-          eventName: 'checkClassStart',
-          callback: true,
-          callbackFunction: processEndClass
-        }];
-
-        Scheduler.create(schedulerData, function(err, scheduler){
-          console.log("Scheduler job created");
-        });
-
-        var priorNotificationJob = schedule.scheduleJob(notifyUserTime, function(classId){
-          eventEmitter.emit('notifyUser', {
-            classId: classId
+          Scheduler.create(schedulerData, function(err, scheduler){
+            console.log("Scheduler job created");
           });
-        }.bind(null,userclass._id));
 
+          var priorNotificationJob = schedule.scheduleJob(notifyUserTime, function(classId){
+            eventEmitter.emit('notifyUser', {
+              classId: classId
+            });
+          }.bind(null,userclass._id));
 
-        var endClassJob = schedule.scheduleJob(endClassTime, function(classId){
-          eventEmitter.emit('endClass', {
-            classId: classId
+          var endClassJob = schedule.scheduleJob(endClassTime, function(classId){
+            eventEmitter.emit('endClass', {
+              classId: classId
+            });
+            processEndClass(classId);
+          }.bind(null,userclass._id));
+
+          var endClassJob = schedule.scheduleJob(checkClassStartTime, function(classId){
+            eventEmitter.emit('checkClassStart', {
+              classId: classId
+            });
+            processEndClass(classId);
+          }.bind(null,userclass._id));
+
+          var _notificationData = {
+            forUser: userclass.studentID,
+            fromUser: userclass.teacherID,
+            notificationType: 'requestConfirmed',
+            notificationStatus: 'unread',
+            notificationMessage: 'Test Message',
+            referenceClass: userclass._id
+          }
+          Notification.create(_notificationData, function(err, notification){
+            console.log(err);
+            eventEmitter.emit('notifyClassConfirmed', {
+              classId: userclass._id
+            });
+            return res.status(201).json(userclass);
           });
-          processEndClass(classId);
-        }.bind(null,userclass._id));
-
-        var endClassJob = schedule.scheduleJob(checkClassStartTime, function(classId){
-          eventEmitter.emit('checkClassStart', {
-            classId: classId
-          });
-          processEndClass(classId);
-        }.bind(null,userclass._id));
-
-        var _notificationData = {
-          forUser: userclass.studentID,
-          fromUser: userclass.teacherID,
-          notificationType: 'requestConfirmed',
-          notificationStatus: 'unread',
-          notificationMessage: 'Test Message',
-          referenceClass: userclass._id
         }
-        Notification.create(_notificationData, function(err, notification){
-          console.log(err);
-          return res.status(201).json(userclass);
-        });
       });
     }else{
       return res.status(400).send("Invalid request type");
@@ -262,6 +270,9 @@ exports.denyClassRequest = function(req, res) {
               }
               Notification.create(_notificationData, function(err, notification){
                 console.log(err);
+                eventEmitter.emit('notifyClassDenied', {
+                  classId: classId
+                });
                 return res.status(201).json(userclass);
               });
             })

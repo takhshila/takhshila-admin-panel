@@ -371,11 +371,12 @@ exports.getAvailability = function(req, res, next) {
 
     var _dayOfWeek = _weekDays.indexOf(moment().format('dddd').toLowerCase());
     var _currentTime = moment().valueOf();
+    var _priorTime = moment().add(180, 'm').valueOf();
     var _weekStartDate = moment(req.body.start);
     
     Userclass.find({
       'teacherID': userId,
-      'requestedTime.start': {$gte: _currentTime},
+      'requestedTime.start': {$gte: _priorTime},
       'status': {$in: ['requested', 'confirmed', 'pendingPayment']}
     }, function(err, userclass){
       var _bookedClasses = {};

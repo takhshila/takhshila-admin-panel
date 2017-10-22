@@ -12,6 +12,7 @@ var User = require('../api/user/user.model');
 var Userclass = require('../api/userclass/userclass.model');
 var Transaction = require('../api/transaction/transaction.model');
 var Wallet = require('../api/wallet/wallet.model');
+var Notification = require('../api/notification/notification.model');
 var Scheduler = require('../api/scheduler/scheduler.model');
 var eventEmitter = new events.EventEmitter();
 
@@ -465,6 +466,132 @@ eventEmitter.on('newClassRequestNotification', function(data){
   })
 });
 
+
+eventEmitter.on('notifyClassConfirmed', function(data){
+  console.log('Received event: notifyClassConfirmed');
+  var classID = data.classId;
+  Userclass
+  .findById(classID)
+  .populate('studentID teacherID')
+  .exec(function (err, userclass){
+    if(userclass.status === 'confirmed'){
+      var studentID = userclass.studentID._id.toString();
+      if(onlineUsers[studentID] === undefined){
+        var textMessage = 'Hi ' + userclass.studentID.name.firstName + '! ' + userclass.teacherID.name.firstName + ' has confirmed your request for class on ' + userclass.requestedTime.dateFormated + '. Please make yourselef available at least 10 mins prior class time.';
+        Helper.sendTextMessage(userclass.studentID.phone, textMessage);
+      }
+    }
+  })
+});
+
+
+eventEmitter.on('notifyClassDenied', function(data){
+  console.log('Received event: notifyClassDenied');
+  var classID = data.classId;
+  Userclass
+  .findById(classID)
+  .populate('studentID teacherID')
+  .exec(function (err, userclass){
+    if(userclass.status === 'confirmed'){
+      var studentID = userclass.studentID._id.toString();
+      if(onlineUsers[studentID] === undefined){
+        var textMessage = 'Hi ' + userclass.studentID.name.firstName + '! We regret to inform you that ' + userclass.teacherID.name.firstName + ' will be unable to take a class on ' + userclass.requestedTime.dateFormated + '. We are sorry for the inconvenience.';
+        Helper.sendTextMessage(userclass.studentID.phone, textMessage);
+      }
+    }
+  })
+});
+
+
+eventEmitter.on('notifyUserIfClassNotApproved', function(data){
+  console.log('Received event: notifyUserIfClassNotApproved');
+  var classID = data.classId;
+  Userclass
+  .findById(classID)
+  .populate('studentID teacherID')
+  .exec(function (err, userclass){
+    if(userclass.status === 'requested'){
+      var teacherID = userclass.teacherID._id.toString();
+      if(onlineUsers[teacherID] === undefined){
+        var textMessage = 'Hi ' + userclass.teacherID.name.firstName + '! You have a pending request from ' + userclass.studentID.name.firstName + ' for class on ' + userclass.requestedTime.dateFormated + '. Please visit www.takhshila.com to approve the request or it will automatically be cancelled.';
+        Helper.sendTextMessage(userclass.teacherID.phone, textMessage);
+      }
+    }
+  })
+});
+
+eventEmitter.on('cancelClassIfNotApproved', function(data){
+  console.log('Received event: cancelClassIfNotApproved');
+  var classID = data.classId;
+  Userclass
+  .findById(classID)
+  .populate('studentID teacherID')
+  .exec(function (err, userclass){
+    if(userclass.status === 'requested'){
+      userclass.status = 'cancelled';
+      userclass.additionalInfo = 'Class cancelled because teacher did not respond.';
+      userclass.save(function(err){
+        var teacherID = userclass.teacherID._id.toString();
+        var studentID = userclass.studentID._id.toString();
+        var studentMessage = 'Hi ' + userclass.studentID.name.firstName + '! We regret to inform you that your class request with ' + userclass.teacherID.name.firstName + ' has been cancelled since it was not responded. We are sorry for the inconvenience.';
+        var teacherMessage = 'Hi ' + userclass.teacherID.name.firstName + '! The class request from ' + userclass.studentID.name.firstName + ' has been cancelled since you did not responded.';
+
+        Wallet.findOne({
+          userID: userclass.studentID
+        }, function(err, walletData){
+          // var refundAmount = parseFloat(userclass.amount.withdrawBalance);
+          walletData.nonWithdrawBalance = parseFloat(walletData.nonWithdrawBalance - (userclass.amount.withdrawBalance + userclass.amount.promoBalance));
+          walletData.withdrawBalance = parseFloat(walletData.withdrawBalance + userclass.amount.withdrawBalance);
+          walletData.promoBalance = parseFloat(walletData.promoBalance + userclass.amount.promoBalance);
+          walletData.totalBalance = parseFloat(walletData.totalBalance + (userclass.amount.withdrawBalance + userclass.amount.promoBalance));
+
+          walletData.save(function(err){
+            var transactionData = {
+              userID: userclass.studentID,
+              transactionType: 'Credit',
+              transactionIdentifier: 'walletCashRefunded',
+              transactionDescription: 'Wallet cash refunded because the class request was cancelled.',
+              transactionAmount: parseFloat(userclass.amount.withdrawBalance + userclass.amount.promoBalance),
+              classRefrence: userclass._id,
+              status: 'completed'
+            }
+
+            Transaction.create(transactionData, function(err, transaction){
+              var _notificationData = {
+                forUser: userclass.studentID,
+                fromUser: userclass.teacherID,
+                notificationType: 'noResponse',
+                notificationStatus: 'unread',
+                notificationMessage: 'Test Message',
+                referenceClass: userclass._id
+              }
+              Notification.create(_notificationData, function(err, notification){
+                if(onlineUsers[studentID] === undefined){
+                  Helper.sendTextMessage(studentID, studentMessage);
+                }
+              });
+            })
+          });
+        });
+
+        var _notificationData = {
+          forUser: userclass.teacherID,
+          fromUser: userclass.studentID,
+          notificationType: 'noResponse',
+          notificationStatus: 'unread',
+          notificationMessage: 'Test Message',
+          referenceClass: userclass._id
+        }
+        Notification.create(_notificationData, function(err, notification){
+          if(onlineUsers[teacherID] === undefined){
+            Helper.sendTextMessage(teacherID, teacherMessage);
+          }
+        });
+      });
+    }
+  })
+});
+
 eventEmitter.on('endClass', function(data){
   console.log('Received event: End class');
   var classID = data.classId;
@@ -546,8 +673,8 @@ function reInitializeScheduler(){
         time: schedulers[i].jobTime,
         data: JSON.parse(schedulers[i].jobData)
       }
-      console.log("eventData");
-      console.log(eventData);
+      // console.log("eventData");
+      // console.log(eventData);
       eventEmitter.emit(eventName, eventData);
     }
   });

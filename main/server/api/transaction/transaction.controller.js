@@ -181,8 +181,8 @@ exports.initiatePayment = function(req, res) {
                   'udf10': ''
                 }
 
-                var validateTransactionTime = moment().add(5, 'm').valueOf();
-                // var validateTransactionTime = moment().add(15, 's').valueOf();
+                // var validateTransactionTime = moment().add(5, 'm').valueOf();
+                var validateTransactionTime = moment().add(15, 's').valueOf();
 
                 var j = schedule.scheduleJob(validateTransactionTime, function(transactionId){
                   validateTransaction(transactionId);
@@ -471,9 +471,9 @@ function bookClass(classData, paymentRefrence){
             usedWithdrawBalance = parseFloat(totalAmount - tempWalletData.promoBalance);
           }
 
-          console.log('totalAmount = ' + totalAmount);
-          console.log('usedPromoBalance = ' + usedPromoBalance);
-          console.log('usedWithdrawBalance = ' + usedWithdrawBalance);
+          // console.log('totalAmount = ' + totalAmount);
+          // console.log('usedPromoBalance = ' + usedPromoBalance);
+          // console.log('usedWithdrawBalance = ' + usedWithdrawBalance);
 
           tempWalletData.withdrawBalance = parseFloat(tempWalletData.withdrawBalance - usedWithdrawBalance);
           tempWalletData.promoBalance = parseFloat(tempWalletData.promoBalance - usedPromoBalance);
@@ -505,8 +505,49 @@ function bookClass(classData, paymentRefrence){
                 referenceClass: userclass._id
               }
               Notification.create(notificationData, function(err, notification){
-                console.log('Notification created');
-                console.log(err);
+
+                var cancelClassIfNotApprovedTime = moment.unix(userclass.requestedTime.start/1000).subtract(60, 'm').valueOf();
+
+                var schedulerData = [{
+                  jobName:'scheduleCancelClassIfNotApproved',
+                  jobTime: cancelClassIfNotApprovedTime,
+                  jobData: JSON.stringify({classId: userclass._id}),
+                  emitEvent: true,
+                  eventName: 'cancelClassIfNotApproved',
+                  callback: false
+                }];
+                var cancelClassIfNotApprovedJob = schedule.scheduleJob(cancelClassIfNotApprovedTime, function(classId){
+                  eventEmitter.emit('cancelClassIfNotApproved', {
+                    classId: classId
+                  });
+                }.bind(null,userclass._id));
+
+                var timeToStartClass = (moment.unix(userclass.requestedTime.start/1000).valueOf() - moment().valueOf())/(3600 * 1000);
+                // console.log(moment().add(900, 'm').valueOf());
+                // console.log(moment.unix(userclass.requestedTime.start/1000).valueOf());
+                // console.log(moment().add(900, 'm').valueOf() < moment.unix(userclass.requestedTime.start/1000).valueOf());
+                // console.log("timeToStartClass => " + timeToStartClass);
+                if(timeToStartClass >= 15){
+                  var notifyUserIfClassNotApprovedTime = moment().add(600, 'm').valueOf();
+                  schedulerData.push({
+                    jobName:'scheduleNotifyUserIfClassNotApproved',
+                    jobTime: notifyUserIfClassNotApprovedTime,
+                    jobData: JSON.stringify({classId: userclass._id}),
+                    emitEvent: true,
+                    eventName: 'notifyUserIfClassNotApproved',
+                    callback: false
+                  });
+                  var notifyUserIfClassNotApprovedJob = schedule.scheduleJob(notifyUserIfClassNotApprovedTime, function(classId){
+                    eventEmitter.emit('notifyUserIfClassNotApproved', {
+                      classId: classId
+                    });
+                  }.bind(null,userclass._id));
+                }
+
+                Scheduler.create(schedulerData, function(err, scheduler){
+                  console.log("Scheduler job created");
+                });
+
                 eventEmitter.emit('newClassRequestNotification', {
                   classId: userclass._id
                 });
