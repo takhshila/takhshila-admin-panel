@@ -3,6 +3,7 @@
 // Development specific configuration
 // ==================================
 module.exports = {
+	siteBase: 'http://localhost:9000',
 	// MongoDB connection options
 	mongo: {
 		uri: 'mongodb://localhost/takhshila-dev'
