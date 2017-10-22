@@ -16,6 +16,7 @@
     "express-jwt": "^3.0.0",
     "express-session": "~1.0.2",
     "fluent-ffmpeg": "^2.1.0",
+    "force-ssl": "^1.0.5",
     "jsonwebtoken": "^5.0.0",
     "lodash": "~3.10.1",
     "method-override": "~1.0.0",

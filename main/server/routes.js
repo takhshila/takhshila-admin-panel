@@ -5,6 +5,8 @@
 'use strict';
 
 var ExpressPeerServer = require('peer').ExpressPeerServer;
+var forceSsl = require('force-ssl');
+var config = require('./config/environment');
 var errors = require('./components/errors');
 var path = require('path');
 
@@ -17,6 +19,12 @@ module.exports = function(app, server) {
   var peerServer = ExpressPeerServer(server, peerOptions);
 
   app.use('/peerconnection', peerServer);
+
+  if(config.sslServer){
+    forceSsl.https_port = 443;
+    // forceSsl.https_port = config.ip;
+    app.use(forceSsl);
+  }
 
   peerServer.on('connection', function(id) {
     console.log(id)
