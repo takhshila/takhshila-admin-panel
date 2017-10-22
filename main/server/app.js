@@ -9,6 +9,7 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 var express = require('express');
 var mongoose = require('mongoose');
+var forceSSL = require('express-force-ssl');
 var config = require('./config/environment');
 
 // Connect to database
@@ -41,7 +42,14 @@ if(config.sslServer){
 	  key: fs.readFileSync(config.root + '/server/cert/key.pem'),
 	  cert: fs.readFileSync(config.root + '/server/cert/cert.pem')
 	};
+	require('http').createServer(app).listen(80);
 	server = require('https').createServer(options, app);
+	app.set('forceSSLOptions', {
+	  enable301Redirects: true,
+	  trustXFPHeader: false
+	  httpsPort: 443,
+	  sslRequiredMessage: 'SSL Required.'
+	});
 }else{
 	server = require('http').createServer(app);
 }
