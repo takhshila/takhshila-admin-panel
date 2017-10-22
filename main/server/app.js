@@ -50,6 +50,7 @@ if(config.sslServer){
 	  httpsPort: 443,
 	  sslRequiredMessage: 'SSL Required.'
 	});
+	app.use(forceSSL);
 }else{
 	server = require('http').createServer(app);
 }
