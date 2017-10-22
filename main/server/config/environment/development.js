@@ -27,6 +27,15 @@ module.exports = {
 		sender: "TKHSLA",
 		type: 3
 	},
+
+	textLocal: {
+		apiBase: "https://api.textlocal.in/send",
+		apiKey: "Yalfd/Icifs-st5uslQnVGbeqSpSnOkar0VcL4ZVV7",
+		user: "pratikraj26@gmail.com",
+		password: "Jh@ri@123",
+		sender: "TKHSLA",
+		hash: "22d8a965b44e3f8d9271cd2bf95ed482b3b1539e639a9df1251c269318fada30"
+	},
 	
 	seedDB: true
 };
