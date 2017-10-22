@@ -507,6 +507,9 @@ function bookClass(classData, paymentRefrence){
               Notification.create(notificationData, function(err, notification){
                 console.log('Notification created');
                 console.log(err);
+                eventEmitter.emit('newClassRequestNotification', {
+                  classId: userclass._id
+                });
                 resolve(singleClassData);
               });
             });

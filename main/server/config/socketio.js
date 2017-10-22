@@ -449,6 +449,22 @@ eventEmitter.on('notifyUser', function(data){
   })
 });
 
+
+eventEmitter.on('newClassRequestNotification', function(data){
+  console.log('Received event: newClassRequestNotification');
+  var classID = data.classId;
+  Userclass
+  .findById(classID)
+  .populate('studentID teacherID')
+  .exec(function (err, userclass){
+    var teacherID = userclass.teacherID._id.toString();
+    if(onlineUsers[teacherID] === undefined){
+      var textMessage = 'Hi ' + userclass.teacherID.name.firstName + '! You have new class request from ' + userclass.studentID.name.firstName + ' for ' + userclass.requestedTime.dateFormated + '. Please visit www.takhshila.com to approve the request.';
+      Helper.sendTextMessage(userclass.teacherID.phone, textMessage);
+    }
+  })
+});
+
 eventEmitter.on('endClass', function(data){
   console.log('Received event: End class');
   var classID = data.classId;
