@@ -46,7 +46,7 @@ if(config.sslServer){
 	server = require('https').createServer(options, app);
 	app.set('forceSSLOptions', {
 	  enable301Redirects: true,
-	  trustXFPHeader: false
+	  trustXFPHeader: false,
 	  httpsPort: 443,
 	  sslRequiredMessage: 'SSL Required.'
 	});
