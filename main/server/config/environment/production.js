@@ -23,11 +23,11 @@ module.exports = {
   },
   
   payu: {
-    merchantID: 4934580,
-    key: 'rjQUPktU',
-    salt: 'e5iIg1jwi8',
-    authorizationHeader: 'y8tNAC1Ar0Sd8xAHGjZ817UGto5jt37zLJSX/NHK3ok=',
-    host: 'https://test.payumoney.com',
+    merchantID: 5804204,
+    key: 'vQqpeAeQ',
+    salt: 'WA7eXxUoRF',
+    authorizationHeader: '1mCD5YnSWir3SceFM1PP8BJ3ACgv1wkypEAsWdQUPqk=',
+    host: 'https://secure.payumoney.com',
     path: {
       paymentResponse: '/payment/op/getPaymentResponse'
     }

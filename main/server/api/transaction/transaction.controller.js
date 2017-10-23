@@ -18,17 +18,7 @@ var _ = require('lodash'),
     Transactionhistory = require('../transactionhistory/transactionhistory.model'),
     transactionHistoryController = require('../transactionhistory/transactionhistory.controller'),
     hashSequence = "key|txnid|amount|productinfo|firstname|email|udf1|udf2|udf3|udf4|udf5|udf6|udf7|udf8|udf9|udf10",
-    tempClassData = [],
-    payu = {
-      merchantID: 4934580,
-      key: 'rjQUPktU',
-      salt: 'e5iIg1jwi8',
-      authorizationHeader: 'y8tNAC1Ar0Sd8xAHGjZ817UGto5jt37zLJSX/NHK3ok=',
-      host: 'https://test.payumoney.com',
-      path: {
-        paymentResponse: '/payment/op/getPaymentResponse'
-      }
-    };
+    tempClassData = [];
 
 var eventEmitter;
 
@@ -257,6 +247,7 @@ exports.updatePayment = function(req, res) {
   if(req.body._id) { delete req.body._id; }
   var transaction = null;
   var transactionData = req.body;
+  console.log(transactionData);
   var updatePaymentPromise = new Promise(function(resolve, reject){
     processPaymentResponse(transactionData)
     .then(function(walletData){
@@ -273,6 +264,7 @@ exports.updatePayment = function(req, res) {
       }
     })
     .catch(function(err){
+      console.log("Transaction Failed");
       reject(err);
     });
   });
@@ -380,7 +372,7 @@ function validateTransaction(transactionId){
         .catch(function(err){
           console.log("Transaction error received from API");
           console.log(err);
-          transaction.status = 'Failed';
+          transaction.status = 'Failure';
           transaction.transactionData = err;
           transaction.save(function(err){
             console.log('Transaction failed');
@@ -586,16 +578,20 @@ function processPaymentResponse(transactionData, transactionType){
         transaction.status = transactionData.status;
         transaction.transactionData = transactionData;
         transaction.save(function(err){
-          Wallet.findOne({
-            userID: userID
-          })
-          .exec(function(err, walletData){
-            walletData.totalBalance = parseFloat(walletData.totalBalance + transactionAmount);
-            walletData.withdrawBalance = parseFloat(walletData.withdrawBalance + transactionAmount);
-            walletData.save(function(err, updatedWalletData){
-              resolve(updatedWalletData);
+          if(transactionData.status === 'success'){
+            Wallet.findOne({
+              userID: userID
+            })
+            .exec(function(err, walletData){
+              walletData.totalBalance = parseFloat(walletData.totalBalance + transactionAmount);
+              walletData.withdrawBalance = parseFloat(walletData.withdrawBalance + transactionAmount);
+              walletData.save(function(err, updatedWalletData){
+                resolve(updatedWalletData);
+              });
             });
-          });
+          }else{
+            reject(transactionData);
+          }
         });
       });
     }else{
