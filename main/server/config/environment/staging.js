@@ -3,7 +3,7 @@
 // Production specific configuration
 // =================================
 module.exports = {
-  siteBase: 'http://www.takhshila.com',
+  siteBase: 'https://www.takhshila.com',
   // Server IP
   ip:       process.env.IP ||
             undefined,
