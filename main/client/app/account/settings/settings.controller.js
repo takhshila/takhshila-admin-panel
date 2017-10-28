@@ -43,6 +43,7 @@ angular.module('takhshilaApp')
             disableParentScroll: true,
             locals: {
               userId: $rootScope.currentUser._id,
+              verificationType: 'phone',
               generateToken: false
             }
           });

@@ -80,7 +80,7 @@ angular.module('takhshilaApp')
        * @param  {Function} callback - optional
        * @return {Promise}
        */
-      verifyOTP: function(data, callback) {
+      verifyPhoneNumber: function(data, callback) {
         var cb = callback || angular.noop;
         var deferred = $q.defer();
 
@@ -90,6 +90,62 @@ angular.module('takhshilaApp')
             $cookieStore.put('token', data.token);
             currentUser = User.get();
           }
+          deferred.resolve(data);
+          return cb(data);
+        }).
+        error(function(err) {
+          deferred.reject(err);
+          return cb(err);
+        }.bind(this));
+
+        return deferred.promise;
+      },
+      
+      /**
+       * Verify One Time Password
+       *
+       * @param  {Object}   user     - user info
+       * @param  {Function} callback - optional
+       * @return {Promise}
+       */
+      verifyOTP: function(data, callback) {
+        var cb = callback || angular.noop;
+        var deferred = $q.defer();
+
+        $http.post('/api/v1/users/verifyOTP', data).
+        success(function(data) {
+          if(data.token){
+            $cookieStore.put('token', data.token);
+            currentUser = User.get();
+          }
+          deferred.resolve(data);
+          return cb(data);
+        }).
+        error(function(err) {
+          deferred.reject(err);
+          return cb(err);
+        }.bind(this));
+
+        return deferred.promise;
+      },
+
+      /**
+       * Send One Time Password
+       *
+       * @param  {Object}   user     - user info
+       * @param  {Function} callback - optional
+       * @return {Promise}
+       */
+      sendOTP: function(data, callback) {
+        var cb = callback || angular.noop;
+        var deferred = $q.defer();
+
+        $http.post('/api/v1/users/sendOTP', data).
+        success(function(data) {
+          // if(data.token){
+          //   $cookieStore.put('token', data.token);
+          //   currentUser = User.get();
+          // }
           deferred.resolve(data);
           return cb(data);
         }).
@@ -120,6 +176,30 @@ angular.module('takhshilaApp')
         }, function(err) {
           return cb(err);
         }).$promise;
+      },
+      /**
+       * Update password
+       *
+       * @param  {String}   oldPassword
+       * @param  {String}   newPassword
+       * @param  {Function} callback    - optional
+       * @return {Promise}
+       */
+      updatePassword: function(newPassword, callback) {
+        var cb = callback || angular.noop;
+        var deferred = $q.defer();
+
+        $http.put('/api/v1/users/updatePassword', {newPassword: newPassword}).
+        success(function(data) {
+          deferred.resolve(data);
+          return cb(data);
+        }).
+        error(function(err) {
+          deferred.reject(err);
+          return cb(err);
+        }.bind(this));
+
+        return deferred.promise;
       },
 
       /**

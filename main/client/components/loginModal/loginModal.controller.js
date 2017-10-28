@@ -42,6 +42,7 @@ angular.module('takhshilaApp')
     };
 
     $scope.validate = function(loginForm){
+      $scope.loginError = false;
       if(loginForm.$invalid){
         var el = angular.element("[name='" + loginForm.$name + "']").find('.ng-invalid:visible:first');
         var elName = el[0].name;
@@ -70,6 +71,7 @@ angular.module('takhshilaApp')
     }
 
     $scope.signUp = function(registerForm){
+      $scope.registerError = false;
       if(registerForm.$invalid){
         var el = angular.element("[name='" + registerForm.$name + "']").find('.ng-invalid:visible:first');
         var elName = el[0].name;
@@ -92,12 +94,14 @@ angular.module('takhshilaApp')
         }
         Auth.register(registerData)
         .then(function(data){
+          $scope.registerError = false;
           $scope.registeredId = data.id;
           $scope.logging = false;
           $scope.current = 'verify-otp';
           // $scope.closeDialog();
         }, function(err){
           $scope.logging = false;
+          $scope.registerError = false;
           for(var error in err.errors){
             registerForm[error].$valid = false;
             registerForm[error].$invalid = true;
@@ -121,7 +125,7 @@ angular.module('takhshilaApp')
         $scope.logging = true;
         $scope.verifyOTPFormData.userId = $scope.registeredId;
         $scope.verifyOTPFormData.generateToken = true;
-        Auth.verifyOTP($scope.verifyOTPFormData)
+        Auth.verifyPhoneNumber($scope.verifyOTPFormData)
         .then(function(data){
           $scope.logging = false;
           // $scope.current = 'verify-otp';

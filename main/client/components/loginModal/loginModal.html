@@ -16,10 +16,8 @@
         </div>
         <div class="ui form">
           <form class="" name = "loginForm" novalidate autocomplete="off">
-            <div class="field form-error" ng-class = "{'has-error': loginError}">
-              <div class="help-block">
-                  <p>{{loginErrorMessage}}</p>
-              </div>
+            <div class="field form-error" ng-if = "loginError">
+              <div class="ui red message">{{loginErrorMessage}}</div>
             </div>
 
             <div layout-gt-sm="row">
@@ -34,8 +32,8 @@
 
               <md-input-container class="md-block" flex-gt-sm="60" flex-xs="100">
                 <label>Phone Number</label>
-                <input name="phone" ng-model="registerFormData.phone" required ng-pattern="/^[0-9]{10}$/" md-maxlength="10">
-                <div ng-messages="registerFormData.phone.$error" role="alert" multiple>
+                <input name="phone" ng-model="loginFormData.phone" required ng-pattern="/^[0-9]{10}$/" md-maxlength="10">
+                <div ng-messages="loginFormData.phone.$error" role="alert" multiple>
                   <div ng-message="required" class="my-message">Required.</div>
                   <div ng-message="md-maxlength" class="my-message">
                     Invalid phone number.
@@ -87,10 +85,8 @@
         </div>
         <div class="ui form">
           <form class="" name = "registerForm" novalidate>
-            <div class="field form-error" ng-class = "{'has-error': registerError}">
-              <div class="help-block">
-                  <p>{{registerErrorMessage}}</p>
-              </div>
+            <div class="field form-error" ng-if = "registerError">
+              <div class="ui red message">{{registerErrorMessage}}</div>
             </div>
 
             <div layout-gt-sm="row">

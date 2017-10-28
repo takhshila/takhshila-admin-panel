@@ -24,6 +24,20 @@ angular.module('takhshilaApp')
         navStick: true,
         authenticate: false
       })
+      .state('forget-password', {
+        url: '/forget-password',
+        templateUrl: 'app/account/forget-password/forget-password.html',
+        controller: 'ForgetPasswordCtrl',
+        navStick: true,
+        authenticate: false
+      })
+      .state('update-password', {
+        url: '/update-password',
+        templateUrl: 'app/account/update-password/update-password.html',
+        controller: 'UpdatePasswordCtrl',
+        navStick: true,
+        authenticate: true
+      })
       .state('profile', {
         url: '/profile',
         templateUrl: 'app/account/profile/profile.html',

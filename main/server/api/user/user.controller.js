@@ -101,6 +101,42 @@ exports.sendVerificationCode = function (req, res, next) {
     return validationError(res, err);
   })
 };
+/**
+ * Send OTP code for user
+ */
+exports.sendOTP = function (req, res, next) {
+  var  sendOPTPromise = new Promise(function(resolve, reject){
+    User.findOne({
+      phone: req.body.phone,
+      dialCode: req.body.dialCode
+    }, function(err, user){
+      if (err) return next(err);
+      if(!user){ return res.status(200).json({success: false, error: 'The phone number is not registered with us.'}); }
+      user.phoneVerificationCode = Helper.getRandomNuber(4);
+      user.save(function(err, userUpdated){
+        if(err){ reject(err); }
+        var message = user.phoneVerificationCode + " is your one time code. Do not share it with anyone.";
+        user.message = message
+        resolve(user);
+        // Helper.sendTextMessage(user.phone, message)
+        // .then(function(response){
+        //   resolve(user);
+        // })
+        // .catch(function(err){
+        //   reject(err);
+        // });
+      });
+    })
+  })
+
+  sendOPTPromise
+  .then(function(response){
+    res.json({ success: true, id: response._id, message: response.message });
+  })
+  .catch(function(err){
+    return validationError(res, err);
+  })
+};
 
 /**
  * Verify phone verification code for new user
@@ -151,6 +187,43 @@ exports.verifyPhoneNumber = function (req, res, next) {
     })
   });
   verifyPhonePromise
+  .then(function(user){
+    if(req.body.generateToken){
+      var token = jwt.sign({_id: user._id }, config.secrets.session, { expiresIn: 60*5 });
+      res.json({ success: true, token: token });
+    }else{
+      if(user.isTeacher){
+        res.json(user.teacherProfile);
+      }else {
+        res.json(user.profile);
+      }
+    }
+  })
+  .catch(function(err){
+    return res.status(err.status).json(err.data);
+  });
+};
+
+/**
+ * Verify OTP for user
+ */
+exports.verifyOTP = function (req, res, next) {
+  var verifyOTPPromise = new Promise(function(resolve, reject){
+    User.findOne({
+      _id: req.body.userId,
+      phoneVerificationCode: req.body.otp
+    }, function(err, user){
+      if (err) { reject({status: 403, data: err }); return; }
+      if(!user){ reject({status: 403, data: {errors: {otp: 'Invalid otp'}}}); return; }
+      user.phoneVerificationCode = null;
+      user.save(function(err, user) {
+        if (err) { reject({status: 422, data: err }); return; };
+        resolve(user);
+      });
+    })
+  });
+
+  verifyOTPPromise
   .then(function(user){
     if(req.body.generateToken){
       var token = jwt.sign({_id: user._id }, config.secrets.session, { expiresIn: 60*5 });
@@ -248,6 +321,22 @@ exports.changePassword = function(req, res, next) {
     } else {
       res.status(403).send('Forbidden');
     }
+  });
+};
+
+/**
+ * Update a users password
+ */
+exports.updatePassword = function(req, res, next) {
+  var userId = req.user._id;
+  var newPass = String(req.body.newPassword);
+
+  User.findById(userId, function (err, user) {
+    user.password = newPass;
+    user.save(function(err) {
+      if (err) return validationError(res, err);
+      res.status(200).send('OK');
+    });
   });
 };
 /**

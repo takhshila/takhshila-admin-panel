@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('takhshilaApp')
-  .controller('VerifyOtpModalCtrl', function ($rootScope, $mdDialog, $scope, $state, Auth, userId, generateToken) {
+  .controller('VerifyOtpModalCtrl', function ($rootScope, $mdDialog, $scope, $state, Auth, userId, verificationType, generateToken) {
     $scope.verifyOTPFormData = {
       userId: userId || null,
       generateToken: generateToken || false,
@@ -23,20 +23,37 @@ angular.module('takhshilaApp')
         $scope.verifying = false;
         return false;
       }else{
-        Auth.verifyOTP($scope.verifyOTPFormData)
-        .then(function(data){
-          $scope.verifying = false;
-          $scope.closeDialog();
-        }, function(err){
-          $scope.verifying = false;
-          for(var error in err.errors){
-            verifyOTPForm[error].$valid = false;
-            verifyOTPForm[error].$invalid = true;
-            verifyOTPForm[error].$error.serverError = true;
-            $scope.verifyOtpErrorMessage = err.errors[error];
-            angular.element("[name='" + verifyOTPForm.$name + "'] [name='" + error + "']").focus();
-          }
-        })
+        if(verificationType === 'otp'){
+          Auth.verifyOTP($scope.verifyOTPFormData)
+          .then(function(data){
+            $scope.verifying = false;
+            $scope.closeDialog();
+          }, function(err){
+            $scope.verifying = false;
+            for(var error in err.errors){
+              verifyOTPForm[error].$valid = false;
+              verifyOTPForm[error].$invalid = true;
+              verifyOTPForm[error].$error.serverError = true;
+              $scope.verifyOtpErrorMessage = err.errors[error];
+              angular.element("[name='" + verifyOTPForm.$name + "'] [name='" + error + "']").focus();
+            }
+          });
+        }else{
+          Auth.verifyPhoneNumber($scope.verifyOTPFormData)
+          .then(function(data){
+            $scope.verifying = false;
+            $scope.closeDialog();
+          }, function(err){
+            $scope.verifying = false;
+            for(var error in err.errors){
+              verifyOTPForm[error].$valid = false;
+              verifyOTPForm[error].$invalid = true;
+              verifyOTPForm[error].$error.serverError = true;
+              $scope.verifyOtpErrorMessage = err.errors[error];
+              angular.element("[name='" + verifyOTPForm.$name + "'] [name='" + error + "']").focus();
+            }
+          });
+        }
       }
     }
   });

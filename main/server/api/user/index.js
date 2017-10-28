@@ -17,6 +17,7 @@ router.put('/status', auth.isAuthenticated(), controller.updateStatus);
 router.put('/profilephoto', auth.isAuthenticated(), controller.updateProfilePhoto);
 router.put('/rateperhour', auth.isAuthenticated(), controller.updateRatePerHour);
 router.put('/password/:id', auth.isAuthenticated(), controller.changePassword);
+router.put('/updatePassword', auth.isAuthenticated(), controller.updatePassword);
 
 router.post('/specialization', auth.isAuthenticated(), controller.addSpecialization);
 router.delete('/specialization/:id', auth.isAuthenticated(), controller.deleteSpecialization);
@@ -40,5 +41,7 @@ router.get('/referral/:referralID', /*auth.isAuthenticated(),*/ controller.getRe
 // router.post('/', controller.create);
 router.post('/register', controller.sendVerificationCode);
 router.post('/verifyPhoneNumber', controller.verifyPhoneNumber);
+router.post('/sendOTP', controller.sendOTP);
+router.post('/verifyOTP', controller.verifyOTP);
 
 module.exports = router;

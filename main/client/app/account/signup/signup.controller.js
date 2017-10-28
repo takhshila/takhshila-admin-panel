@@ -80,6 +80,7 @@ angular.module('takhshilaApp')
               clickOutsideToClose: false,
               locals: {
                 userId: data.id,
+                verificationType: 'phone',
                 generateToken: true
               },
               onRemoving: function (event, removePromise) {
@@ -107,37 +108,6 @@ angular.module('takhshilaApp')
             registerForm[error].$error.serverError = true;
             registerForm[error].$error.errorMessage = err.data.errors[error].message;
             angular.element("[name='" + registerForm.$name + "'] [name='" + error + "']").focus();
-          }
-        })
-      }
-    }
-
-    $scope.verifyOtp = function(verifyOTPForm){
-      if(verifyOTPForm.$invalid){
-        var el = angular.element("[name='" + verifyOTPForm.$name + "']").find('.ng-invalid:visible:first');
-        var elName = el[0].name;
-        verifyOTPForm[elName].$dirty = true;
-        verifyOTPForm[elName].$pristine = false;
-        angular.element("[name='" + verifyOTPForm.$name + "']").find('.ng-invalid:visible:first').focus();
-        return false;
-      }else{
-        $scope.logging = true;
-        $scope.verifyOTPFormData.userId = $scope.registeredId;
-        $scope.verifyOTPFormData.generateToken = true;
-        Auth.verifyOTP($scope.verifyOTPFormData)
-        .then(function(data){
-          $scope.logging = false;
-          // $scope.current = 'verify-otp';
-          $scope.closeDialog();
-        }, function(err){
-          $scope.logging = false;
-          console.log(err);
-          for(var error in err.errors){
-            verifyOTPForm[error].$valid = false;
-            verifyOTPForm[error].$invalid = true;
-            verifyOTPForm[error].$error.serverError = true;
-            $scope.verifyOtpErrorMessage = err.errors[error];
-            angular.element("[name='" + verifyOTPForm.$name + "'] [name='" + error + "']").focus();
           }
         })
       }
