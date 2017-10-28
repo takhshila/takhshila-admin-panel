@@ -6,12 +6,23 @@ angular.module('takhshilaApp')
       .state('login', {
         url: '/login',
         templateUrl: 'app/account/login/login.html',
-        controller: 'LoginCtrl'
+        controller: 'LoginCtrl',
+        navStick: true,
+        authenticate: false
       })
       .state('signup', {
         url: '/signup',
         templateUrl: 'app/account/signup/signup.html',
-        controller: 'SignupCtrl'
+        controller: 'SignupCtrl',
+        navStick: true,
+        authenticate: false
+      })
+      .state('signupReferral', {
+        url: '/signup/:referralID',
+        templateUrl: 'app/account/signup/signup.html',
+        controller: 'SignupCtrl',
+        navStick: true,
+        authenticate: false
       })
       .state('profile', {
         url: '/profile',

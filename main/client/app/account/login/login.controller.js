@@ -1,9 +1,10 @@
 'use strict';
 
 angular.module('takhshilaApp')
-  .controller('LoginCtrl', function ($scope, Auth, $location, $window) {
+  .controller('LoginCtrl', function ($rootScope, $scope, Auth, $location, $window) {
     $scope.user = {};
     $scope.errors = {};
+    $rootScope.isLoading = false;
 
     $scope.login = function(form) {
       $scope.submitted = true;

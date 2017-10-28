@@ -40,7 +40,11 @@ angular.module('takhshilaApp')
             templateUrl: 'components/verifyOtpModal/verifyOtpModal.html',
             controller: 'VerifyOtpModalCtrl',
             parent: parentEl,
-            disableParentScroll: true
+            disableParentScroll: true,
+            locals: {
+              userId: $rootScope.currentUser._id,
+              generateToken: false
+            }
           });
         }
       })

@@ -12,7 +12,7 @@
     <div class = "tab tab-default" ng-class = "{'active': current == 'default'}">
       <div class="ui basic segment">
         <div class="heading-text">
-          Login With Your Email
+          Login
         </div>
         <div class="ui form">
           <form class="" name = "loginForm" novalidate autocomplete="off">
@@ -34,16 +34,14 @@
 
               <md-input-container class="md-block" flex-gt-sm="60" flex-xs="100">
                 <label>Phone Number</label>
-                <input name="phone" ng-model="loginFormData.phone" placeholder=""
-                       required ng-pattern="/^[0-9]{10}$/" md-maxlength="10">
-
-                <div ng-messages="loginFormData.phone.$error" role="alert" multiple>
-                  <div ng-message="required" class="my-message">You must enter the phone number.</div>
-                  <div ng-message="pattern" class="my-message">
+                <input name="phone" ng-model="registerFormData.phone" required ng-pattern="/^[0-9]{10}$/" md-maxlength="10">
+                <div ng-messages="registerFormData.phone.$error" role="alert" multiple>
+                  <div ng-message="required" class="my-message">Required.</div>
+                  <div ng-message="md-maxlength" class="my-message">
                     Invalid phone number.
                   </div>
-                  <div ng-message="md-maxlength" class="my-message">
-                    Phone number seems to be too long.
+                  <div ng-message="pattern" class="my-message">
+                    Invalid phone number.
                   </div>
                 </div>
               </md-input-container>
@@ -85,7 +83,7 @@
       <div class="ui basic segment">
         <div class="heading-text">
           <i class="angle left icon" ng-click = "current = 'default'"></i>
-          Sign Up With Your Email
+          Sign Up
         </div>
         <div class="ui form">
           <form class="" name = "registerForm" novalidate>
@@ -96,7 +94,7 @@
             </div>
 
             <div layout-gt-sm="row">
-               <md-radio-group name="userType" ng-model="registerFormData.isTeacher" class="md-block" flex required>
+<!--                <md-radio-group name="userType" ng-model="registerFormData.isTeacher" class="md-block" flex required>
                 <label>I am a: </label>
                 <md-radio-button flex-gt-sm="50" flex-xs="100" ng-value="true" class="md-primary" >
                   Teacher
@@ -108,7 +106,8 @@
                 <div ng-messages="registerFormData.name.userType.$error" role="alert" multiple>
                   <div ng-message="required" class="my-message">Required.</div>
                 </div>
-              </md-radio-group>
+              </md-radio-group> -->
+              
 <!--               <md-radio-group ng-model="data.group1">
 
                 <md-radio-button value="Apple" class="md-primary">Apple</md-radio-button>
@@ -153,16 +152,14 @@
 
               <md-input-container class="md-block" flex-gt-sm="60" flex-xs="100">
                 <label>Phone Number</label>
-                <input name="phone" ng-model="registerFormData.phone" placeholder=""
-                       required ng-pattern="/^[0-9]{10}$/" md-maxlength="10">
-
+                <input name="phone" ng-model="registerFormData.phone" required ng-pattern="/^[0-9]{10}$/" md-maxlength="10">
                 <div ng-messages="registerFormData.phone.$error" role="alert" multiple>
-                  <div ng-message="required" class="my-message">You must enter the phone number.</div>
-                  <div ng-message="pattern" class="my-message">
+                  <div ng-message="required" class="my-message">Required.</div>
+                  <div ng-message="md-maxlength" class="my-message">
                     Invalid phone number.
                   </div>
-                  <div ng-message="md-maxlength" class="my-message">
-                    Phone number seems to be too long.
+                  <div ng-message="pattern" class="my-message">
+                    Invalid phone number.
                   </div>
                 </div>
               </md-input-container>
@@ -183,11 +180,6 @@
 
             <button ng-init = "logging = false" ng-click = "signUp(registerForm)" ng-disabled="logging" ng-class = "{'loading': logging}" class="ui button primary" lx-ripple>Sign Up</button>
           </form>
-        </div>
-        <div class = "row">
-          <div class = "col-md-12 col-sm-12 col-xs-12 login-modal-additional-link">
-            <a ng-href = "#" ng-click = "current = 'forgot-password'">Forgot Password ?</a>
-          </div>
         </div>
       </div>
       <div class = "login-modal-bottom">

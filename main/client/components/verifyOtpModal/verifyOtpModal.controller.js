@@ -1,9 +1,10 @@
 'use strict';
 
 angular.module('takhshilaApp')
-  .controller('VerifyOtpModalCtrl', function ($rootScope, $mdDialog, $scope, $state, Auth) {
+  .controller('VerifyOtpModalCtrl', function ($rootScope, $mdDialog, $scope, $state, Auth, userId, generateToken) {
     $scope.verifyOTPFormData = {
-      userId: null,
+      userId: userId || null,
+      generateToken: generateToken || false,
       otp: null
     }
 
@@ -22,7 +23,6 @@ angular.module('takhshilaApp')
         $scope.verifying = false;
         return false;
       }else{
-        $scope.verifyOTPFormData.userId = $rootScope.currentUser._id;
         Auth.verifyOTP($scope.verifyOTPFormData)
         .then(function(data){
           $scope.verifying = false;

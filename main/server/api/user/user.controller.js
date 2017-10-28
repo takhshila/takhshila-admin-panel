@@ -40,9 +40,10 @@ exports.sendVerificationCode = function (req, res, next) {
       dialCode: req.body.dialCode
     }, function(err, user){
       if (err) return next(err);
-      if(user.length > 0){ return res.status(200).json({success: false, error: 'Phone number exists'}); }
+      if(user.length > 0){ return res.status(200).json({success: false, error: 'User with this phone number already exist.'}); }
       var userData = {
         name: req.body.name,
+        slugName: req.body.name.firstName,
         password: req.body.password,
         provider: 'local',
         role: 'user',
@@ -52,23 +53,49 @@ exports.sendVerificationCode = function (req, res, next) {
         phoneVerificationCode: Helper.getRandomNuber(4),
         isTeacher: req.body.isTeacher
       }
-      User.create(userData, function(err, user) {
-        if (err) { reject(err); }
-        var message = user.phoneVerificationCode + " is your one time code to register on Takhshila. Do not share it with anyone.";
-        Helper.sendTextMessage(user.tempPhone, message)
-        .then(function(response){
-          resolve(user);
+      if(req.body.referralID){
+        User.findOne({
+          referralID: req.body.referralID
         })
-        .catch(function(err){
-          reject(err);
+        .exec( function (err, referral) {
+          if(!err && referral){
+            userData.referredBy = referral.referralID;
+          }
+          User.create(userData, function(err, user) {
+            if (err) { reject(err); }
+            var message = user.phoneVerificationCode + " is your one time code to register on Takhshila. Do not share it with anyone.";
+            user.message = message
+            resolve(user);
+            // Helper.sendTextMessage(user.tempPhone, message)
+            // .then(function(response){
+            //   resolve(user);
+            // })
+            // .catch(function(err){
+            //   reject(err);
+            // });
+          });
         });
-      });
+      }else{
+        User.create(userData, function(err, user) {
+          if (err) { reject(err); }
+          var message = user.phoneVerificationCode + " is your one time code to register on Takhshila. Do not share it with anyone.";
+          user.message = message
+          resolve(user);
+          // Helper.sendTextMessage(user.tempPhone, message)
+          // .then(function(response){
+          //   resolve(user);
+          // })
+          // .catch(function(err){
+          //   reject(err);
+          // });
+        });
+      }
     })
   })
 
   addUser
   .then(function(response){
-    res.json({ id: response._id });
+    res.json({ success: true, id: response._id, message: response.message });
   })
   .catch(function(err){
     return validationError(res, err);
@@ -80,10 +107,7 @@ exports.sendVerificationCode = function (req, res, next) {
  */
 exports.verifyPhoneNumber = function (req, res, next) {
   var verificationCode = req.body.otp;
-  
-  var promoBalance = 100.00;
-  var withdrawBalance = 0.00;
-  var nonWithdrawBalance = 0.00;
+  var createWallet = false;
   
   var verifyPhonePromise = new Promise(function(resolve, reject){
     User.findOne({
@@ -96,20 +120,33 @@ exports.verifyPhoneNumber = function (req, res, next) {
       user.phone = user.tempPhone;
       user.isPhoneVerified = true;
       user.tempPhone = null;
+      if(user.status === 'pending'){
+        createWallet = true;
+      }
       user.status = 'active';
       user.save(function(err, user) {
         if (err) { reject({status: 422, data: err }); return; };
-        var walletData = {
-          userID: user._id,
-          promoBalance: promoBalance,
-          withdrawBalance: withdrawBalance,
-          nonWithdrawBalance: nonWithdrawBalance,
-          totalBalance: parseFloat(promoBalance + withdrawBalance + nonWithdrawBalance).toFixed(2)
-        }
-        Wallet.create(walletData, function(err, wallet) {
-          if (err) { reject({status: 422, data: err }); return; }
+        if(createWallet){
+          var promoBalance = 0.00;
+          var withdrawBalance = 0.00;
+          var nonWithdrawBalance = 0.00;
+          if(user.referredBy){
+            promoBalance = 500.00;
+          }
+          var walletData = {
+            userID: user._id,
+            promoBalance: promoBalance,
+            withdrawBalance: withdrawBalance,
+            nonWithdrawBalance: nonWithdrawBalance,
+            totalBalance: parseFloat(promoBalance + withdrawBalance + nonWithdrawBalance).toFixed(2)
+          }
+          Wallet.create(walletData, function(err, wallet) {
+            if (err) { reject({status: 422, data: err }); return; }
+            resolve(user);
+          });
+        }else{
           resolve(user);
-        });
+        }
       });
     })
   });
@@ -155,6 +192,25 @@ exports.show = function (req, res, next) {
   .exec( function (err, user) {
     if (err) return next(err);
     if (!user) return res.status(401).send('Unauthorized');
+    if(user.isTeacher){
+      res.json(user.teacherProfile);
+    }else {
+      res.json(user.profile);
+    }
+  });
+};
+
+/**
+ * Get a single user via referral ID
+ */
+exports.getReferral = function (req, res, next) {
+  var referralID = req.params.referralID;
+  User.findOne({
+    referralID: referralID
+  })
+  .exec( function (err, user) {
+    if (err) return next(err);
+    if (!user) return res.status(401).send('Not Found');
     if(user.isTeacher){
       res.json(user.teacherProfile);
     }else {
@@ -221,7 +277,7 @@ exports.updateSettings = function(req, res, next) {
               user.phoneVerificationCode = Helper.getRandomNuber(4);
               phoneNumberUpdated = true;
               var message = user.phoneVerificationCode + " is your one time code to update phone number on Takhshila. Do not share it with anyone.";
-              Helper.sendTextMessage(user.tempPhone, message);
+              // Helper.sendTextMessage(user.tempPhone, message);
             }
             resolve();
         })

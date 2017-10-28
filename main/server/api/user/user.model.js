@@ -1,6 +1,12 @@
 'use strict';
 
 var mongoose = require('mongoose');
+var slug = require('mongoose-slug-generator');
+mongoose.plugin(slug, {
+  separator: "",
+  lang: "en",
+  truncate: 120
+});
 var Schema = mongoose.Schema;
 var crypto = require('crypto');
 var authTypes = ['github', 'twitter', 'facebook', 'google'];
@@ -11,6 +17,9 @@ var UserSchema = new Schema({
     firstName: { type: String, required: true },
     lastName: { type: String, required: true }
   },
+  slugName: { type: String, required: true },
+  referralID: { type: String, slug: 'slugName', slug_padding_size: 4, unique: true },
+  referredBy: { type: String, default: null },
   country: {type: String, ref: 'Countries', required: true},
   dialCode: {type: Number, required: true},
   tempPhone: { type: String, default: null },
