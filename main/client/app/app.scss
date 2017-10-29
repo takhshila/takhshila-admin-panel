@@ -1,7 +1,7 @@
 /**
  * App-wide Styles
  */
-
+@import url('https://fonts.googleapis.com/css?family=Roboto:100,300,400');
 :focus {
     outline: none;
 }
@@ -93,6 +93,7 @@ hr { width: 100%; border-top: 1px solid #E9E9E9; display: inline-block; }
 @import 'addExperienceModal/addExperienceModal.scss';
 @import 'classReview/classReview.scss';
 @import 'confirmModal/confirmModal.scss';
+@import 'footer/footer.scss';
 @import 'loginModal/loginModal.scss';
 @import 'lxRipple/lxRipple.scss';
 @import 'lxTextField/lxTextField.scss';
