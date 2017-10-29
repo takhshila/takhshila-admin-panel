@@ -163,6 +163,40 @@ function onConnect(socket) {
   });  
 }
 
+function checkFirstClass(userID){
+  return new Promise(function(resolve, reject){
+    Userclass.find({
+      studentID: userID,
+      status: 'completed'
+    })
+    .exec(function(err, classList){
+      if(classList.length === 1){
+        resolve(true);
+      }
+      resolve(false);
+    });
+  });
+}
+
+
+function getReferralData(userID){
+  return new Promise(function(resolve, reject){
+    User.findById(userID, function(err, user){
+      if(!err && user && user.referredBy){
+        User.findById(user.referredBy, function(err, referralData){
+          if(!err && referralData){
+            resolve(referralData);
+          }else{
+            reject();
+          }
+        });
+      }else{
+        reject();
+      }
+    })
+  });
+}
+
 function startLiveClass(classID){
   if(liveClassList[classID] !== undefined){
     if(liveClassList[classID].connectedUser.length === 2){
@@ -326,6 +360,37 @@ function endClass(classID, classStatus){
 
                 Transaction.create(transactionDataForTakhshila, function(err){
                   console.log('Transaction after completion of class has been completed');
+                  checkFirstClass(studentID)
+                  .then(function(response){
+                    if(response){
+                      getReferralData(studentID)
+                      .then(function(referralData){
+                        var referralBonus = 500;
+                        var transactionDataForReferral = {
+                          userID: referralData._id,
+                          transactionType: 'Credit',
+                          transactionIdentifier: 'walletCashReceived',
+                          transactionDescription: 'Wallet cash for INR ' + referralBonus + ' received on successful completion of first class by student referred by you.',
+                          transactionAmount: referralBonus,
+                          classRefrence: userclass._id,
+                          status: 'completed'
+                        }
+                        Transaction.create(transactionDataForTakhshila, function(err){
+                          if(!err){
+                            Wallet.findOne({
+                              userID: referralData._id
+                            }, function(err, walletData){
+                              walletData.promoBalance = parseFloat(walletData.promoBalance + referralBonus);
+                              walletData.totalBalance = parseFloat(walletData.totalBalance + referralBonus);
+                              walletData.save(function(err){
+                                console.log("Wallet data updated for referral account.");
+                              })
+                            })
+                          }
+                        })
+                      });
+                    }
+                  });
                 });
               });
             });
