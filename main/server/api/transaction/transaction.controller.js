@@ -255,26 +255,33 @@ exports.updatePayment = function(req, res) {
       if(classData){
         bookClass(classData, transactionData.txnid)
         .then(function(response){
-          delete tempClassData[transactionData.txnid];
-          resolve(response);
+        	delete tempClassData[transactionData.txnid];
+        	resolve(response);
         })
         .catch(function(err){
-          reject(err);
+        	delete tempClassData[transactionData.txnid];
+         	reject({errorType: 'class'});
         });
+      }else{
+      	reject({errorType: 'class'});
       }
     })
     .catch(function(err){
-      console.log("Transaction Failed");
-      reject(err);
+      reject({errorType: 'transaction'});
     });
   });
   updatePaymentPromise
   .then(function(data){
-    return res.redirect('/profile');
+  	console.log("Data: ", data);
+	return res.redirect('/class/success/');
   })
   .catch(function(err){
     console.log(err);
-    return res.redirect('/payment/failure/');
+    if(err.errorType === 'transaction'){
+		return res.redirect('/payment/failure/');
+    }else{
+    	return res.redirect('/class/failure/');
+    }
   });
 };
 
@@ -359,11 +366,10 @@ function validateTransaction(transactionId){
           if(classData){
             bookClass(classData, transactionId)
             .then(function(response){
-              delete tempClassData[transaction._id];
-              console.log('Successfully added class request');
+            	delete tempClassData[transaction._id];
             })
             .catch(function(err){
-              console.log(err);
+            	delete tempClassData[transaction._id];
             });
           }else{
             console.log('Class data was not found');
@@ -442,125 +448,202 @@ function bookClass(classData, paymentRefrence){
     })
     .exec(function(err, walletData){
       tempWalletData = walletData;
-      var bookClassPromise = classData.map(function(singleClassData){
-        var userID = singleClassData.studentID;
-        var totalAmount = parseFloat(singleClassData.amount.totalCost);
+      isClassAvailable(classData)
+      .then(function(response){
+      	if(response){
+	      var bookClassPromise = classData.map(function(singleClassData){
+	        var userID = singleClassData.studentID;
+	        var totalAmount = parseFloat(singleClassData.amount.totalCost);
 
-        return new Promise(function(resolve, reject){
-          var usedPromoBalance = 0;
-          var usedWithdrawBalance = 0;
+	        return new Promise(function(resolve, reject){
+	          var usedPromoBalance = 0;
+	          var usedWithdrawBalance = 0;
 
-          var walletBalance = tempWalletData.totalBalance;
-          var nonWithdrawBalance = tempWalletData.nonWithdrawBalance;
-          var withdrawBalance = tempWalletData.withdrawBalance;
-          var promoBalance = tempWalletData.promoBalance;
-          var bookingBalance = parseFloat(withdrawBalance + promoBalance);
+	          var walletBalance = tempWalletData.totalBalance;
+	          var nonWithdrawBalance = tempWalletData.nonWithdrawBalance;
+	          var withdrawBalance = tempWalletData.withdrawBalance;
+	          var promoBalance = tempWalletData.promoBalance;
+	          var bookingBalance = parseFloat(withdrawBalance + promoBalance);
 
-          if(promoBalance >= totalAmount){
-            usedPromoBalance = totalAmount;
-          }else{
-            usedPromoBalance = tempWalletData.promoBalance;
-            usedWithdrawBalance = parseFloat(totalAmount - tempWalletData.promoBalance);
-          }
+	          if(promoBalance >= totalAmount){
+	            usedPromoBalance = totalAmount;
+	          }else{
+	            usedPromoBalance = tempWalletData.promoBalance;
+	            usedWithdrawBalance = parseFloat(totalAmount - tempWalletData.promoBalance);
+	          }
 
-          // console.log('totalAmount = ' + totalAmount);
-          // console.log('usedPromoBalance = ' + usedPromoBalance);
-          // console.log('usedWithdrawBalance = ' + usedWithdrawBalance);
+	          // console.log('totalAmount = ' + totalAmount);
+	          // console.log('usedPromoBalance = ' + usedPromoBalance);
+	          // console.log('usedWithdrawBalance = ' + usedWithdrawBalance);
 
-          tempWalletData.withdrawBalance = parseFloat(tempWalletData.withdrawBalance - usedWithdrawBalance);
-          tempWalletData.promoBalance = parseFloat(tempWalletData.promoBalance - usedPromoBalance);
-          tempWalletData.nonWithdrawBalance = parseFloat(tempWalletData.nonWithdrawBalance + totalAmount);
-              
-          singleClassData.status = 'requested';
-          singleClassData.amount.promoBalance = usedPromoBalance;
-          singleClassData.amount.withdrawBalance = usedWithdrawBalance;
-          if(paymentRefrence){ singleClassData.paymentRefrence = paymentRefrence; }
+	          tempWalletData.withdrawBalance = parseFloat(tempWalletData.withdrawBalance - usedWithdrawBalance);
+	          tempWalletData.promoBalance = parseFloat(tempWalletData.promoBalance - usedPromoBalance);
+	          tempWalletData.nonWithdrawBalance = parseFloat(tempWalletData.nonWithdrawBalance + totalAmount);
+	              
+	          singleClassData.status = 'requested';
+	          singleClassData.amount.promoBalance = usedPromoBalance;
+	          singleClassData.amount.withdrawBalance = usedWithdrawBalance;
+	          if(paymentRefrence){ singleClassData.paymentRefrence = paymentRefrence; }
 
-          Userclass.create(singleClassData, function(err, userclass){
-            var transactionData = {
-              userID: userID,
-              transactionType: 'Debit',
-              transactionIdentifier: 'walletCashDeducted',
-              transactionDescription: 'Wallet cash deducted for class booking',
-              transactionAmount: totalAmount,
-              classRefrence: userclass._id,
-              status: 'completed'
-            }
+	          Userclass.create(singleClassData, function(err, userclass){
+	            var transactionData = {
+	              userID: userID,
+	              transactionType: 'Debit',
+	              transactionIdentifier: 'walletCashDeducted',
+	              transactionDescription: 'Wallet cash deducted for class booking',
+	              transactionAmount: totalAmount,
+	              classRefrence: userclass._id,
+	              status: 'completed'
+	            }
 
-            Transaction.create(transactionData, function(err, transaction){
-              var notificationData = {
-                forUser: userclass.teacherID,
-                fromUser: userclass.studentID,
-                notificationType: 'classRequest',
-                notificationStatus: 'unread',
-                notificationMessage: 'Test Message',
-                referenceClass: userclass._id
-              }
-              Notification.create(notificationData, function(err, notification){
+	            Transaction.create(transactionData, function(err, transaction){
+	              var notificationData = {
+	                forUser: userclass.teacherID,
+	                fromUser: userclass.studentID,
+	                notificationType: 'classRequest',
+	                notificationStatus: 'unread',
+	                notificationMessage: 'Test Message',
+	                referenceClass: userclass._id
+	              }
+	              Notification.create(notificationData, function(err, notification){
 
-                var cancelClassIfNotApprovedTime = moment.unix(userclass.requestedTime.start/1000).subtract(60, 'm').valueOf();
+	                var cancelClassIfNotApprovedTime = moment.unix(userclass.requestedTime.start/1000).subtract(60, 'm').valueOf();
 
-                var schedulerData = [{
-                  jobName:'scheduleCancelClassIfNotApproved',
-                  jobTime: cancelClassIfNotApprovedTime,
-                  jobData: JSON.stringify({classId: userclass._id}),
-                  emitEvent: true,
-                  eventName: 'cancelClassIfNotApproved',
-                  callback: false
-                }];
-                var cancelClassIfNotApprovedJob = schedule.scheduleJob(cancelClassIfNotApprovedTime, function(classId){
-                  eventEmitter.emit('cancelClassIfNotApproved', {
-                    classId: classId
-                  });
-                }.bind(null,userclass._id));
+	                var schedulerData = [{
+	                  jobName:'scheduleCancelClassIfNotApproved',
+	                  jobTime: cancelClassIfNotApprovedTime,
+	                  jobData: JSON.stringify({classId: userclass._id}),
+	                  emitEvent: true,
+	                  eventName: 'cancelClassIfNotApproved',
+	                  callback: false
+	                }];
+	                var cancelClassIfNotApprovedJob = schedule.scheduleJob(cancelClassIfNotApprovedTime, function(classId){
+	                  eventEmitter.emit('cancelClassIfNotApproved', {
+	                    classId: classId
+	                  });
+	                }.bind(null,userclass._id));
 
-                var timeToStartClass = (moment.unix(userclass.requestedTime.start/1000).valueOf() - moment().valueOf())/(3600 * 1000);
-                // console.log(moment().add(900, 'm').valueOf());
-                // console.log(moment.unix(userclass.requestedTime.start/1000).valueOf());
-                // console.log(moment().add(900, 'm').valueOf() < moment.unix(userclass.requestedTime.start/1000).valueOf());
-                // console.log("timeToStartClass => " + timeToStartClass);
-                if(timeToStartClass >= 15){
-                  var notifyUserIfClassNotApprovedTime = moment().add(600, 'm').valueOf();
-                  schedulerData.push({
-                    jobName:'scheduleNotifyUserIfClassNotApproved',
-                    jobTime: notifyUserIfClassNotApprovedTime,
-                    jobData: JSON.stringify({classId: userclass._id}),
-                    emitEvent: true,
-                    eventName: 'notifyUserIfClassNotApproved',
-                    callback: false
-                  });
-                  var notifyUserIfClassNotApprovedJob = schedule.scheduleJob(notifyUserIfClassNotApprovedTime, function(classId){
-                    eventEmitter.emit('notifyUserIfClassNotApproved', {
-                      classId: classId
-                    });
-                  }.bind(null,userclass._id));
-                }
+	                var timeToStartClass = (moment.unix(userclass.requestedTime.start/1000).valueOf() - moment().valueOf())/(3600 * 1000);
+	                // console.log(moment().add(900, 'm').valueOf());
+	                // console.log(moment.unix(userclass.requestedTime.start/1000).valueOf());
+	                // console.log(moment().add(900, 'm').valueOf() < moment.unix(userclass.requestedTime.start/1000).valueOf());
+	                // console.log("timeToStartClass => " + timeToStartClass);
+	                if(timeToStartClass >= 15){
+	                  var notifyUserIfClassNotApprovedTime = moment().add(600, 'm').valueOf();
+	                  schedulerData.push({
+	                    jobName:'scheduleNotifyUserIfClassNotApproved',
+	                    jobTime: notifyUserIfClassNotApprovedTime,
+	                    jobData: JSON.stringify({classId: userclass._id}),
+	                    emitEvent: true,
+	                    eventName: 'notifyUserIfClassNotApproved',
+	                    callback: false
+	                  });
+	                  var notifyUserIfClassNotApprovedJob = schedule.scheduleJob(notifyUserIfClassNotApprovedTime, function(classId){
+	                    eventEmitter.emit('notifyUserIfClassNotApproved', {
+	                      classId: classId
+	                    });
+	                  }.bind(null,userclass._id));
+	                }
 
-                Scheduler.create(schedulerData, function(err, scheduler){
-                  console.log("Scheduler job created");
-                });
+	                Scheduler.create(schedulerData, function(err, scheduler){
+	                  console.log("Scheduler job created");
+	                });
 
-                eventEmitter.emit('newClassRequestNotification', {
-                  classId: userclass._id
-                });
-                resolve(singleClassData);
-              });
-            });
-          });
-        });
+	                eventEmitter.emit('newClassRequestNotification', {
+	                  classId: userclass._id
+	                });
+	                resolve(singleClassData);
+	              });
+	            });
+	          });
+	        });
+	      });
+
+	      Promise.all(bookClassPromise)
+	      .then(function(data){
+	        tempWalletData.save(function(err){
+	          console.log('wallet data updated');
+	          resolve(data);
+	        });
+	      })
+	      .catch(function(err){
+	        reject(err);
+	      });
+      	}else{
+      		reject({status: 403, data: 'One of the class requested is not available.'})
+      	}
       });
-
-      Promise.all(bookClassPromise)
-      .then(function(data){
-        tempWalletData.save(function(err){
-          console.log('wallet data updated');
-          resolve(data);
-        });
-      })
-      .catch(function(err){
-        reject(err);
-      })
     });
+  });
+}
+
+function isClassAvailable(classData){
+  return new Promise(function(resolve, reject){
+	var _currentTime = moment().valueOf();
+	Userclass.find({
+		teacherID: classData[0].teacherID,
+		'requestedTime.start': {$gte: _currentTime},
+		'status': {$in: ['requested', 'confirmed', 'pendingPayment']}
+	})
+	.exec(function(err, bookedClassList){
+		if(bookedClassList.length > 0){
+			var _bookedClasses = {};
+			var matchFound = false;
+			for(var a = 0; a < bookedClassList.length; a++){
+				var _bookedClassStart = parseInt(bookedClassList[a].requestedTime.start);
+				var _bookedClassEnd = parseInt(bookedClassList[a].requestedTime.end);
+				var _bookedTimeDifference = (_bookedClassEnd - _bookedClassStart) / (60*1000);
+				if(_bookedTimeDifference > 30){
+					do{
+						_bookedClasses[_bookedClassStart] = {
+							start: _bookedClassStart,
+							end: _bookedClassStart + (30 * 60 * 1000),
+							dateTime: moment(_bookedClassStart).format("MMM DD, YYYY HH:mm a"),
+							status: bookedClassList[a].status
+						}
+						_bookedClassStart += (30 * 60 * 1000);
+						_bookedTimeDifference -= 30;
+					}while (_bookedTimeDifference >= 30)
+				}else{
+					_bookedClasses[_bookedClassStart] = {
+						start: _bookedClassStart,
+						end: _bookedClassEnd,
+						dateTime: moment(_bookedClassStart).format("MMM DD, YYYY HH:mm a"),
+						status: bookedClassList[a].status
+					};
+				}
+			}
+			for(var b = 0; b < classData.length; b++){
+				var difference = (classData[b].requestedTime.end - classData[b].requestedTime.start)/(60*1000);
+				if(difference > 30){
+					var startDateTime = classData[b].requestedTime.start;
+					do{
+						if(_bookedClasses[startDateTime] !== undefined){
+							matchFound = true;
+							break;
+						}
+						startDateTime += (30 * 60 * 1000);
+						difference -= 30;
+					}while(difference >= 30)
+				}else{
+					if(_bookedClasses[classData[b].requestedTime.start] !== undefined){
+						matchFound = true;
+						break;
+					}
+				}
+				if(matchFound){
+					break;
+				}
+			}
+			if(matchFound){
+				resolve(false)
+			}else{
+				resolve(true);
+			}
+		}else{
+			resolve(true);
+		}
+	});
   });
 }
 
