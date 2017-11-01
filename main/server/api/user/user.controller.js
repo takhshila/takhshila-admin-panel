@@ -64,30 +64,26 @@ exports.sendVerificationCode = function (req, res, next) {
           User.create(userData, function(err, user) {
             if (err) { reject(err); }
             var message = user.phoneVerificationCode + " is your one time code to register on Takhshila. Do not share it with anyone.";
-            user.message = message
-            resolve(user);
-            // Helper.sendTextMessage(user.tempPhone, message)
-            // .then(function(response){
-            //   resolve(user);
-            // })
-            // .catch(function(err){
-            //   reject(err);
-            // });
+            Helper.sendTextMessage(user.tempPhone, message)
+            .then(function(response){
+              resolve(user);
+            })
+            .catch(function(err){
+              reject(err);
+            });
           });
         });
       }else{
         User.create(userData, function(err, user) {
           if (err) { reject(err); }
           var message = user.phoneVerificationCode + " is your one time code to register on Takhshila. Do not share it with anyone.";
-          user.message = message
-          resolve(user);
-          // Helper.sendTextMessage(user.tempPhone, message)
-          // .then(function(response){
-          //   resolve(user);
-          // })
-          // .catch(function(err){
-          //   reject(err);
-          // });
+          Helper.sendTextMessage(user.tempPhone, message)
+          .then(function(response){
+            resolve(user);
+          })
+          .catch(function(err){
+            reject(err);
+          });
         });
       }
     })
@@ -116,15 +112,13 @@ exports.sendOTP = function (req, res, next) {
       user.save(function(err, userUpdated){
         if(err){ reject(err); }
         var message = user.phoneVerificationCode + " is your one time code. Do not share it with anyone.";
-        user.message = message
-        resolve(user);
-        // Helper.sendTextMessage(user.phone, message)
-        // .then(function(response){
-        //   resolve(user);
-        // })
-        // .catch(function(err){
-        //   reject(err);
-        // });
+        Helper.sendTextMessage(user.phone, message)
+        .then(function(response){
+          resolve(user);
+        })
+        .catch(function(err){
+          reject(err);
+        });
       });
     })
   })
@@ -366,7 +360,7 @@ exports.updateSettings = function(req, res, next) {
               user.phoneVerificationCode = Helper.getRandomNuber(4);
               phoneNumberUpdated = true;
               var message = user.phoneVerificationCode + " is your one time code to update phone number on Takhshila. Do not share it with anyone.";
-              // Helper.sendTextMessage(user.tempPhone, message);
+              Helper.sendTextMessage(user.tempPhone, message);
             }
             resolve();
         })

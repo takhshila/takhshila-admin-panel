@@ -28,7 +28,7 @@ angular.module('takhshilaApp')
       fetchReferralDetails(referralID)
       .then(function(response){
         $scope.registerFormData.referralID = referralID;
-        $scope.giftFrom = response.data.name.firstName + ' ' + response.data.name.lastName;
+        $scope.giftFrom = response.data.name.firstName;
       })
       .catch(function(err){
         console.log(err);

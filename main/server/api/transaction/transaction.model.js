@@ -11,6 +11,7 @@ var TransactionSchema = new Schema({
   transactionAmount: {type: Number, required: true},
   transactionData: {type: Object, default: null},
   classRefrence: {type: String, ref: 'Userclass', default: null},
+  classInfo: {type: String, default: null},
   dateTime: {type: Date, default: Date.now},
   status: {type: String, default: 'pending'},
 });

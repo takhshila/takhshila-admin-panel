@@ -35,7 +35,8 @@ exports.index = function(req, res) {
   var page = req.query.page || 0;
   var userID = req.user._id;
   Transaction.find({
-    userID: userID
+    userID: userID,
+    transactionAmount: {$gt: 0}
   })
   .limit(perPage)
   .skip(perPage * page)
@@ -126,6 +127,7 @@ exports.initiatePayment = function(req, res) {
                 transactionIdentifier: 'walletCashReceived',
                 transactionDescription: 'Wallet cash for INR ' + amountToPay + ' received',
                 transactionAmount: parseFloat(amountToPay),
+                classInfo: JSON.stringify(classData),
                 status: 'pending'
               }
               Transaction.create(transactionData, function(err, transaction) {
@@ -197,16 +199,28 @@ exports.initiatePayment = function(req, res) {
                 });
               });
             }else{
-              bookClass(classData)
-              .then(function(response){
-                resolve({
-                  paymentRequired: false,
-                  paymentData: null
+              var transactionData = {
+                userID: user._id,
+                transactionType: 'Credit',
+                transactionIdentifier: 'walletCashReceived',
+                transactionDescription: 'Wallet cash for INR ' + amountToPay + ' received',
+                transactionAmount: parseFloat(amountToPay),
+                classInfo: JSON.stringify(classData),
+                status: 'success'
+              }
+              Transaction.create(transactionData, function(err, transaction){
+                bookClass(classData)
+                .then(function(response){
+                  resolve({
+                    paymentRequired: false,
+                    paymentData: null,
+                    transactionId: transaction._id
+                  });
+                })
+                .catch(function(err){
+                  reject(err);
                 });
               })
-              .catch(function(err){
-                reject(err);
-              });
             }
           });
         });
@@ -226,10 +240,14 @@ exports.initiatePayment = function(req, res) {
 };
 
 // Get a single transaction
-exports.show = function(req, res) {
+exports.getTransactionData = function(req, res) {
+  var userID = req.user._id;
   Transaction.findById(req.params.id, function (err, transaction) {
     if(err) { return handleError(res, err); }
-    if(!transaction) { return res.status(404).send('Not Found'); }
+    if(!transaction || transaction.userID.toString() !== userID.toString()){
+      return res.status(404).send('Not Found');
+    }
+    delete transaction.transactionData;
     return res.json(transaction);
   });
 };
@@ -260,28 +278,22 @@ exports.updatePayment = function(req, res) {
         })
         .catch(function(err){
         	delete tempClassData[transactionData.txnid];
-         	reject({errorType: 'class'});
+         	reject();
         });
       }else{
-      	reject({errorType: 'class'});
+      	reject();
       }
     })
     .catch(function(err){
-      reject({errorType: 'transaction'});
+      reject();
     });
   });
   updatePaymentPromise
   .then(function(data){
-  	console.log("Data: ", data);
-	return res.redirect('/class/success/');
+    return res.redirect('/class/success/' + transactionData.txnid);
   })
   .catch(function(err){
-    console.log(err);
-    if(err.errorType === 'transaction'){
-		return res.redirect('/payment/failure/');
-    }else{
-    	return res.redirect('/class/failure/');
-    }
+    return res.redirect('/class/failure/' + transactionData.txnid);
   });
 };
 
@@ -552,7 +564,7 @@ function bookClass(classData, paymentRefrence){
 	                eventEmitter.emit('newClassRequestNotification', {
 	                  classId: userclass._id
 	                });
-	                resolve(singleClassData);
+	                resolve(userclass);
 	              });
 	            });
 	          });

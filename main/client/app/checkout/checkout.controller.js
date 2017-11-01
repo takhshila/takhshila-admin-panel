@@ -49,7 +49,7 @@ angular.module('takhshilaApp')
         		$scope.paymentData = response.paymentData;
         		$rootScope.$broadcast('processFormSubmit', {formName: 'paymentRedirect'});
             }else{
-                $state.go('profile');
+                $state.go('classBookResponse', {'status': 'success', 'txnID': response.transactionId});
             }
     		// var paymentForm = angular.element('#paymentRedirect');
     		// paymentForm.click();
