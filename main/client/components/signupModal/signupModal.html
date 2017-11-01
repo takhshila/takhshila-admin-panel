@@ -12,76 +12,7 @@
 		<div class = "tab tab-default" ng-class = "{'active': current == 'default'}">
 			<div class="ui basic segment">
 				<div class="heading-text">
-					Login
-				</div>
-				<div class="ui form">
-					<form class="" name = "loginForm" novalidate autocomplete="off">
-						<div class="field form-error" ng-if = "loginError">
-							<div class="ui red message">{{loginErrorMessage}}</div>
-						</div>
-
-						<div layout-gt-sm="row">
-							<md-input-container class="md-block" flex-gt-sm="40" flex-xs="100">
-								<label>Country</label>
-								<md-select ng-model="selectedCountry">
-									<md-option ng-repeat="country in countries" ng-value="country">
-										{{country.name}}
-									</md-option>
-								</md-select>
-							</md-input-container>
-
-							<md-input-container class="md-block" flex-gt-sm="60" flex-xs="100">
-								<label>Phone Number</label>
-								<input name="phone" ng-model="loginFormData.phone" required ng-pattern="/^[0-9]{10}$/" md-maxlength="10">
-								<div ng-messages="loginFormData.phone.$error" role="alert" multiple>
-									<div ng-message="required" class="my-message">Required.</div>
-									<div ng-message="md-maxlength" class="my-message">
-										Invalid phone number.
-									</div>
-									<div ng-message="pattern" class="my-message">
-										Invalid phone number.
-									</div>
-								</div>
-							</md-input-container>
-						</div>
-
-						<div layout-gt-sm="row">
-							<md-input-container class="md-block" flex-gt-sm="100" flex-xs="100">
-								<label>Password</label>
-								<input name="password" ng-model="loginFormData.password" type="password" md-maxlength="30" required>
-								<div ng-messages="loginFormData.password.$error" role="alert" multiple>
-									<div ng-message="required" class="my-message">You must enter the password.</div>
-									<div ng-message="md-maxlength" class="my-message">
-										Password seems to be too long.
-									</div>
-								</div>
-							</md-input-container>
-						</div>
-
-						<br>
-
-						<button ng-init = "logging = false" ng-click = "validate(loginForm)" ng-disabled="logging" ng-class = "{'loading': logging}" class="ui button primary" lx-ripple>Login</button>
-						<div class = "row">
-							<div class = "col-md-12 col-sm-12 col-xs-12 login-modal-additional-link">
-								<a ng-href = "#" ng-click = "retrievePassword()">Forgot Password ?</a>
-							</div>
-						</div>
-					</form>
-				</div>
-			</div>
-			<div class = "login-modal-bottom">
-				<div class="ui horizontal divider">
-					&nbsp;
-				</div>
-				New to TakhShila? <a ng-href = "#" ng-click = "current = 'signup'">Sign Up</a>
-			</div>
-		</div>
-
-		<div class = "tab tab-signup" ng-class = "{'active': current == 'signup'}">
-			<div class="ui basic segment">
-				<div class="heading-text">
-					<i class="angle left icon" ng-click = "current = 'default'"></i>
-					Sign up to learn
+					Sign up to teach
 				</div>
 				<div class="ui form">
 					<form class="" name = "registerForm" novalidate>
@@ -158,34 +89,76 @@
 				<div class="ui horizontal divider">
 					&nbsp;
 				</div>
-				Already have an account? <a ng-href = "#" ng-click = "current = 'default'">Login</a>
+				Already have an account? <a ng-href = "#" ng-click = "current = 'login'">Login</a>
 			</div>
 		</div>
 
-		<div class = "tab tab-forgot-password" ng-class = "{'active': current == 'forgot-password'}">
-			<div class="ui center aligned basic segment">
+		<div class = "tab tab-login" ng-class = "{'active': current == 'login'}">
+			<div class="ui basic segment">
 				<div class="heading-text">
 					<i class="angle left icon" ng-click = "current = 'default'"></i>
-					Retrieve Password
+					Login
 				</div>
-				<p>
-					Enter the phone number associated with your account, and we'll send you OTP to reset your password.
-				</p>
 				<div class="ui form">
-					<form class="" name = "forgotPasswordForm" novalidate>
-						<div class="field" ng-class = "{'has-error': forgotPasswordForm.email.$invalid && forgotPasswordForm.email.$touched}">
-							<lx-text-field label="Email ID" error = "forgotPasswordForm.email.$invalid && forgotPasswordForm.email.$touched">
-								<input name = "email" type="email" ng-model="forgotPasswordFormData.email" ng-pattern="/^.+@.+\..+$/" required>
-							</lx-text-field>
-							<div class="help-block" ng-messages="forgotPasswordForm.email.$error" ng-if="forgotPasswordForm.email.$touched">
-								<p ng-message="pattern">Invalid Email.</p>
-								<p ng-message="required">This field is required.</p>
+					<form class="" name = "loginForm" novalidate autocomplete="off">
+						<div class="field form-error" ng-if = "loginError">
+							<div class="ui red message">{{loginErrorMessage}}</div>
+						</div>
+
+						<div layout-gt-sm="row">
+							<md-input-container class="md-block" flex-gt-sm="40" flex-xs="100">
+								<label>Country</label>
+								<md-select ng-model="selectedCountry">
+									<md-option ng-repeat="country in countries" ng-value="country">
+										{{country.name}}
+									</md-option>
+								</md-select>
+							</md-input-container>
+
+							<md-input-container class="md-block" flex-gt-sm="60" flex-xs="100">
+								<label>Phone Number</label>
+								<input name="phone" ng-model="loginFormData.phone" required ng-pattern="/^[0-9]{10}$/" md-maxlength="10">
+								<div ng-messages="loginFormData.phone.$error" role="alert" multiple>
+									<div ng-message="required" class="my-message">Required.</div>
+									<div ng-message="md-maxlength" class="my-message">
+										Invalid phone number.
+									</div>
+									<div ng-message="pattern" class="my-message">
+										Invalid phone number.
+									</div>
+								</div>
+							</md-input-container>
+						</div>
+
+						<div layout-gt-sm="row">
+							<md-input-container class="md-block" flex-gt-sm="100" flex-xs="100">
+								<label>Password</label>
+								<input name="password" ng-model="loginFormData.password" type="password" md-maxlength="30" required>
+								<div ng-messages="loginFormData.password.$error" role="alert" multiple>
+									<div ng-message="required" class="my-message">You must enter the password.</div>
+									<div ng-message="md-maxlength" class="my-message">
+										Password seems to be too long.
+									</div>
+								</div>
+							</md-input-container>
+						</div>
+
+						<br>
+
+						<button ng-init = "logging = false" ng-click = "validate(loginForm)" ng-disabled="logging" ng-class = "{'loading': logging}" class="ui button primary" lx-ripple>Login</button>
+						<div class = "row">
+							<div class = "col-md-12 col-sm-12 col-xs-12 login-modal-additional-link">
+							<a ng-href = "#" ng-click = "retrievePassword()">Forgot Password ?</a>
 							</div>
 						</div>
-						<br>
-						<button ng-init = "reseting = false" ng-click = "reseting = !reseting" ng-disabled="reseting" ng-class = "{'loading': reseting}" class="ui button primary" lx-ripple>Reset Password</button>
 					</form>
 				</div>
+			</div>
+			<div class = "login-modal-bottom">
+				<div class="ui horizontal divider">
+					&nbsp;
+				</div>
+				New to TakhShila? <a ng-href = "#" ng-click = "current = 'default'">Sign Up</a>
 			</div>
 		</div>
 

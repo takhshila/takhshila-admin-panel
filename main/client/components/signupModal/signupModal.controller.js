@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('takhshilaApp')
-.controller('LoginModalCtrl', function ($rootScope, $mdDialog, $scope, $state, Auth) {
+.controller('SignupModalCtrl', function ($rootScope, $mdDialog, $scope, $state, Auth) {
 	$scope.registeredId = null;
 	$scope.loginError = false;
 	$scope.loginErrorMessage = null;
@@ -28,7 +28,7 @@ angular.module('takhshilaApp')
 		phone: null,
 		phoneNumber: null,
 		password: null,
-		isTeacher: ($state.current.name === "teach") ? true: false
+		isTeacher: true
 	}
 
 	$scope.retrievePassword = function(){

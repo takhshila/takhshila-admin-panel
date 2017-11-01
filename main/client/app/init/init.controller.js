@@ -53,6 +53,19 @@ angular.module('takhshilaApp')
       });
     }
 
+    $rootScope.showSignupModal = function($event){
+      $event.preventDefault();
+      $event.stopPropagation();
+      var parentEl = angular.element(document.body);
+      $mdDialog.show({
+        templateUrl: 'components/signupModal/signupModal.html',
+        controller: 'SignupModalCtrl',
+        parent: parentEl,
+        targetEvent: $event,
+        disableParentScroll: true
+      });
+    }
+
     $rootScope.showProfilePicModal = function($event){
       var parentEl = angular.element(document.body);
       $mdDialog.show({
