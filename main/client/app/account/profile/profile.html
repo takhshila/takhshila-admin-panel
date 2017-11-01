@@ -64,6 +64,71 @@
           <star-rating ng-model="averageRating" readonly="true"></star-rating>
         </div>
       </div>
+      <div class="ui incomplete-task middle aligned divided list" ng-if = "currentUser.isTeacher && !currentUser.isProfileLive">
+            <div class="">
+              <div class="ui attached message">
+                <div class="header">
+                Please complete your profile to start teaching.
+                </div>
+              </div>
+            </div>
+            <div class="item" ng-if="!currentUser.ratePerHour.value">
+              <div class="content">
+                Add your price per hour.
+              </div>
+              <div class="right floated content">
+                <div class="ui button" ng-click="editRatePerHour($event)">Add</div>
+              </div>
+            </div>
+            <div class="item" ng-if="!demoVideos.length">
+              <div class="content">
+                Upload demo videos of yourself.
+              </div>
+              <div class="right floated content">
+                <div class="ui button" ng-click="uploadVideo()">Add</div>
+              </div>
+            </div>
+            <div class="item" ng-if="!currentUser.availability">
+              <div class="content">
+                Add your availability.
+              </div>
+              <div class="right floated content">
+                <div class="ui button" scroll-to-item scroll-to="#availability" ng-click="editAvailability($event)">Add</div>
+              </div>
+            </div>
+            <div class="item" ng-if="!currentUser.basicInfo">
+              <div class="content">
+                Write something about yourself.
+              </div>
+              <div class="right floated content">
+                <div class="ui button" scroll-to-item scroll-to="#basicInfo" ng-click="editBasicInfo($event)">Add</div>
+              </div>
+            </div>
+            <div class="item" ng-if="!currentUser.specialization.length">
+              <div class="content">
+                Add subject/topics you want to teach.
+              </div>
+              <div class="right floated content">
+                <div class="ui button" scroll-to-item scroll-to="#specialization" ng-click="editSpecialization($event)">Add</div>
+              </div>
+            </div>
+            <div class="item" ng-if="!currentUser.education.length">
+              <div class="content">
+                Add your education details.
+              </div>
+              <div class="right floated content">
+                <div class="ui button" ng-click="showAddEducationModal($event)">Add</div>
+              </div>
+            </div>
+            <div class="item" ng-if="!currentUser.experience.length">
+              <div class="content">
+                Add your experience details.
+              </div>
+              <div class="right floated content">
+                <div class="ui button" ng-click="showAddExperienceModal($event)">Add</div>
+              </div>
+            </div>
+      </div>
 
 <!--       <div class="ui vertical steps">
         <a class="active step">
@@ -85,7 +150,7 @@
        -->
     </div>
     <div class="col-md-9 col-sm-9 right">
-      <div class="row">
+      <div class="row" id="basicInfo">
         <div class="ui attached message">
           <div class="header">
             <span class="title">About {{currentUser.name.firstName}}</span>
@@ -115,7 +180,7 @@
       </div>
 
       <div class="row" ng-if = "currentUser.isTeacher">
-        <div class="ui attached message">
+        <div class="ui attached message" id="specialization">
           <div class="header">
             <span class="title">Specialization</span>
             <div class="action-container">
@@ -360,7 +425,7 @@
       </div> -->
 
       <div class="row" ng-if = "currentUser.isTeacher">
-        <div class="ui attached message">
+        <div class="ui attached message" id="availability">
           <div class="header">
             <span class="title">Availability</span>
             <div class="action-container">

@@ -2,7 +2,7 @@
 
 angular.module('takhshilaApp')
   .controller('ProfileCtrl', function ($rootScope, $scope, $timeout, $http, $mdDialog, Cropper, uiCalendarConfig, Upload, Auth, userFactory, videoFactory) {
-    $rootScope.isLoading = false;
+    $scope.isProfileLive = true;
     $scope.demoVideos = [];
     if(Cropper.currentFile === undefined){
       Cropper.currentFile = null;
@@ -10,6 +10,22 @@ angular.module('takhshilaApp')
   	if(Upload.currentVideo === undefined){
   		Upload.currentVideo = null;
   	}
+
+    var isProfileLive = function(){
+      if($rootScope.currentUser.isTeacher){
+        if(!(
+          $rootScope.currentUser.availability
+          && $rootScope.currentUser.education.length > 0
+          && $rootScope.currentUser.experience.length > 0
+          && $rootScope.currentUser.specialization.length > 0
+          && $scope.demoVideos.length > 0
+          && $rootScope.currentUser.ratePerHour.value
+          && $rootScope.currentUser.basicInfo
+          )){
+          $scope.isProfileLive = false;
+        }
+      }
+    }
 
     $scope.averageRating = 0;
 
@@ -50,6 +66,7 @@ angular.module('takhshilaApp')
     $scope.getUserVideos = function(){
       videoFactory.getUserVideos($rootScope.currentUser._id)
       .success(function(response){
+        isProfileLive();
         $scope.demoVideos = response;
       })
       .error(function(err){
@@ -566,6 +583,7 @@ angular.module('takhshilaApp')
 
     $rootScope.$watch('loggedIn', function(status){
       if(status === true){
+        $rootScope.isLoading = false;
         $scope.getUserVideos();
         $scope.getReviews();
       }

@@ -24,18 +24,6 @@ angular.module('takhshilaApp')
 
     $rootScope.$watch('loggedIn', function(status){
       if(status === true){
-        if($rootScope.currentUser.isTeacher){
-          if(!(
-            $rootScope.currentUser.availability
-            && $rootScope.currentUser.education.length > 0
-            && $rootScope.currentUser.experience.length > 0
-            && $rootScope.currentUser.specialization.length > 0
-            && $rootScope.currentUser.ratePerHour.value
-            && $rootScope.currentUser.basicInfo
-            )){
-            $rootScope.isProfileLive = false;
-          }
-        }
         $rootScope.getLastClass()
         .then(function(response){
           var classData = response.data;

@@ -4,6 +4,26 @@
     border-radius: 0px;
     box-shadow: none;
     border: 1px solid rgba(34, 36, 38, 0.15);
+    &.incomplete-task{
+      font-family: 'Roboto', sans-serif;
+      border: 0px !important;
+      margin-top: 10px;
+      .attached.message{
+        font-size: 12px;
+        font-weight: 400;
+        padding: 5px !important;
+      }
+      .item{
+        display: table;
+        background: #fff;
+        padding: 5px;
+        width: 100%;
+        font-size: 13px;
+        .content{
+          display: table-cell;
+        }
+      }
+    }
     md-input-container{
       button{
         &.ui{
