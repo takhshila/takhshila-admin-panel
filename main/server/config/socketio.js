@@ -504,7 +504,7 @@ eventEmitter.on('notifyUser', function(data){
       console.log(onlineUsers);
       if(onlineUsers[user._id.toString()] === undefined){
         var textMessage = 'Hi ' + user.name.firstName + '! Your takhshila class is about to start. Please visit ' + classLink;
-        Helper.sendTextMessage(user.phone, textMessage);
+        Helper.sendTextMessage(user.dialCode + user.phone, textMessage);
       }else{
         onlineUsers[user._id.toString()].emit('liveClassLink', {
           classLink: classLink,
@@ -526,7 +526,7 @@ eventEmitter.on('newClassRequestNotification', function(data){
     var teacherID = userclass.teacherID._id.toString();
     if(onlineUsers[teacherID] === undefined){
       var textMessage = 'Hi ' + userclass.teacherID.name.firstName + '! You have new class request from ' + userclass.studentID.name.firstName + ' for ' + userclass.requestedTime.dateFormated + '. Please visit www.takhshila.com to approve the request.';
-      Helper.sendTextMessage(userclass.teacherID.phone, textMessage);
+      Helper.sendTextMessage(userclass.teacherID.dialCode + userclass.teacherID.phone, textMessage);
     }
   })
 });
@@ -543,7 +543,7 @@ eventEmitter.on('notifyClassConfirmed', function(data){
       var studentID = userclass.studentID._id.toString();
       if(onlineUsers[studentID] === undefined){
         var textMessage = 'Hi ' + userclass.studentID.name.firstName + '! ' + userclass.teacherID.name.firstName + ' has confirmed your request for class on ' + userclass.requestedTime.dateFormated + '. Please make yourselef available at least 10 mins prior class time.';
-        Helper.sendTextMessage(userclass.studentID.phone, textMessage);
+        Helper.sendTextMessage(userclass.studentID.dialCode + userclass.studentID.phone, textMessage);
       }
     }
   })
@@ -561,7 +561,7 @@ eventEmitter.on('notifyClassDenied', function(data){
       var studentID = userclass.studentID._id.toString();
       if(onlineUsers[studentID] === undefined){
         var textMessage = 'Hi ' + userclass.studentID.name.firstName + '! We regret to inform you that ' + userclass.teacherID.name.firstName + ' will be unable to take a class on ' + userclass.requestedTime.dateFormated + '. We are sorry for the inconvenience.';
-        Helper.sendTextMessage(userclass.studentID.phone, textMessage);
+        Helper.sendTextMessage(userclass.studentID.dialCode + userclass.studentID.phone, textMessage);
       }
     }
   })
@@ -579,7 +579,7 @@ eventEmitter.on('notifyUserIfClassNotApproved', function(data){
       var teacherID = userclass.teacherID._id.toString();
       if(onlineUsers[teacherID] === undefined){
         var textMessage = 'Hi ' + userclass.teacherID.name.firstName + '! You have a pending request from ' + userclass.studentID.name.firstName + ' for class on ' + userclass.requestedTime.dateFormated + '. Please visit www.takhshila.com to approve the request or it will automatically be cancelled.';
-        Helper.sendTextMessage(userclass.teacherID.phone, textMessage);
+        Helper.sendTextMessage(userclass.teacherID.dialCode + userclass.teacherID.phone, textMessage);
       }
     }
   })
@@ -602,7 +602,7 @@ eventEmitter.on('cancelClassIfNotApproved', function(data){
         var teacherMessage = 'Hi ' + userclass.teacherID.name.firstName + '! The class request from ' + userclass.studentID.name.firstName + ' has been cancelled since you did not responded.';
 
         Wallet.findOne({
-          userID: userclass.studentID
+          userID: studentID
         }, function(err, walletData){
           // var refundAmount = parseFloat(userclass.amount.withdrawBalance);
           walletData.nonWithdrawBalance = parseFloat(walletData.nonWithdrawBalance - (userclass.amount.withdrawBalance + userclass.amount.promoBalance));
@@ -612,7 +612,7 @@ eventEmitter.on('cancelClassIfNotApproved', function(data){
 
           walletData.save(function(err){
             var transactionData = {
-              userID: userclass.studentID,
+              userID: studentID,
               transactionType: 'Credit',
               transactionIdentifier: 'walletCashRefunded',
               transactionDescription: 'Wallet cash refunded because the class request was cancelled.',
@@ -623,8 +623,8 @@ eventEmitter.on('cancelClassIfNotApproved', function(data){
 
             Transaction.create(transactionData, function(err, transaction){
               var _notificationData = {
-                forUser: userclass.studentID,
-                fromUser: userclass.teacherID,
+                forUser: studentID,
+                fromUser: teacherID,
                 notificationType: 'noResponse',
                 notificationStatus: 'unread',
                 notificationMessage: 'Test Message',
@@ -632,7 +632,7 @@ eventEmitter.on('cancelClassIfNotApproved', function(data){
               }
               Notification.create(_notificationData, function(err, notification){
                 if(onlineUsers[studentID] === undefined){
-                  Helper.sendTextMessage(studentID, studentMessage);
+                  Helper.sendTextMessage(userclass.studentID.dialCode + userclass.studentID.phone, studentMessage);
                 }
               });
             })
@@ -649,7 +649,7 @@ eventEmitter.on('cancelClassIfNotApproved', function(data){
         }
         Notification.create(_notificationData, function(err, notification){
           if(onlineUsers[teacherID] === undefined){
-            Helper.sendTextMessage(teacherID, teacherMessage);
+            Helper.sendTextMessage(userclass.teacherID.dialCode + userclass.teacherID.phone, teacherMessage);
           }
         });
       });
