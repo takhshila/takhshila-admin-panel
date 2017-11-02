@@ -29,6 +29,13 @@ module.exports = {
 		type: 3
 	},
 
+	msg91: {
+		apiBase: "http://api.msg91.com/api/sendhttp.php",
+		authkey: "181964ASuehXXhrB59fb3097",
+		sender: "TKHSLA",
+		route: 4
+	},
+
 	textLocal: {
 		apiBase: "https://api.textlocal.in/send",
 		apiKey: "Yalfd/Icifs-st5uslQnVGbeqSpSnOkar0VcL4ZVV7",

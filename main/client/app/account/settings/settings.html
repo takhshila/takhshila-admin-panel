@@ -7,6 +7,10 @@
       <md-tab label="Personal Info">
         <md-content class="md-padding">
           <form class="" name = "settingsForm" novalidate autocomplete="off">
+            <form class="" name = "registerForm" novalidate>
+            <div class="field form-error" ng-if = "updateError">
+              <div class="ui red message">{{updateErrorMessage}}</div>
+            </div>
             <div layout-gt-sm="row">
               <i class="icon user" hide-sm hide-xs></i>
               <md-input-container class="md-block" flex-gt-sm="50" flex-xs="100">

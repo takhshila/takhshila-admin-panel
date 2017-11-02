@@ -21,6 +21,13 @@ module.exports = {
             process.env.OPENSHIFT_MONGODB_DB_URL+process.env.OPENSHIFT_APP_NAME ||
             'mongodb://localhost/takhshila'
   },
+
+  msg91: {
+    apiBase: "http://api.msg91.com/api/sendhttp.php",
+    authkey: "181964ASuehXXhrB59fb3097",
+    sender: "TKHSLA",
+    route: 4
+  },
   
   payu: {
     merchantID: 5804204,

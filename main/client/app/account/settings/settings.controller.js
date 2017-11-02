@@ -2,7 +2,8 @@
 
 angular.module('takhshilaApp')
   .controller('SettingsCtrl', function ($rootScope, $scope, $mdDialog, $http, User, userFactory, Auth) {
-    $scope.errors = {};
+    $scope.updateError = false;
+    $scope.updateErrorMessage = null;
     $scope.bankAccounts = [];
 
     $scope.changePassword = function(form) {
@@ -21,6 +22,8 @@ angular.module('takhshilaApp')
     };
 
     $scope.saveSettings = function(settingsForm){
+      $scope.updateError = false;
+      $scope.updateError = false;
       $scope.saving = true;
       var updateData = {
         name: {
@@ -33,20 +36,26 @@ angular.module('takhshilaApp')
       userFactory.saveSettings(updateData)
       .success(function(response){
         $scope.saving = false;
-        $rootScope.currentUser.name = response.data.name;
-        if(response.phoneNumberUpdated){
-          var parentEl = angular.element(document.body);
-          $mdDialog.show({
-            templateUrl: 'components/verifyOtpModal/verifyOtpModal.html',
-            controller: 'VerifyOtpModalCtrl',
-            parent: parentEl,
-            disableParentScroll: true,
-            locals: {
-              userId: $rootScope.currentUser._id,
-              verificationType: 'phone',
-              generateToken: false
-            }
-          });
+        console.log(response);
+        if(response.success){
+          $rootScope.currentUser.name = response.data.name;
+          if(response.phoneNumberUpdated){
+            var parentEl = angular.element(document.body);
+            $mdDialog.show({
+              templateUrl: 'components/verifyOtpModal/verifyOtpModal.html',
+              controller: 'VerifyOtpModalCtrl',
+              parent: parentEl,
+              disableParentScroll: true,
+              locals: {
+                userId: $rootScope.currentUser._id,
+                verificationType: 'phone',
+                generateToken: false
+              }
+            });
+          }
+        }else{
+          $scope.updateErrorMessage = response.error;
+          $scope.updateError = true;
         }
       })
       .error(function(err){

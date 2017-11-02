@@ -32,6 +32,13 @@ module.exports = {
     }
   },
 
+  msg91: {
+    apiBase: "http://api.msg91.com/api/sendhttp.php",
+    authkey: "181964ASuehXXhrB59fb3097",
+    sender: "TKHSLA",
+    route: 4
+  },
+  
   bulkSMS: {
     apiBase: "http://login.bulksmsgateway.in/sendmessage.php",
     user: "pratikraj26",

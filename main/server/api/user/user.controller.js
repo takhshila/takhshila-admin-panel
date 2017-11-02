@@ -64,7 +64,7 @@ exports.sendVerificationCode = function (req, res, next) {
           User.create(userData, function(err, user) {
             if (err) { reject(err); }
             var message = user.phoneVerificationCode + " is your one time code to register on Takhshila. Do not share it with anyone.";
-            Helper.sendTextMessage(user.dialCode + user.tempPhone, message)
+            Helper.sendTextMessage(user.dialCode, user.tempPhone, message)
             .then(function(response){
               resolve(user);
             })
@@ -77,7 +77,7 @@ exports.sendVerificationCode = function (req, res, next) {
         User.create(userData, function(err, user) {
           if (err) { reject(err); }
           var message = user.phoneVerificationCode + " is your one time code to register on Takhshila. Do not share it with anyone.";
-          Helper.sendTextMessage(user.dialCode + user.tempPhone, message)
+          Helper.sendTextMessage(user.dialCode, user.tempPhone, message)
           .then(function(response){
             resolve(user);
           })
@@ -112,7 +112,7 @@ exports.sendOTP = function (req, res, next) {
       user.save(function(err, userUpdated){
         if(err){ reject(err); }
         var message = user.phoneVerificationCode + " is your one time code. Do not share it with anyone.";
-        Helper.sendTextMessage(user.dialCode + user.phone, message)
+        Helper.sendTextMessage(user.dialCode, user.phone, message)
         .then(function(response){
           resolve(user);
         })
@@ -354,13 +354,13 @@ exports.updateSettings = function(req, res, next) {
           dialCode: user.dialCode
         }, function(err, data){
             if (err) return next(err);
-            if(user.length > 0){ return res.status(200).json({success: false, error: 'Phone number exists'}); }
+            if(data.length > 0){ return res.status(200).json({success: false, error: 'Phone number exists'}); }
             if(user.phone !== req.body.phone){
               user.tempPhone = req.body.phone;
               user.phoneVerificationCode = Helper.getRandomNuber(4);
               phoneNumberUpdated = true;
               var message = user.phoneVerificationCode + " is your one time code to update phone number on Takhshila. Do not share it with anyone.";
-              Helper.sendTextMessage(user.dialCode + user.tempPhone, message);
+              Helper.sendTextMessage(user.dialCode, user.tempPhone, message);
             }
             resolve();
         })
