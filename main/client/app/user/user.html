@@ -43,7 +43,12 @@
           <ul class="specialization-container">
             <li ng-repeat="topic in user.specialization">
               <a href="#" class="topic-name">{{topic.topic.topicName}}</a>
-              <a href="#" class="topic-level">{{topic.level}}</a>
+              <!-- <a href="#" class="topic-level">{{topic.level}}</a> -->
+              <ul class="selected-topic-list">
+                <li ng-repeat="level in topic.level">
+                  {{level}}
+                </li>
+              </ul>
               <a href="#" class="topic-delete" ng-click="deleteSpecialization($event, $index, topic._id)" ng-show="edit.specialization.editing">
                 <i ng-show="!topic.progress" class="remove red icon"></i>
                 <i ng-show="topic.progress" class="ui mini active inline loader"></i>

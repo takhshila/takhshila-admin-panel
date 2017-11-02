@@ -24,6 +24,47 @@
         }
       }
     }
+    ul{
+      &.specialization-container{
+        padding: 0px;
+        li{
+          list-style: none;
+          a.topic-name{
+            font-family: 'Roboto', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+          }
+          a.topic-delete{
+            float: right;
+            top: 2px;
+            display: block;
+            position: relative;
+            font-size: 20px;
+          }
+        }
+      }
+      &.selected-topic-list{
+        padding: 0px;
+        margin-top: 0px;
+        float: right;
+        li{
+          display: inline-block;
+          margin: 0px;
+          margin-right: 5px;
+          margin-bottom: 5px;
+          padding: 5px 10px;
+          list-style: none;
+          background: #00B5AD;
+          color: #fff;
+          border-radius: 10px;
+          span{
+            &.remove-topic{
+              cursor: pointer;
+            }
+          }
+        }
+      }
+    }
     md-input-container{
       button{
         &.ui{
@@ -51,6 +92,27 @@
   .ui.card{
     .image{
       border-radius: 0px !important;
+      .upload-profile-photo-action{
+        cursor: pointer;
+        position: absolute;
+        bottom: 0px;
+        height: 38px;
+        background: rgba(0,0,0,0.5);
+        width: 100%;
+        padding: 10px;
+        font-family: 'Roboto', sans-serif;
+        font-weight: 400;
+        font-size: 14px;
+        color: #fff;
+        display: none;
+        -webkit-transition: left .25s ease-in-out;
+        transition: left .25s ease-in-out;
+      }
+      &:hover{
+        .upload-profile-photo-action{
+          display: block;
+        }
+      }
     }
   }
   .ui.vertical.steps{
