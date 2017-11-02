@@ -156,10 +156,11 @@ box-shadow: 0px 0px 64px 0px rgba(197,197,197,.5);
   width: 100%;
   height: 450px;
   background-position: center;
-  background-image: url('https://assets-0.housingcdn.com/website/images/home_page/homepage_new-43ae7ae2339ab31362e1e3d8749b5556.jpg');
+  background-image: url('https://cdn.verbling.com/888f63bdd405ee838c25f63de7169a159f5908c4/img/landing/feature-hero-01.jpg');
   background-size: cover;
   position: relative;
   background-attachment: scroll;
+  background-position-y: -315px;
 }
 .register-version.static-header::before {
   position: absolute;;
@@ -170,7 +171,9 @@ box-shadow: 0px 0px 64px 0px rgba(197,197,197,.5);
   left: 0;
   background-color: rgba(0,0,0,.2);
 }
-
+#hero{
+  z-index: 9;
+}
 #searchFormContainer{
   display: table;
   width: 100%;
@@ -214,4 +217,64 @@ box-shadow: 0px 0px 64px 0px rgba(197,197,197,.5);
   position: absolute;
   width: 100%;
   margin-top: -35px;
+}
+
+#featured-container{
+  padding-top: 100px;
+  z-index: 8;
+  .section-header h2{
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 40px;
+  }
+  .teacher-name{
+    margin-top: 15px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 20px;
+    display: block;
+  }
+  .button-container{
+    margin-top: 60px;
+    button{
+      width: 70%;
+    }
+  }
+  .slider-container{
+    .arrow{
+      position: absolute;
+      z-index: 9;
+      top: 0px;
+      top: 60%;
+      font-size: 5em;
+      i{
+        width: auto;
+      }
+    }
+    #next{
+      right: 0px;
+    }
+    #prev{
+      left: 5px;
+    }
+  }
+  .slider-item{
+    height: 350px;
+    img{
+      max-height: 350px;
+    }
+    .testimonial-content-container{
+      display: table;
+      height: 100%;
+    }
+    .testimonial-content{
+      display: table-cell;
+      vertical-align: middle;
+      font-size: 20px;
+      font-size: 2rem;
+      letter-spacing: .15px;
+      letter-spacing: .015rem;
+      line-height: 1.3em;
+    }
+  }
 }

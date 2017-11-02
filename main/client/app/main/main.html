@@ -1,56 +1,121 @@
 <navbar></navbar>
 
-<div style="height:2000px">
-  <div id="hero" class="static-header register-version">
-    <span class = "home-navbar-gradient"></span>
-    <div id="searchFormContainer">
-    	<div class="search-form-container">
-			<form action="/search" method="get" class="col-md-8 col-md-offset-2 ui action input search-form" ng-submit="processSearch($event)">
-			  <!-- <input type="text" name="topic" ng-model="search.topic" placeholder="Enter topic or subject...."> -->
-        <div class="search-text-input" ng-class="{'loading': specialization.loadingResults}">
-          <input type="text" ng-model="search.topic" placeholder="Enter topic or subject..." uib-typeahead="topic for topic in getTopicList($viewValue)" typeahead-loading="loading" typeahead-no-results="noResults">
-        </div>
-			  <select class="ui compact selection dropdown" name="level" ng-model="search.level">
-			    <option value="Basic" ng-selected="true">Class 6-8</option>
-			    <option value="Intermediate">Class 9-10</option>
-          <option value="Advanced">Class 11-12</option>
-			    <option value="Others">Non-Academic</option>
-			  </select>
-			  <div type="submit" class="ui green button" ng-click="processSearch($event)">
-			  	<i class="search icon"></i> Search
-			  </div>
-			</form>
-    	</div>
-    </div>
-    <div id="stepsContainer">
-	    <div class="col-md-8 col-md-offset-2">
-			<div class="ui three steps">
-        <div class="active step">
-          <i class="search icon"></i>
-          <div class="content">
-            <div class="title">Search</div>
-            <div class="description">Search for teachers with<br> subject or topics you need<br> help with.</div>
-          </div>
-        </div>
-
-        <div class="active step">
-          <i class="users icon"></i>
-          <div class="content">
-            <div class="title">Schedule</div>
-            <div class="description">Choose the best teachers <br>from the list of industy <br>experts and schedule a class.</div>
-          </div>
-        </div>
-
-        <div class="active step">
-          <i class="laptop icon"></i>
-          <div class="content">
-            <div class="title">Learn</div>
-            <div class="description">Learn from the expert over<br> video chat with the <br>comfort of home.</div>
-          </div>
-        </div>
-        
+<div>
+	<div id="hero" class="static-header register-version">
+		<span class = "home-navbar-gradient"></span>
+		<div id="searchFormContainer">
+			<div class="search-form-container">
+				<form action="/search" method="get" class="col-md-8 col-md-offset-2 ui action input search-form" ng-submit="processSearch($event)">
+					<!-- <input type="text" name="topic" ng-model="search.topic" placeholder="Enter topic or subject...."> -->
+					<div class="search-text-input" ng-class="{'loading': specialization.loadingResults}">
+						<input type="text" ng-model="search.topic" placeholder="Enter topic or subject..." uib-typeahead="topic for topic in getTopicList($viewValue)" typeahead-loading="loading" typeahead-no-results="noResults">
+					</div>
+					<select class="ui compact selection dropdown" name="level" ng-model="search.level">
+						<option value="Basic" ng-selected="true">Class 6-8</option>
+						<option value="Intermediate">Class 9-10</option>
+						<option value="Advanced">Class 11-12</option>
+						<option value="Others">Non-Academic</option>
+					</select>
+					<div type="submit" class="ui green button" ng-click="processSearch($event)">
+						<i class="search icon"></i> Search
+					</div>
+				</form>
 			</div>
-	    </div>
-    </div>
-  </div>
+		</div>
+		<div id="stepsContainer">
+			<div class="col-md-8 col-md-offset-2">
+				<div class="ui three steps">
+					<div class="active step">
+						<i class="search icon"></i>
+						<div class="content">
+							<div class="title">Search</div>
+							<div class="description">Search for teachers with<br> subject or topics you need<br> help with.</div>
+						</div>
+					</div>
+
+					<div class="active step">
+						<i class="users icon"></i>
+						<div class="content">
+							<div class="title">Schedule</div>
+							<div class="description">Choose the best teachers <br>from the list of industy <br>experts and schedule a class.</div>
+						</div>
+					</div>
+
+					<div class="active step">
+						<i class="laptop icon"></i>
+						<div class="content">
+							<div class="title">Learn</div>
+							<div class="description">Learn from the expert over<br> video chat with the <br>comfort of home.</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<section id="featured-container" class="section dark">
+		<div class="container">
+			<div class="section-header center visible">
+				<h2>Our Community of <span class="highlight">Experts</span></h2>
+			</div>
+			<div class="row">
+				<div class="col-md-3 col-sm-3 col-xs-12">
+					<img class="ui medium circular image" src="https://semantic-ui.com/images/wireframe/square-image.png">
+					<span class="teacher-name">
+						Name
+					</span>
+				</div>
+				<div class="col-md-3 col-sm-3 col-xs-12">
+					<img class="ui medium circular image" src="https://semantic-ui.com/images/wireframe/square-image.png">
+					<span class="teacher-name">
+						Name
+					</span>
+				</div>
+				<div class="col-md-3 col-sm-3 col-xs-12">
+					<img class="ui medium circular image" src="https://semantic-ui.com/images/wireframe/square-image.png">
+					<span class="teacher-name">
+						Name
+					</span>
+				</div>
+				<div class="col-md-3 col-sm-3 col-xs-12">
+					<img class="ui medium circular image" src="https://semantic-ui.com/images/wireframe/square-image.png">
+					<span class="teacher-name">
+						Name
+					</span>
+				</div>
+			</div>
+			<div class="row button-container">
+				<button class="ui big primary basic button">View All Experts</button>
+			</div>
+		</div>
+	</section>
+
+	<section id="featured-container" class="section">
+		<div class="container">
+			<div class="section-header center visible">
+				<h2>What Our Students Have to Say About <span class="highlight">Takhshila</span></h2>
+			</div>
+			<div class="row slider-container">
+				<div class="slider-item">
+					<div class="col-md-6 col-sm-6 col-xs-12">
+						<img class="ui large image" src="https://cdn.verbling.com/888f63bdd405ee838c25f63de7169a159f5908c4/img/landing/home-testimonial-02.jpg">
+					</div>
+					<div class="col-md-6 col-sm-6 col-xs-12 testimonial-content-container">
+						<div class="testimonial-content">
+							Over time I’ve hit walls with Duolingo; the app’s structured lessons offer a nice (and free) foundation, but conversations on Verbling provide more depth and help me prepare for the real world.
+						</div>
+					</div>
+				</div>
+				<a href="#" id="prev" class="arrow" ng-click="prev($event)">
+					<i class="angle left icon"></i>
+				</a>
+
+				<a href="#" id="next" class="arrow" ng-click="next($event)">
+					<i class="angle right icon"></i>
+				</a>
+			</div>
+		</div>
+	</section>
+
 </div>
