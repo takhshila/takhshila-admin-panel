@@ -14,9 +14,7 @@ module.exports = {
 
   // MongoDB connection options
   mongo: {
-    uri:    process.env.MONGOLAB_URI ||
-            process.env.MONGOHQ_URL ||
-            'mongodb://takhshila-staging:takhshilaStaging123@localhost/takhshila-staging'
+    uri:    'mongodb://takhshila-staging:takhshilaStaging123@localhost/takhshila-staging'
   },
 
   sslServer: true,
@@ -37,14 +35,6 @@ module.exports = {
     authkey: "181964ASuehXXhrB59fb3097",
     sender: "TKHSLA",
     route: 4
-  },
-  
-  bulkSMS: {
-    apiBase: "http://login.bulksmsgateway.in/sendmessage.php",
-    user: "pratikraj26",
-    password: "Jh@ri@123",
-    sender: "TKHSLA",
-    type: 3
   },
   
   seedDB: true

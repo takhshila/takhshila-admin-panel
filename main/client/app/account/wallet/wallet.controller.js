@@ -26,7 +26,6 @@ angular.module('takhshilaApp')
       }
 			$scope.page++;
 			$scope.transactionHistory = response.data;
-      console.log($scope.transactionHistory);
 		}, function(err){
 			console.log(err);
 		});

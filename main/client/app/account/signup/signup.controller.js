@@ -20,22 +20,6 @@ angular.module('takhshilaApp')
       referralID: null
     }
 
-    var fetchReferralDetails = function(referralID){
-      return $http.get('/api/v1/users/referral/' + referralID);
-    }
-
-    if(referralID){
-      fetchReferralDetails(referralID)
-      .then(function(response){
-        $scope.registerFormData.referralID = referralID;
-        $scope.giftFrom = response.data.name.firstName;
-      })
-      .catch(function(err){
-        console.log(err);
-        $scope.registerFormData.referralID = null;
-      })
-    }
-
     $scope.selectCountry = function(index){
       if($rootScope.countries[index] !== undefined){
         $scope.selectedCountry = $rootScope.countries[index];
@@ -86,7 +70,6 @@ angular.module('takhshilaApp')
               onRemoving: function (event, removePromise) {
                 removePromise
                 .then(function(){
-                  console.log('Modal Removed');
                   if($rootScope.loggedIn){
                     $state.go('profile');
                   }
@@ -116,6 +99,11 @@ angular.module('takhshilaApp')
     $rootScope.populateCountries()
     .then(function(){
       $scope.countries = $rootScope.countries;
-      $scope.selectedCountry = $scope.countries[0];
+      for(var i = 0; i < $scope.countries.length; i++){
+        if($scope.countries[i].code === 'IN'){
+          $scope.selectedCountry = $scope.countries[i];
+          break;
+        }
+      }
     });
   });

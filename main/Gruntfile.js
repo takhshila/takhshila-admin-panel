@@ -230,7 +230,7 @@ module.exports = function (grunt) {
     wiredep: {
       target: {
         src: '<%= yeoman.client %>/index.html',
-        ignorePath: '<%= yeoman.client %>/',
+        ignorePath: './<%= yeoman.client %>/',
         exclude: ['/json3/', '/es5-shim/']
       }
     },

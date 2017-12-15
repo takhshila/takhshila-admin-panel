@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('takhshilaApp')
-  .controller('ProfileCtrl', function ($rootScope, $scope, $timeout, $http, $mdDialog, Cropper, uiCalendarConfig, Upload, Auth, userFactory, videoFactory) {
+  .controller('ProfileCtrl', function ($rootScope, $scope, $timeout, $http, $mdDialog, $window, Cropper, uiCalendarConfig, Upload, Auth, userFactory, videoFactory) {
     $scope.isProfileLive = true;
     $scope.demoVideos = [];
     if(Cropper.currentFile === undefined){
@@ -15,6 +15,7 @@ angular.module('takhshilaApp')
       if($rootScope.currentUser.isTeacher){
         if(!(
           $rootScope.currentUser.availability
+          && $rootScope.extensionInstalled
           && $rootScope.currentUser.education.length > 0
           && $rootScope.currentUser.experience.length > 0
           && $rootScope.currentUser.specialization.length > 0
@@ -581,8 +582,17 @@ angular.module('takhshilaApp')
       $scope.getUserVideos();
     });
 
+    $window.addEventListener("message", function(msg){
+      if( !msg.data ) {
+        return;
+      } else if( msg.data === 'takhshila-addon-installed' ) {
+        $scope.extensionInstalled = true;
+      }
+    }, false);
+
     $rootScope.$watch('loggedIn', function(status){
       if(status === true){
+        $window.postMessage('takhshila-check-addon-installed', '*' );
         $rootScope.isLoading = false;
         $scope.getUserVideos();
         $scope.getReviews();

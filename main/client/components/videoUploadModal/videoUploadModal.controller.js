@@ -56,6 +56,7 @@ angular.module('takhshilaApp')
       }
       videoFactory.updateVideo($scope.videoData._id, videoData)
       .then(function(response){
+        $scope.closeDialog();
         $scope.updateVideoDataProgress = false;
         $rootScope.$broadcast('videoDataSaved', {});
       }, function(err){

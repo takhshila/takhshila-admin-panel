@@ -1,8 +1,6 @@
 var config = require('../config/environment');
 var querystring = require('querystring');
-var plivo = require('plivo');
 var request = require('request');
-var client = new plivo.Client('MAMWIXZGM4MJK3YJHHND', 'NDY2ZDExYmY0MGQ2ODEzY2E2NWU1M2M1NGE3ZDhi');
 
 exports.sendTextMessage = function(dialCode, phone, message) {
 	return new Promise(function(resolve, reject){

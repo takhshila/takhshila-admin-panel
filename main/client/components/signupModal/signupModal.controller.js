@@ -150,7 +150,12 @@ angular.module('takhshilaApp')
 	$rootScope.populateCountries()
 	.then(function(){
 		$scope.countries = $rootScope.countries;
-		$scope.selectedCountry = $scope.countries[0];
+		for(var i = 0; i < $scope.countries.length; i++){
+			if($scope.countries[i].code === 'IN'){
+				$scope.selectedCountry = $scope.countries[i];
+				break;
+			}
+		}
 	});
 
 });
