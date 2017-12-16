@@ -35,6 +35,19 @@ exports.userVideo = function(req, res) {
   });
 };
 
+// Get list of user videos
+exports.selfVideo = function(req, res) {
+  Video
+  .find({ 
+    userId: req.user._id
+  })
+  .populate('topics')
+  .exec(function (err, videos) {
+    if(err) { return handleError(res, err); }
+      return res.status(200).json(videos);
+  });
+};
+
 // Creates a new video in the DB.
 exports.create = function(req, res) {
   var currentTimestamp = new Date().getTime();

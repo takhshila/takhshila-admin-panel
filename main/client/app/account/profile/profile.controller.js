@@ -65,7 +65,7 @@ angular.module('takhshilaApp')
     }
 
     $scope.getUserVideos = function(){
-      videoFactory.getUserVideos($rootScope.currentUser._id)
+      videoFactory.getSelfVideos()
       .success(function(response){
         isProfileLive();
         $scope.demoVideos = response;

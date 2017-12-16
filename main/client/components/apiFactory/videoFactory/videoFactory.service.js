@@ -7,6 +7,9 @@ angular.module('takhshilaApp')
       getUserVideos: function( id ){
           return api.get(subUrl + 'user/', id);
       },
+      getSelfVideos: function( id ){
+          return api.getList(subUrl + 'self');
+      },
       updateVideo: function( id, data ){
           return api.putData(subUrl, id, data, {});
       },
