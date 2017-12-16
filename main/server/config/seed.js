@@ -10,10 +10,13 @@ var Countries = require('../api/countries/countries.model');
 var Language = require('../api/language/language.model');
 var School = require('../api/school/school.model');
 var Bank = require('../api/bank/bank.model');
+var User = require('../api/user/user.model');
 
 var countryList = require('./seedData/countries.json');
 var languageList = require('./seedData/languages.json');
 var schoolList = require('./seedData/universityDomain.json');
+
+var adminCountry = {};
 
 function capitalize(str) {
   	if(str){
@@ -38,9 +41,18 @@ Countries
 				dialCode: countryList[i].dial_code
 			}
 			Countries.create(countryData, function(err, addedCountry){
+				if(countryList[i].code.replace(/\s/g,'').toLowerCase() === 'in'){
+					adminCountry = addedCountry;
+				}
 				if(err) { console.log("Error is: ", err); }
 			})
 		}		
+	}else{
+		for(var i = 0; i < countriesFound.length; i++){
+			if(countriesFound[i].code.replace(/\s/g,'').toLowerCase() === 'in'){
+				adminCountry = countriesFound[i];
+			}
+		}
 	}
 });
 
@@ -77,5 +89,50 @@ School
 				if(err) { console.log("Error is: ", err); }
 			})
 		}	
+	}
+});
+
+User
+.find()
+.exec(function (err, userList) {
+	var adminExist = false;
+	for(var i = 0; i < userList.length; i++){
+		if(userList[i].role === 'admin'){
+			adminExist = true;
+			break;
+		}
+	}
+	if(adminExist){
+		console.log("Admin user exist.");
+	}else{
+		var adminData = {
+		    "password" : "Jh@ri@123",
+		    "slugName" : "welcome",
+		    "provider" : "local",
+		    "dialCode" : adminCountry.dialCode,
+		    "country" : adminCountry._id,
+		    "status" : "active",
+		    "role" : "admin",
+		    "profileSetup" : false,
+		    "isTeacher" : true,
+		    "isEmailVerified" : false,
+		    "isPhoneVerified" : true,
+		    "emailVerificationCode" : null,
+		    "phoneVerificationCode" : null,
+		    "phone" : "9599226023",
+		    "tempPhone" : null,
+		    "referredBy" : null,
+		    "name" : {
+		        "firstName" : "Takhshila",
+		        "lastName" : "Technologies"
+		    }
+		}
+		User.create(adminData, function(err, admin){
+			if(err){
+				console.log("Error creating admin >>>>>>>>>>>>>>>>>>>>>", err);
+			}else{
+				console.log("Admin created >>>>>>>>>>>>>>>>>>>>>", admin);
+			}
+		});
 	}
 });

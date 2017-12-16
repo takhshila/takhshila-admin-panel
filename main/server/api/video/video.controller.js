@@ -24,7 +24,10 @@ exports.show = function(req, res) {
 // Get list of user videos
 exports.userVideo = function(req, res) {
   Video
-  .find({ userId: req.params.id })
+  .find({ 
+    userId: req.params.id,
+    active: true
+  })
   .populate('topics')
   .exec(function (err, videos) {
     if(err) { return handleError(res, err); }
@@ -111,6 +114,60 @@ exports.update = function(req, res) {
     updated.save(function (err) {
       if (err) { return handleError(res, err); }
       return res.status(200).json(updated);
+    });
+  });
+};
+
+// Publish an existing video in the DB.
+exports.publish = function(req, res) {
+  Video.findById(req.params.id, function (err, video) {
+    if (err) { return handleError(res, err); }
+    if(!video) { return res.status(404).send('Not Found'); }
+    var videoData = {
+      status: 'published',
+      active: true
+    }
+    var updated = _.merge(video, videoData);
+    updated.save(function (err) {
+      if (err) { return handleError(res, err); }
+      var _notificationData = {
+        forUser: updated.userId,
+        fromUser: req.body.teacherID,
+        notificationType: 'videoPublished',
+        notificationStatus: 'unread',
+        notificationMessage: 'Your video ' + updated.title + ' has been successfully published.'
+      }
+      Notification.create(_notificationData, function(err){
+        console.log(err);
+        return res.status(200).json(updated);
+      });
+    });
+  });
+};
+
+// Unpublish an existing video in the DB.
+exports.unpublish = function(req, res) {
+  Video.findById(req.params.id, function (err, video) {
+    if (err) { return handleError(res, err); }
+    if(!video) { return res.status(404).send('Not Found'); }
+    var videoData = {
+      status: 'unpublished',
+      active: false
+    }
+    var updated = _.merge(video, videoData);
+    updated.save(function (err) {
+      if (err) { return handleError(res, err); }
+      var _notificationData = {
+        forUser: updated.userId,
+        fromUser: req.body.teacherID,
+        notificationType: 'videoPublished',
+        notificationStatus: 'unread',
+        notificationMessage: 'Your video ' + updated.title + ' was not published. Please try again with a different video.'
+      }
+      Notification.create(_notificationData, function(err){
+        console.log(err);
+        return res.status(200).json(updated);
+      });
     });
   });
 };

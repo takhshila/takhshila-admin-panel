@@ -40,7 +40,7 @@ function isAuthenticated() {
  */
 function hasRole(roleRequired) {
   if (!roleRequired) throw new Error('Required role needs to be set');
-
+  console.log("req.user.role >>>>>>>>>>>>>>>>> " + roleRequired);
   return compose()
     .use(isAuthenticated())
     .use(function meetsRequirements(req, res, next) {

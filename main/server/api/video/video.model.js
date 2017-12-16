@@ -12,6 +12,7 @@ var VideoSchema = new Schema({
   thumbnailURI: {type: String, default: null},
   topics: [{type: String, ref: 'Topic'}],
   userId: {type: String, required: true},
+  status: {type: String, required: true, default: 'pending'},
   active: {type: Boolean, default: false}
 });
 

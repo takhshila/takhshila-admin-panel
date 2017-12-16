@@ -9,6 +9,9 @@ var multipartyMiddleware = multiparty();
 
 var router = express.Router();
 
+router.post('/publish/:id', auth.hasRole('admin'), controller.publish);
+router.post('/unpublish/:id', auth.hasRole('admin'), controller.unpublish);
+
 router.get('/', controller.index);
 router.get('/single/:id', controller.show);
 router.get('/user/:id', controller.userVideo);
