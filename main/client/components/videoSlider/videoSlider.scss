@@ -19,10 +19,30 @@
     overflow: hidden;
     margin-left: 20px;
     margin-right: 20px;
-    padding-bottom: 2px;
+    padding-bottom: 20px;
     #video-slides-container{
       -webkit-transition: left .25s ease-in-out;
       transition: left .25s ease-in-out;
+      .video-data span{
+        position: absolute;
+        top: 35px;
+        transform: rotate(-45deg);
+        width: 100%;
+        text-align: center;
+        left: -65px;
+        color: white;
+        height: 22px;
+        font-weight: bold;
+        &.pending{
+          background: #d01919;
+        }
+        &.published{
+          background: #00918b;
+        }
+        &.unpublished{
+          background: #d01919;
+        }
+      }
       .video{
         .video-slider-overlay-container{
           position: absolute;
@@ -96,6 +116,7 @@
             width: 100%;
             height: 100%;
             background: transparent;
+            overflow: hidden;
             span{
               background-size: cover;
               background-position: center;

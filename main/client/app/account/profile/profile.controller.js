@@ -3,6 +3,7 @@
 angular.module('takhshilaApp')
   .controller('ProfileCtrl', function ($rootScope, $scope, $timeout, $http, $mdDialog, $window, Cropper, uiCalendarConfig, Upload, Auth, userFactory, videoFactory) {
     $scope.isProfileLive = true;
+    $scope.isAvailabilitySet = false;
     $scope.demoVideos = [];
     if(Cropper.currentFile === undefined){
       Cropper.currentFile = null;
@@ -13,17 +14,26 @@ angular.module('takhshilaApp')
 
     var isProfileLive = function(){
       if($rootScope.currentUser.isTeacher){
-        if(!(
-          $rootScope.currentUser.availability
-          && $rootScope.extensionInstalled
-          && $rootScope.currentUser.education.length > 0
-          && $rootScope.currentUser.experience.length > 0
-          && $rootScope.currentUser.specialization.length > 0
-          && $scope.demoVideos.length > 0
-          && $rootScope.currentUser.ratePerHour.value
-          && $rootScope.currentUser.basicInfo
-          )){
+        for(var day in $rootScope.currentUser.availability){
+          if($rootScope.currentUser.availability[day].length > 0){
+            $scope.isAvailabilitySet = true;
+            break;
+          }
+        }
+        
+        if(!$scope.isAvailabilitySet
+          || !$rootScope.extensionInstalled
+          || $rootScope.currentUser.education.length === 0
+          || $rootScope.currentUser.experience.length === 0
+          || $rootScope.currentUser.specialization.length === 0
+          || $scope.demoVideos.length === 0
+          || !$rootScope.currentUser.ratePerHour.value
+          || !$rootScope.currentUser.basicInfo
+          || !$rootScope.currentUser.basicInfo === ''
+        ){
           $scope.isProfileLive = false;
+        }else{
+          $scope.isProfileLive = true;
         }
       }
     }
@@ -67,8 +77,8 @@ angular.module('takhshilaApp')
     $scope.getUserVideos = function(){
       videoFactory.getSelfVideos()
       .success(function(response){
-        isProfileLive();
         $scope.demoVideos = response;
+        isProfileLive();
       })
       .error(function(err){
         console.log(err);
@@ -114,7 +124,6 @@ angular.module('takhshilaApp')
           }
         }
         checkConnectedTime();
-        console.log($scope.events);
         uiCalendarConfig.calendars["availabilityCalendar"].fullCalendar('rerenderEvents');
       })
       .error(function(err){
@@ -236,10 +245,11 @@ angular.module('takhshilaApp')
       .success(function(response){
         $scope.edit.availability.progress = false;
         $scope.cancelEditAvailability();
-        console.log(response);
+        isProfileLive();
       })
       .error(function(err){
         $scope.edit.availability.progress = false;
+        isProfileLive();
         console.log(err);
       });
     }
@@ -586,7 +596,8 @@ angular.module('takhshilaApp')
       if( !msg.data ) {
         return;
       } else if( msg.data === 'takhshila-addon-installed' ) {
-        $scope.extensionInstalled = true;
+        $rootScope.extensionInstalled = true;
+        isProfileLive();
       }
     }, false);
 

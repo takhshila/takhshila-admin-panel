@@ -42,10 +42,10 @@
                     </span>
                   </div>
                 </div>
-                <div class="ui right labeled input">
+<!--                 <div class="ui right labeled input">
                   <span>Display Amount:</span>
                   {{edit.ratePerHour.data.value}}
-                </div>
+                </div> -->
                 <div class="ui buttons">
                   <button class="ui primary button" ng-class = "{'loading': edit.ratePerHour.progress}" ng-disabled="edit.ratePerHour.progress" ng-click="saveRatePerHour()">Save</button>
                   <div class="or"></div>
@@ -66,7 +66,7 @@
           <star-rating ng-model="averageRating" readonly="true"></star-rating>
         </div>
       </div>
-      <div class="ui incomplete-task middle aligned divided list" ng-if = "currentUser.isTeacher && !currentUser.isProfileLive">
+      <div class="ui incomplete-task middle aligned divided list" ng-if = "currentUser.isTeacher && !isProfileLive">
             <div class="">
               <div class="ui attached message">
                 <div class="header">
@@ -98,7 +98,7 @@
                 <div class="ui button" ng-click="uploadVideo()">Add</div>
               </div>
             </div>
-            <div class="item" ng-if="!currentUser.availability">
+            <div class="item" ng-if="!isAvailabilitySet">
               <div class="content">
                 Add your availability.
               </div>
@@ -283,6 +283,7 @@
                 <i ng-show="!topic.progress" class="remove red icon"></i>
                 <i ng-show="topic.progress" class="ui mini active inline loader"></i>
               </a>
+              <div class="clear clearfix"></div>
             </li>
           </ul>
           <div class="no-data" ng-if="!currentUser.specialization.length && !edit.specialization.editing" ng-click="editSpecialization($event)">
