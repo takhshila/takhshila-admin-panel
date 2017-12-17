@@ -129,9 +129,9 @@ User
 		}
 		User.create(adminData, function(err, admin){
 			if(err){
-				console.log("Error creating admin >>>>>>>>>>>>>>>>>>>>>", err);
+				console.log("Error creating admin", err);
 			}else{
-				console.log("Admin created >>>>>>>>>>>>>>>>>>>>>", admin);
+				console.log("Admin created");
 			}
 		});
 	}

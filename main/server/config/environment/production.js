@@ -10,7 +10,7 @@ module.exports = {
 
   // Server port
   port:     process.env.PORT ||
-            8080,
+            8084,
 
   // MongoDB connection options
   mongo: {
