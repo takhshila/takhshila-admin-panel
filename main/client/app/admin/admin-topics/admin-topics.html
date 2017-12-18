@@ -2,6 +2,46 @@
 
 <div class="container" id="admin-topics">
 	<div class="row">
+		<div class="ui green segment add-topic-container">
+			<h4 class="header">Add New Topic</h4>
+			<div class="ui fitted divider"></div>
+			<div class="ui form">
+				<form class="addTopicForm" name = "addTopicForm" novalidate>
+					<div layout-gt-sm="row">
+						<md-input-container class="md-block" flex-gt-sm="80" flex-xs="100">
+							<label>Topic name</label>
+							<!-- <input name="topicName" ng-model="addTopicFormData.topicName" name="" required md-maxlength="30"> -->
+							<input
+								name = "topics"
+								type="text"
+								ng-change="clearField()"
+								ng-model="addTopicFormData.topicName"
+								uib-typeahead="topic.topicName for topic in searchTopics($index, $viewValue)"
+								typeahead-loading="loading"
+								typeahead-on-select="addFieldValue($item)"
+								typeahead-no-results="noResults"
+								md-maxlength="30"
+								name="topicName"
+								required
+							/>
+							<div ng-messages="addTopicFormData.topicName.$error" role="alert" multiple>
+								<div ng-message="required" class="my-message">Required.</div>
+								<div ng-message="md-maxlength" class="my-message">
+									Topic name is too long.
+								</div>
+							</div>
+						</md-input-container>
+
+						<div class="md-block" flex-gt-sm="20" flex-xs="100">
+							<button ng-init = "addingTopic = false" ng-click = "addTopic(addTopicForm)" ng-disabled="addingTopic" ng-class = "{'loading': addingTopic}" class="ui button primary" lx-ripple>Add</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<br>
+	<div class="row">
 		<div class="ui piled segment">
 	      <div class="row">
 	        <div class="ui attached message">

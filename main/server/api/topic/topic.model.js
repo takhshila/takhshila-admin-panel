@@ -14,7 +14,7 @@ var TopicSchema = new Schema({
 TopicSchema
   .pre('save', function(next) {
     // if (!this.isNew) return next();
-    this.topicName = capitalize(this.topicName);
+    this.topicName = capitalize(this.topicName.toLowerCase());
     return next();
   });
 

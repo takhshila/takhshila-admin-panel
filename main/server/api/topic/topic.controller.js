@@ -13,6 +13,9 @@ exports.index = function(req, res) {
   .limit(perPage)
   .skip(perPage * page)
   .populate('addedByID')
+  .sort({
+    addedOn: 'desc'
+  })
   .exec(function (err, topics) {
     if(err) { return handleError(res, err); }
       return res.status(200).json(topics);
@@ -42,29 +45,29 @@ exports.search = function(req, res) {
 // Creates a new topic in the DB.
 exports.create = function(req, res) {
   var userID = req.user._id;
-  var topicList = req.body;
-  var promises = topicList.map(function(topic, index){
-    return new Promise(function(resolve, reject){
-      Topic.findOne({
-        topicName: topic.topicName.toLowerCase(),
-        active: true
-      }, function(err, topic){
-        if(err){ reject(err); }
-        console.log(topic)
-        if(!topic){
-          topicList[index].addedByID = userID;
-          Topic.create(topicList[index], function(err, addedTopic){
-            if(err){ reject(err); }
-            resolve(addedTopic);
-          });
-        }else{
-          resolve(topic);
+  var topicName = req.body.topicName;
+  var addTopicPromise = new Promise(function(resolve, reject){
+    Topic.findOne({
+      topicName: capitalize(topicName.toLowerCase()),
+      active: true
+    }, function(err, topic){
+      if(err){ reject(err); }
+      if(!topic){
+        var newTopic = {
+          topicName: topicName,
+          addedByID: userID
         }
-      })
+        Topic.create(newTopic, function(err, addedTopic){
+          if(err){ reject(err); }
+          resolve(addedTopic);
+        });
+      }else{
+        resolve(topic);
+      }
     })
-  });
+  })
 
-  Promise.all(promises)
+  addTopicPromise
   .then(function(data){
     return res.status(201).json(data);
   })
@@ -101,4 +104,16 @@ exports.destroy = function(req, res) {
 
 function handleError(res, err) {
   return res.status(500).send(err);
+}
+
+function capitalize(str) {
+    if(str){
+    str = str.toLowerCase().split(' ');
+    for (var i = 0; i < str.length; i++) {
+      if(str[i] !== 'of'){
+        str[i] = str[i].charAt(0).toUpperCase() + str[i].slice(1); 
+      }
+    }
+    return str.join(' ');
+    }
 }

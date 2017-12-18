@@ -214,7 +214,7 @@
                   <label>Enter subject or topic you want to teach.</label>
                   <div class="search">
                     <div class="icon input topic" ng-class="{'loading': specialization.loadingResults}">
-                      <input type="text" ng-model="specialization.topicName" uib-typeahead="topic for topic in getLocation($index, $viewValue)" typeahead-loading="loading" typeahead-no-results="noResults">
+                      <input type="text" ng-model="specialization.topicName" uib-typeahead="topic for topic in getTopics($index, $viewValue)" typeahead-loading="loading" typeahead-no-results="noResults">
                       <i class="icon"></i>
                     </div>
                   </div>

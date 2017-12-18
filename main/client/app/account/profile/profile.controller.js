@@ -566,7 +566,7 @@ angular.module('takhshilaApp')
 
 
 
-    $scope.getLocation = function(index, searcTerm) {
+    $scope.getTopics = function(index, searcTerm) {
       $scope.edit.specialization.data[index].loadingResults = true;
       return $http.get('/api/v1/topics/search/'+searcTerm).then(function(response){
         $scope.edit.specialization.data[index].loadingResults = false;
