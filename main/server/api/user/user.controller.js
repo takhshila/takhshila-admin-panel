@@ -24,9 +24,19 @@ var validationError = function(res, err) {
  * restriction: 'admin'
  */
 exports.index = function(req, res) {
-  User.find({}, '-salt -hashedPassword', function (err, users) {
-    if(err) return res.status(500).send(err);
-    res.status(200).json(users);
+  var perPage = req.query.perPage || 10;
+  var page = req.query.page || 0;
+  User.find({
+    role: {$in: ['user', 'guest']}
+  }, '-salt -hashedPassword')
+  .limit(perPage)
+  .skip(perPage * page)
+  .sort({
+    joinedOn: 'desc'
+  })
+  .exec(function (err, users) {
+    if(err) { return handleError(res, err); }
+    return res.status(200).json(users);
   });
 };
 
@@ -646,7 +656,7 @@ exports.addSpecialization = function (req, res, next) {
       return new Promise(function(resolve, reject){
         if(!specialization.topic){
           Topic.findOne({
-            topicName: specialization.topicName.toLowerCase().trim()
+            topicName: capitalize(specialization.topicName.toLowerCase().trim())
           }, function(err, topic){
             if(err) { return reject(err); }
             if(topic && (topic.active === true || (topic.active === false && topic.addedByID.toString() === userId.toString()))){
@@ -974,4 +984,16 @@ exports.authCallback = function(req, res, next) {
 
 function handleError(res, err) {
   return res.status(500).send(err);
+}
+
+function capitalize(str) {
+    if(str){
+    str = str.toLowerCase().split(' ');
+    for (var i = 0; i < str.length; i++) {
+      if(str[i] !== 'of'){
+        str[i] = str[i].charAt(0).toUpperCase() + str[i].slice(1); 
+      }
+    }
+    return str.join(' ');
+    }
 }

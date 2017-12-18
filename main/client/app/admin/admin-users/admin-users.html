@@ -1,0 +1,67 @@
+<navbar></navbar>
+
+<div class="container" id="admin-users">
+	<div class="row">
+		<div class="ui piled segment">
+	      <div class="row">
+	        <div class="ui attached message">
+	          <div class="header">
+	          	<div class="row">
+		            <div class = "col-sm-4">Name</div>
+		            <div class = "col-sm-2">Joined On</div>
+		            <div class = "col-sm-1">Classes</div>
+		            <div class = "col-sm-2">Wallet Balance</div>
+		            <div class = "col-sm-3">Actions</div>
+	          	</div>
+	          </div>
+	        </div>
+	        <div class="ui segment user-list">
+	          	<div class="row user-item" ng-repeat="user in users">
+		            <div class = "col-sm-4">
+				    	<div class="user-details">
+					    	<div class="user-name">
+					    		<p>{{user.name.firstName}} {{user.name.lastName}}</p>
+					    	</div>
+				    	</div>
+		            </div>
+		            <div class = "col-sm-2">
+				    	<div class="user-type">
+				    		<p>{{user.joinedOn | amDateFormat:'MM-DD-YYYY HH:mm'}}</p>
+				    	</div>
+		            </div>
+		            <div class = "col-sm-1">
+				    	<div class="user-amount">
+				    		<p>{{user.userAmount}}</p>
+				    	</div>
+		            </div>
+		            <div class = "col-sm-2">
+				    	<div class="user-status">
+				    		<p>{{user.status | capitalize}}</p>
+				    	</div>
+		            </div>
+		            <div class = "col-sm-3">
+				    	<div class="user-actions">
+				    		<a href="#"><i class="write icon"></i></a>
+				    		<a href="#"><i class="trash icon"></i></a>
+				    		<a href="#"><i class="money icon"></i></a>
+				    	</div>
+		            </div>
+	          	</div>
+	          	<div class="row" ng-if="users.length == 0">
+	          		<div class="no-data">
+	          			No Users Found
+	          		</div>	          		
+	          	</div>
+
+	            <div class="action-container centered" ng-if="hasMoreData">
+	              <div class="ui buttons">
+	                <button ng-class = "{'loading': loading}" ng-disabled="loading" ng-click="loadTransactionHistory()" class = "ui button basic primary">Load More</button>
+	              </div>
+	            </div>
+	            
+	        </div>
+	      </div>
+		</div>
+	</div>
+	<br>
+</div>

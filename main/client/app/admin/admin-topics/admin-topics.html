@@ -1,0 +1,68 @@
+<navbar></navbar>
+
+<div class="container" id="admin-topics">
+	<div class="row">
+		<div class="ui piled segment">
+	      <div class="row">
+	        <div class="ui attached message">
+	          <div class="header">
+	          	<div class="row">
+		            <div class = "col-sm-3">Topic Name</div>
+		            <div class = "col-sm-2">Added On</div>
+		            <div class = "col-sm-2">Added By</div>
+		            <div class = "col-sm-2">Status</div>
+		            <div class = "col-sm-3">Actions</div>
+	          	</div>
+	          </div>
+	        </div>
+	        <div class="ui segment topic-list">
+	          	<div class="row topic-item" ng-repeat="topic in topics">
+		            <div class = "col-sm-3">
+				    	<div class="topic-details">
+					    	<div class="topic-name">
+					    		<p>{{topic.topicName}}</p>
+					    	</div>
+				    	</div>
+		            </div>
+		            <div class = "col-sm-2">
+				    	<div class="topic-type">
+				    		<p>{{topic.addedOn | amDateFormat:'DD-MM-YYYY'}}</p>
+				    	</div>
+		            </div>
+		            <div class = "col-sm-2">
+				    	<div class="topic-added-by">
+				    		<p>{{topic.addedByID.name.firstName}} {{topic.addedByID.name.lastName}}</p>
+				    	</div>
+		            </div>
+		            <div class = "col-sm-2">
+				    	<div class="topic-status">
+				    		<p ng-if="topic.active">Active</p>
+				    		<p ng-if="!topic.active">Inactive</p>
+				    	</div>
+		            </div>
+		            <div class = "col-sm-3">
+				    	<div class="topic-actions">
+				    		<a href="#"><i class="write icon"></i></a>
+				    		<a href="#"><i class="trash icon"></i></a>
+				    		<a href="#"><i class="money icon"></i></a>
+				    	</div>
+		            </div>
+	          	</div>
+	          	<div class="row" ng-if="topics.length == 0">
+	          		<div class="no-data">
+	          			No Topics Found
+	          		</div>	          		
+	          	</div>
+
+	            <div class="action-container centered" ng-if="hasMoreData">
+	              <div class="ui buttons">
+	                <button ng-class = "{'loading': loading}" ng-disabled="loading" ng-click="loadTransactionHistory()" class = "ui button basic primary">Load More</button>
+	              </div>
+	            </div>
+	            
+	        </div>
+	      </div>
+		</div>
+	</div>
+	<br>
+</div>

@@ -6,8 +6,13 @@ var User = require('../user/user.model');
 
 // Get list of topics
 exports.index = function(req, res) {
+  var perPage = req.query.perPage || 10;
+  var page = req.query.page || 0;
   Topic
-  .find({ active: true }, '-addedByID')
+  .find({})
+  .limit(perPage)
+  .skip(perPage * page)
+  .populate('addedByID')
   .exec(function (err, topics) {
     if(err) { return handleError(res, err); }
       return res.status(200).json(topics);
@@ -26,7 +31,7 @@ exports.show = function(req, res) {
 exports.search = function(req, res) {
   Topic.find({
     topicName: new RegExp(req.params.searchTerm, "i"),
-    // active: true
+    active: true
   }, function (err, topic) {
     if(err) { return handleError(res, err); }
     if(!topic) { return res.status(404).send('Not Found'); }
