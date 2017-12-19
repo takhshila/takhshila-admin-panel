@@ -82,9 +82,8 @@
 		            </div>
 		            <div class = "col-sm-3">
 				    	<div class="topic-actions">
-				    		<a href="#"><i class="write icon"></i></a>
-				    		<a href="#"><i class="trash icon"></i></a>
-				    		<a href="#"><i class="money icon"></i></a>
+				    		<button ng-init = "deletingTopic = false" ng-click = "deleteTopic(topic._id)" ng-disabled="deletingTopic" ng-class = "{'loading': deletingTopic}" class="ui button red" lx-ripple>Delete</button>
+				    		<button ng-if="!topic.active" ng-init = "publishingTopic = false" ng-click = "publishTopic(topic._id)" ng-disabled="publishingTopic" ng-class = "{'loading': publishingTopic}" class="ui button primary" lx-ripple>Publish</button>
 				    	</div>
 		            </div>
 	          	</div>

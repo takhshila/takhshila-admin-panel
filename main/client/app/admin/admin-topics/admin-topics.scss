@@ -6,4 +6,52 @@
 			margin: 15px;
 		}
 	}
+	.ui{
+		margin: 0px;
+		border-radius: 0px;
+		box-shadow: none;
+		border: 1px solid rgba(34, 36, 38, 0.15);
+		&.segment{
+			.topic-list{
+				p{
+					font-size: 14px;
+				}
+				.topic-item{
+					padding: 15px;
+					border-bottom: 1px solid rgba(34, 36, 38, 0.15);
+					&:last-child{
+						border: 0px;
+					}
+				}
+				.topic-details{
+					div{
+						display: block;
+						float: left;
+						&.topic-icon{
+							width: 15%;
+							i{
+								font-size: 45px;
+								color: #00B5AD;
+								line-height: 0.8;
+							}
+						}
+						&.topic-description{
+							width: 80%;
+						}
+					}
+				}
+			}
+			.action-container{
+				margin-top: 10px;
+				width: 100%;
+				text-align: center;
+				.ui{
+					&.buttons{
+						min-width: 200px;
+						border: 0px;
+					}
+				}
+			}
+		}
+	}
 }
