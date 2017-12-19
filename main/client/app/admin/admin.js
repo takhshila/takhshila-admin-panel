@@ -23,5 +23,12 @@ angular.module('takhshilaApp')
         controller: 'AdminTopicsCtrl',
         navStick: true,
         authenticate: true
+      })
+      .state('admin-videos', {
+        url: '/admin/videos',
+        templateUrl: 'app/admin/admin-videos/admin-videos.html',
+        controller: 'AdminVideosCtrl',
+        navStick: true,
+        authenticate: true
       });
   });

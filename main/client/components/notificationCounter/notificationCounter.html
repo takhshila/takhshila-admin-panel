@@ -11,6 +11,30 @@
 				<div class="image" style="background-image: url('{{notification.fromUser.profilePhoto.dataURI}}');">
 				</div>
 			</div>
+			<div class="notification-content-container" ng-if="notification.notificationType === 'videoPublished'">
+				<div class="notification-title">
+					<span>
+						<strong>Video Published</strong>
+					</span>
+				</div>
+				<div class="notification-content">
+					<span>
+						{{notification.notificationMessage}} on {{notification.createdOn | amDateFormat:'dddd, MMMM Do \'YY'}}
+					</span>
+				</div>
+			</div>
+			<div class="notification-content-container" ng-if="notification.notificationType === 'videounPublished'">
+				<div class="notification-title">
+					<span>
+						<strong>Video Not Published</strong>
+					</span>
+				</div>
+				<div class="notification-content">
+					<span>
+						{{notification.notificationMessage}}
+					</span>
+				</div>
+			</div>
 			<div class="notification-content-container" ng-if="notification.notificationType === 'requestConfirmed'">
 				<div class="notification-title">
 					<span>

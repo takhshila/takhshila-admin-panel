@@ -1,0 +1,71 @@
+<navbar></navbar>
+
+<div class="container" id="admin-videos">
+	<div class="row">
+		<div class="ui piled segment">
+	      <div class="row">
+	        <div class="ui attached message">
+	          <div class="header">
+	          	<div class="row">
+		            <div class = "col-sm-3">Video</div>
+		            <div class = "col-sm-2">Title</div>
+		            <div class = "col-sm-2">Added By</div>
+		            <div class = "col-sm-2">Status</div>
+		            <div class = "col-sm-3">Actions</div>
+	          	</div>
+	          </div>
+	        </div>
+	        <div class="ui segment video-list">
+	          	<div class="row video-item" ng-repeat="video in videos">
+		            <div class = "col-sm-3">
+				    	<div class="video-details">
+					    	<div class="video-name">
+					    		<div class="video-image" ng-click="showVideoModal(video._id)">
+					    			<span style="background-image: url('thumbnails/{{video.thumbnailFile}}');">
+					    		</div>
+					    	</div>
+				    	</div>
+		            </div>
+		            <div class = "col-sm-2">
+				    	<div class="video-type">
+				    		<!-- <p>{{video.addedOn | amDateFormat:'DD-MM-YYYY'}}</p> -->
+				    		<p>{{video.title}}</p>
+				    	</div>
+		            </div>
+		            <div class = "col-sm-2">
+				    	<div class="video-added-by">
+				    		<p>{{video.userId.name.firstName}} {{video.userId.name.lastName}}</p>
+				    	</div>
+		            </div>
+		            <div class = "col-sm-2">
+				    	<div class="video-status">
+				    		<p ng-if="video.active">Active</p>
+				    		<p ng-if="!video.active">Inactive</p>
+				    	</div>
+		            </div>
+		            <div class = "col-sm-3">
+				    	<div class="video-actions">
+				    		<button ng-init = "deletingVideo = false" ng-click = "deleteVideo(video._id)" ng-disabled="deletingVideo" ng-class = "{'loading': deletingVideo}" class="ui button red" lx-ripple>Delete</button>
+				    		<button ng-if="!video.active" ng-init = "publishingVideo = false" ng-click = "publishVideo(video._id)" ng-disabled="publishingVideo" ng-class = "{'loading': publishingVideo}" class="ui button primary" lx-ripple>Publish</button>
+				    		<button ng-if="video.active" ng-init = "unpublishingVideo = false" ng-click = "unpublishVideo(video._id)" ng-disabled="unpublishingVideo" ng-class = "{'loading': unpublishingVideo}" class="ui button brown" lx-ripple>Unpublish</button>
+				    	</div>
+		            </div>
+	          	</div>
+	          	<div class="row" ng-if="videos.length == 0">
+	          		<div class="no-data">
+	          			No Videos Found
+	          		</div>	          		
+	          	</div>
+
+	            <div class="action-container centered" ng-if="hasMoreData">
+	              <div class="ui buttons">
+	                <button ng-class = "{'loading': loading}" ng-disabled="loading" ng-click="loadTransactionHistory()" class = "ui button basic primary">Load More</button>
+	              </div>
+	            </div>
+	            
+	        </div>
+	      </div>
+		</div>
+	</div>
+	<br>
+</div>

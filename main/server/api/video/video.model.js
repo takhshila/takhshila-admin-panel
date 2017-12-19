@@ -11,9 +11,10 @@ var VideoSchema = new Schema({
   thumbnailFile: {type: String, required: true},
   thumbnailURI: {type: String, default: null},
   topics: [{type: String, ref: 'Topic'}],
-  userId: {type: String, required: true},
+  userId: {type: String, ref: 'User', required: true},
   status: {type: String, required: true, default: 'pending'},
-  active: {type: Boolean, default: false}
+  active: {type: Boolean, default: false},
+  uploadedOn: {type: Date, default: Date.now}
 });
 
 module.exports = mongoose.model('Video', VideoSchema);

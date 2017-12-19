@@ -4,10 +4,25 @@ var _ = require('lodash');
 var mv = require('mv');
 var ffmpeg = require('fluent-ffmpeg');
 var Video = require('./video.model');
+var Notification = require('../notification/notification.model');
 
 // Get list of videos
 exports.index = function(req, res) {
-  Video.find(function (err, videos) {
+  var perPage = req.query.perPage || 10;
+  var page = req.query.page || 0;
+  var filterObj = {};
+  if(req.params.status){
+    filterObj.status = req.params.status
+  }
+  Video
+  .find(filterObj)
+  .limit(perPage)
+  .skip(perPage * page)
+  .populate('userId')
+  .sort({
+    uploadedOn: 'desc'
+  })
+  .exec(function (err, videos) {
     if(err) { return handleError(res, err); }
     return res.status(200).json(videos);
   });
@@ -148,7 +163,7 @@ exports.publish = function(req, res) {
         fromUser: req.body.teacherID,
         notificationType: 'videoPublished',
         notificationStatus: 'unread',
-        notificationMessage: 'Your video ' + updated.title + ' has been successfully published.'
+        notificationMessage: 'Your video ' + updated.title + ' has been successfully published'
       }
       Notification.create(_notificationData, function(err){
         console.log(err);
@@ -173,7 +188,7 @@ exports.unpublish = function(req, res) {
       var _notificationData = {
         forUser: updated.userId,
         fromUser: req.body.teacherID,
-        notificationType: 'videoPublished',
+        notificationType: 'videounPublished',
         notificationStatus: 'unread',
         notificationMessage: 'Your video ' + updated.title + ' was not published. Please try again with a different video.'
       }
@@ -192,6 +207,18 @@ exports.destroy = function(req, res) {
     if(err) { return handleError(res, err); }
     if(!video) { return res.status(404).send('Not Found'); }
     if(video.userId.toString() !== userId.toString()){ return res.status(403).send('You are not authorized to delete this video'); }
+    video.remove(function(err) {
+      if(err) { return handleError(res, err); }
+      return res.status(204).send('No Content');
+    });
+  });
+};
+
+// Deletes a video from the DB.
+exports.delete = function(req, res) {
+  Video.findById(req.params.id, function (err, video) {
+    if(err) { return handleError(res, err); }
+    if(!video) { return res.status(404).send('Not Found'); }
     video.remove(function(err) {
       if(err) { return handleError(res, err); }
       return res.status(204).send('No Content');

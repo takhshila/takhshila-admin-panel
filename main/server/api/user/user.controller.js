@@ -269,6 +269,14 @@ exports.show = function (req, res, next) {
   .exec( function (err, user) {
     if (err) return next(err);
     if (!user) return res.status(401).send('Unauthorized');
+    var specializationData = [];
+    for(var i = 0; i < user.specialization.length; i++){
+      if(user.specialization[i].topic !== null){
+        specializationData.push(user.specialization[i]);
+      }
+    }
+    user.specialization = specializationData;
+
     if(user.isTeacher){
       res.json(user.teacherProfile);
     }else {
@@ -637,6 +645,13 @@ exports.me = function(req, res, next) {
   .exec(function(err, user) { // don't ever give out the password or salt
     if (err) return next(err);
     if (!user) return res.status(401).send('Unauthorized');
+    var specializationData = [];
+    for(var i = 0; i < user.specialization.length; i++){
+      if(user.specialization[i].topic !== null){
+        specializationData.push(user.specialization[i]);
+      }
+    }
+    user.specialization = specializationData;
     res.json(user);
   });
 };

@@ -9,8 +9,9 @@ var multipartyMiddleware = multiparty();
 
 var router = express.Router();
 
-router.post('/publish/:id', auth.hasRole('admin'), controller.publish);
-router.post('/unpublish/:id', auth.hasRole('admin'), controller.unpublish);
+router.delete('/delete/:id', auth.hasRole('admin'), controller.delete);
+router.put('/publish/:id', auth.hasRole('admin'), controller.publish);
+router.put('/unpublish/:id', auth.hasRole('admin'), controller.unpublish);
 router.get('/', auth.hasRole('admin'), controller.index);
 
 router.get('/single/:id', controller.show);
