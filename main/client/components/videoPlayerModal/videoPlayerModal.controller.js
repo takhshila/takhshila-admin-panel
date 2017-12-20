@@ -1,9 +1,8 @@
 'use strict';
 
 angular.module('takhshilaApp')
-  .controller('VideoPlayerModalCtrl', function ($scope, $mdDialog, $sce, index, videos) {
-  	console.log(index)
-  	console.log(videos)
+  .controller('VideoPlayerModalCtrl', function ($scope, $state, $mdDialog, $sce, index, videos) {
+  	$scope.video = videos[index];
 	$scope.config = {
 		autoPlay: true,
 		autoHide: false,
@@ -37,5 +36,10 @@ angular.module('takhshilaApp')
 
 	$scope.closeDialog = function() {
 		$mdDialog.hide();
+	};
+
+	$scope.gotoUser = function(userId) {
+		$mdDialog.hide();
+		$state.go('user', {ID: userId});
 	};
   });

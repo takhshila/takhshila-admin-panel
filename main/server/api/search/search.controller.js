@@ -149,7 +149,10 @@ function handleError(res, err) {
 function getUserVideos(userId) {
   return new Promise(function(resolve, reject){
     Video
-    .find({ userId: userId })
+    .find({ 
+      userId: userId,
+      active: true
+    })
     .exec(function (err, videos) {
       if(err) { reject("No Videos Found"); }
       resolve(videos);

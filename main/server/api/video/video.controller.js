@@ -43,7 +43,7 @@ exports.userVideo = function(req, res) {
     userId: req.params.id,
     active: true
   })
-  .populate('topics')
+  .populate('topics userId')
   .exec(function (err, videos) {
     if(err) { return handleError(res, err); }
       return res.status(200).json(videos);
@@ -56,7 +56,7 @@ exports.selfVideo = function(req, res) {
   .find({ 
     userId: req.user._id
   })
-  .populate('topics')
+  .populate('topics userId')
   .exec(function (err, videos) {
     if(err) { return handleError(res, err); }
       return res.status(200).json(videos);

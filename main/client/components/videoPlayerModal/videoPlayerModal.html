@@ -25,6 +25,25 @@
 		<vg-overlay-play></vg-overlay-play>
 		<vg-poster vg-url='controller.config.plugins.poster'></vg-poster>
 	</videogular>
+	<div class="video-details-container">
+		<div class="details-header">
+			<div class="user-image">
+				<img ng-src="{{video.userId.profilePhoto.dataURI}}" >
+			</div>
+			<div class="user-details">
+				<span class="name">
+					{{video.userId.name.firstName}} {{video.userId.name.lastName}}
+				</span>
+				<span class="upload-date">
+					<strong>Uploaded on: </strong>{{video.uploadedOn | amDateFormat:'MM-DD-YYYY HH:mm'}}
+				</span>
+			</div>
+			<div class="clear"></div>
+		</div>
+		<div class="action-container">
+			<button ng-click="gotoUser(video.userId._id)" class = "ui button primary">Book Class Now</button>
+		</div>
+	</div>
   </div>
   <div class = "modal-footer">
 
