@@ -5,6 +5,7 @@ angular.module('takhshilaApp')
     $scope.percentCompleted = 0;
     $scope.showProgress = false;
     $scope.videoUploaded = false;
+    $scope.videoProcessing = false;
     $scope.videoThumbnail = null;
     $scope.updateVideoFormData = {
       title: "Untitled",
@@ -80,6 +81,9 @@ angular.module('takhshilaApp')
         console.log("Error: ",err);
       }, function(progress){
         $scope.percentCompleted = parseInt(progress.loaded / progress.total * 100);
+        if($scope.percentCompleted === 100){
+          $scope.videoProcessing = true;
+        }
         console.log("Completed: " + $scope.percentCompleted);
       });
     }else{

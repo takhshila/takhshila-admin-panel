@@ -9,7 +9,8 @@
       <div ng-if="showProgress" class="col-md-12 col-sm-12">
           <div class="ui indicating active progress" data-percent="{{percentCompleted}}">
             <div class="bar" style="transition-duration: 300ms; width: {{percentCompleted}}%;"></div>
-            <div ng-if="!videoUploaded" class="label">Uploading {{percentCompleted}}%</div>
+            <div ng-if="!videoUploaded && !videoProcessing" class="label">Uploading {{percentCompleted}}%</div>
+            <div ng-if="!videoUploaded && videoProcessing" class="label">Processing</div>
             <div ng-if="videoUploaded" class="label">Uploaded</div>
           </div>
       </div>
