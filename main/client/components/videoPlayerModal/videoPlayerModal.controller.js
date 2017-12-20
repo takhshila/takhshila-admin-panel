@@ -2,6 +2,7 @@
 
 angular.module('takhshilaApp')
   .controller('VideoPlayerModalCtrl', function ($scope, $state, $mdDialog, $sce, index, videos) {
+  	$scope.showBookClassOption = false;
   	$scope.video = videos[index];
 	$scope.config = {
 		autoPlay: true,
@@ -23,7 +24,11 @@ angular.module('takhshilaApp')
 	$scope.config.sources.push({
 		src: $sce.trustAsResourceUrl('videos/' + videos[index].videoFile),
 		type: "video/mp4"
-	})
+	});
+
+	if(!$state.is('profile')){
+		$scope.showBookClassOption = true;
+	}
 
 	$scope.onPlayerReady = function(API) {
 		$scope.API = API;
