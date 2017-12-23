@@ -30,5 +30,12 @@ angular.module('takhshilaApp')
         controller: 'AdminVideosCtrl',
         navStick: true,
         authenticate: true
+      })
+      .state('admin-payments', {
+        url: '/admin/payments',
+        templateUrl: 'app/admin/admin-payments/admin-payments.html',
+        controller: 'AdminPaymentsCtrl',
+        navStick: true,
+        authenticate: true
       });
   });

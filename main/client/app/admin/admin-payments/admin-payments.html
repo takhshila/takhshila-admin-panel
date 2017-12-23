@@ -1,0 +1,76 @@
+<navbar></navbar>
+
+<div class="container" id="admin-payments">
+	<div class="row">
+		<div class="ui piled segment">
+	      <div class="row">
+	        <div class="ui attached message">
+	          <div class="header">
+	          	<div class="row">
+		            <div class = "col-sm-3">User</div>
+		            <div class = "col-sm-2">Promo Balance</div>
+		            <div class = "col-sm-2">Withdraw/Non Withdraw</div>
+		            <div class = "col-sm-2">Total</div>
+		            <div class = "col-sm-3">Actions</div>
+	          	</div>
+	          </div>
+	        </div>
+	        <div class="ui segment payment-list">
+	        	<p class="ui basic label red" ng-if="errorMessage">
+	        		{{errorMessage}}
+	        	</p>
+	          	<div class="row payment-item" ng-repeat="payment in payments">
+		            <div class = "col-sm-3">
+				    	<div class="payment-details" ui-sref="user({ID:payment.userID._id})">
+				    		<div class="payment-image">
+				    			<span style="background-image: url('{{payment.userID.profilePhoto.dataURI}}');">
+				    		</div>
+					    	<div class="user-name">
+					    		{{payment.userID.name.firstName}}&nbsp;&nbsp;{{payment.userID.name.lastName}}
+					    	</div>
+					    	<div class="user-type">
+					    		<p ng-if="payment.userID.isTeacher">(Teacher)</p>
+					    		<p ng-if="!payment.userID.isTeacher">(Student)</p>
+					    	</div>
+				    	</div>
+		            </div>
+		            <div class = "col-sm-2">
+				    	<div class="payment-details">
+				    		<p>{{payment.promoBalance}}</p>
+				    	</div>
+		            </div>
+		            <div class = "col-sm-2">
+				    	<div class="payment-details">
+				    		<p>{{payment.withdrawBalance}} / {{payment.nonWithdrawBalance}}</p>
+				    	</div>
+		            </div>
+		            <div class = "col-sm-2">
+				    	<div class="payment-details">
+				    		<p>{{payment.totalBalance}}</p>
+				    	</div>
+		            </div>
+		            <div class = "col-sm-3">
+				    	<div class="payment-actions">
+				    		<button ng-if="!payment.withdrawlRefrence" ng-init = "initiatingWithdraw[payment.userID._id] = false" ng-click = "initiateWithdraw(payment.userID._id)" ng-disabled="initiatingWithdraw[payment.userID._id]" ng-class = "{'loading': initiatingWithdraw[payment.userID._id]}" class="ui button primary" lx-ripple>Initiate Payment</button>
+				    		<button ng-if="payment.withdrawlRefrence" ng-init = "updatingWithdraw[payment.userID._id] = false" ng-click = "updateWithdraw(payment.userID._id)" ng-disabled="updatingWithdraw[payment.userID._id]" ng-class = "{'loading': updatingWithdraw[payment.userID._id]}" class="ui button brown" lx-ripple>Complete Payment</button>
+				    	</div>
+		            </div>
+	          	</div>
+	          	<div class="row" ng-if="payments.length == 0">
+	          		<div class="no-data">
+	          			No Wallets Found
+	          		</div>	          		
+	          	</div>
+
+	            <div class="action-container centered" ng-if="hasMoreData">
+	              <div class="ui buttons">
+	                <button ng-class = "{'loading': loading}" ng-disabled="loading" ng-click="loadTransactionHistory()" class = "ui button basic primary">Load More</button>
+	              </div>
+	            </div>
+	            
+	        </div>
+	      </div>
+		</div>
+	</div>
+	<br>
+</div>

@@ -273,15 +273,15 @@ exports.updatePayment = function(req, res) {
       if(classData){
         bookClass(classData, transactionData.txnid)
         .then(function(response){
-        	delete tempClassData[transactionData.txnid];
-        	resolve(response);
+          delete tempClassData[transactionData.txnid];
+          resolve(response);
         })
         .catch(function(err){
-        	delete tempClassData[transactionData.txnid];
-         	reject();
+          delete tempClassData[transactionData.txnid];
+          reject();
         });
       }else{
-      	reject();
+        reject();
       }
     })
     .catch(function(err){
@@ -294,6 +294,50 @@ exports.updatePayment = function(req, res) {
   })
   .catch(function(err){
     return res.redirect('/class/failure/' + transactionData.txnid);
+  });
+};
+
+// Initiate withdrawal transaction in the DB.
+exports.initiateWithdraw = function(req, res) {
+  var userID = req.params.id;
+  var updateWithdrawPromise = new Promise(function(resolve, reject){
+    Wallet.findOne({
+      userID: userID
+    }, function(err, walletData){
+      if(err){ reject({status: 403, data: err}); }
+      var withdrawBalance = walletData.withdrawBalance;
+      if(withdrawBalance >  0){
+        var transactionData = {
+          userID: userID,
+          transactionType: 'Debit',
+          transactionIdentifier: 'walletCashDeducted',
+          transactionDescription: 'Wallet cash deducted for auto withdraw.',
+          transactionAmount: withdrawBalance,
+          status: 'pending'
+        };
+        Transaction.create(transactionData, function(err, transaction){
+          if(err){ reject({status: 403, data: err}); }
+          walletData.nonWithdrawBalance = walletData.nonWithdrawBalance + withdrawBalance;
+          walletData.withdrawBalance = walletData.withdrawBalance - withdrawBalance;
+          walletData.totalBalance = walletData.totalBalance - withdrawBalance;
+          walletData.withdrawlRefrence = transaction._id;
+          walletData.save(function(err){
+            if(err){ reject({status: 403, data: err}); }
+            resolve(transaction);
+          });
+        });
+      }else{
+        reject({status: 403, data: 'Insufficient wallet balance to be withdrawn'});
+      }
+    });
+  });
+
+  updateWithdrawPromise
+  .then(function(data){
+    return res.status(201).json(data);
+  })
+  .catch(function(err){
+    return res.status(err.status).send(err.data);
   });
 };
 

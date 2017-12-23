@@ -7,43 +7,49 @@
 	        <div class="ui attached message">
 	          <div class="header">
 	          	<div class="row">
-		            <div class = "col-sm-4">Name</div>
-		            <div class = "col-sm-2">Joined On</div>
-		            <div class = "col-sm-1">Classes</div>
-		            <div class = "col-sm-2">Wallet Balance</div>
+		            <div class = "col-sm-3">User</div>
+		            <div class = "col-sm-2">User Type</div>
+		            <div class = "col-sm-2">Jined On</div>
+		            <div class = "col-sm-2">Status</div>
 		            <div class = "col-sm-3">Actions</div>
 	          	</div>
 	          </div>
 	        </div>
 	        <div class="ui segment user-list">
 	          	<div class="row user-item" ng-repeat="user in users">
-		            <div class = "col-sm-4">
-				    	<div class="user-details">
+		            <div class = "col-sm-3">
+				    	<div class="user-details" ui-sref="user({ID:user._id})">
+				    		<div class="user-image" ng-click="showUserModal(user._id)">
+				    			<span style="background-image: url('{{user.profilePhoto.dataURI}}');">
+				    		</div>
 					    	<div class="user-name">
-					    		<p>{{user.name.firstName}} {{user.name.lastName}}</p>
+					    		{{user.name.firstName}}&nbsp;&nbsp;{{user.name.lastName}}
 					    	</div>
 				    	</div>
 		            </div>
 		            <div class = "col-sm-2">
-				    	<div class="user-type">
-				    		<p>{{user.joinedOn | amDateFormat:'MM-DD-YYYY HH:mm'}}</p>
-				    	</div>
-		            </div>
-		            <div class = "col-sm-1">
-				    	<div class="user-amount">
-				    		<p>{{user.userAmount}}</p>
+				    	<div class="user-details">
+				    		<!-- <p>{{user.addedOn | amDateFormat:'DD-MM-YYYY'}}</p> -->
+				    		<p ng-if="user.isTeacher">Teacher</p>
+				    		<p ng-if="!user.isTeacher">Student</p>
 				    	</div>
 		            </div>
 		            <div class = "col-sm-2">
-				    	<div class="user-status">
-				    		<p>{{user.status | capitalize}}</p>
+				    	<div class="user-details">
+				    		<p>{{user.joinedOn | amDateFormat:'DD-MM-YYYY'}}</p>
+				    	</div>
+		            </div>
+		            <div class = "col-sm-2">
+				    	<div class="user-details">
+				    		<p ng-if="user.status==='active'">Active</p>
+				    		<p ng-if="user.status!=='active'">Inactive</p>
 				    	</div>
 		            </div>
 		            <div class = "col-sm-3">
 				    	<div class="user-actions">
-				    		<a href="#"><i class="write icon"></i></a>
-				    		<a href="#"><i class="trash icon"></i></a>
-				    		<a href="#"><i class="money icon"></i></a>
+				    		<button ng-init = "deletingUser = false" ng-click = "deleteUser(user._id)" ng-disabled="deletingUser" ng-class = "{'loading': deletingUser}" class="ui button red" lx-ripple>Delete</button>
+				    		<button ng-if="!user.active" ng-init = "publishingUser = false" ng-click = "publishUser(user._id)" ng-disabled="publishingUser" ng-class = "{'loading': publishingUser}" class="ui button primary" lx-ripple>Publish</button>
+				    		<button ng-if="user.active" ng-init = "unpublishingUser = false" ng-click = "unpublishUser(user._id)" ng-disabled="unpublishingUser" ng-class = "{'loading': unpublishingUser}" class="ui button brown" lx-ripple>Unpublish</button>
 				    	</div>
 		            </div>
 	          	</div>

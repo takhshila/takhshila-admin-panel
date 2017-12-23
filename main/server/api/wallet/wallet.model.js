@@ -9,6 +9,7 @@ var WalletSchema = new Schema({
   withdrawBalance: {type: Number, required: true, default: 0.00},
   nonWithdrawBalance: {type: Number, required: true, default: 0.00},
   totalBalance: {type: Number, required: true, default: 0.00},
+  withdrawlRefrence: {type: String, ref: 'Transaction', default: null},
   active: Boolean
 });
 

@@ -9,11 +9,11 @@ angular.module('takhshilaApp')
   	var dataPerPage = 20;
   	
   	$scope.getUsers = function(){
-		$http.get('/api/v1/users/?page=' + currentPage + '&perPage=' + dataPerPage)
-		.then(function(response){
-			$rootScope.isLoading = false;
-			$scope.users = response.data;
-		});
+  		$http.get('/api/v1/users/?page=' + currentPage + '&perPage=' + dataPerPage)
+  		.then(function(response){
+  			$rootScope.isLoading = false;
+  			$scope.users = response.data;
+  		});
   	}
 
     $rootScope.$watch('loggedIn', function(status){

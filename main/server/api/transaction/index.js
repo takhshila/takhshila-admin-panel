@@ -11,7 +11,8 @@ router.get('/', auth.isAuthenticated(), controller.index);
 router.get('/single/:id', auth.isAuthenticated(), controller.getTransactionData);
 router.post('/payment/initiate', auth.isAuthenticated(), controller.initiatePayment);
 router.post('/payment/update', controller.updatePayment);
-// router.post('/', controller.create);
+
+router.post('/withdraw/initiate/:id', auth.hasRole('admin'), controller.initiateWithdraw);
 // router.put('/:id', controller.update);
 // router.patch('/:id', controller.update);
 // router.delete('/:id', controller.destroy);

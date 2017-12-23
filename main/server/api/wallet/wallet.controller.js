@@ -5,9 +5,26 @@ var Wallet = require('./wallet.model');
 
 // Get list of wallets
 exports.index = function(req, res) {
-  Wallet.find(function (err, wallets) {
+  var perPage = req.query.perPage || 10;
+  var page = req.query.page || 0;
+
+  Wallet
+  .find()
+  .populate('userID withdrawlRefrence')
+  .limit(perPage)
+  .skip(perPage * page)
+  .sort({
+    totalBalance: 'desc'
+  })
+  .exec(function (err, wallets) {
     if(err) { return handleError(res, err); }
-    return res.status(200).json(wallets);
+    var walletList = [];
+    for(var i = 0; i < wallets.length; i++){
+      if(wallets[i].userID !== null){
+        walletList.push(wallets[i]);
+      }
+    }
+    return res.status(200).json(walletList);
   });
 };
 

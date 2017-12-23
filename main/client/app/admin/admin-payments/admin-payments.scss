@@ -1,4 +1,4 @@
-#admin-users{
+#admin-payments{
 	.addVideoForm{
 		button{
 			border-radius: 0px;
@@ -12,18 +12,18 @@
 		box-shadow: none;
 		border: 1px solid rgba(34, 36, 38, 0.15);
 		&.segment{
-			.user-list{
+			.payment-list{
 				p{
 					font-size: 14px;
 				}
-				.user-item{
+				.payment-item{
 					padding: 15px;
 					border-bottom: 1px solid rgba(34, 36, 38, 0.15);
 					&:last-child{
 						border: 0px;
 					}
 				}
-				.user-image{
+				.payment-image{
 					width: 80px;
 					height: 60px;
 					cursor: pointer;
@@ -35,12 +35,15 @@
 						display: block;
 					}
 				}
-				.user-details{
+				.payment-details{
+					.user-name{
+						font-weight: bold;
+					}
 					div,p{
 						display: block;
 						float: left;
 						line-height: 45px;
-						&.user-icon{
+						&.payment-icon{
 							width: 15%;
 							i{
 								font-size: 45px;
@@ -48,7 +51,7 @@
 								line-height: 0.8;
 							}
 						}
-						&.user-description{
+						&.payment-description{
 							width: 80%;
 						}
 					}
