@@ -13,6 +13,8 @@ router.post('/payment/initiate', auth.isAuthenticated(), controller.initiatePaym
 router.post('/payment/update', controller.updatePayment);
 
 router.post('/withdraw/initiate/:id', auth.hasRole('admin'), controller.initiateWithdraw);
+router.post('/withdraw/complete/:id', auth.hasRole('admin'), controller.completeWithdraw);
+
 // router.put('/:id', controller.update);
 // router.patch('/:id', controller.update);
 // router.delete('/:id', controller.destroy);

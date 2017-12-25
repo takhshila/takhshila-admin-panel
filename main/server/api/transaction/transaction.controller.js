@@ -341,6 +341,51 @@ exports.initiateWithdraw = function(req, res) {
   });
 };
 
+// Initiate withdrawal transaction in the DB.
+exports.completeWithdraw = function(req, res) {
+  var userID = req.params.id;
+  var updateWithdrawPromise = new Promise(function(resolve, reject){
+    Wallet.findOne({
+      userID: userID
+    })
+    .populate('withdrawlRefrence')
+    .exec(function(err, walletData){
+      if(err){ reject({status: 403, data: err}); }
+      if(walletData.nonWithdrawBalance > 0){
+        if(walletData.withdrawlRefrence){
+          if(walletData.withdrawlRefrence.transactionAmount > 0){
+            var transactionData = walletData.withdrawlRefrence;
+            transactionData.status = 'success';
+            transactionData.save(function(err){
+              if(err){ reject({status: 403, data: err}); }
+              walletData.nonWithdrawBalance = walletData.nonWithdrawBalance - walletData.withdrawlRefrence.transactionAmount;
+              walletData.withdrawlRefrence = null;
+              walletData.save(function(err){
+                if(err){ reject({status: 403, data: err}); }
+                resolve(walletData);
+              })
+            });
+          }else{
+            reject({status: 403, data: 'Invalid amount initiated to be withdrawn'});
+          }
+        }else{
+          reject({status: 403, data: 'The withdrawal has not been initiated.'});
+        }
+      }else{
+        reject({status: 403, data: 'Insufficient wallet balance to be withdrawn'});
+      }
+    });
+  });
+
+  updateWithdrawPromise
+  .then(function(data){
+    return res.status(201).json(data);
+  })
+  .catch(function(err){
+    return res.status(err.status).send(err.data);
+  });
+};
+
 // Deletes a transaction from the DB.
 exports.destroy = function(req, res) {
   Transaction.findById(req.params.id, function (err, transaction) {

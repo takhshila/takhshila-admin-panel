@@ -52,7 +52,7 @@
 		            <div class = "col-sm-3">
 				    	<div class="payment-actions">
 				    		<button ng-if="!payment.withdrawlRefrence" ng-init = "initiatingWithdraw[payment.userID._id] = false" ng-click = "initiateWithdraw(payment.userID._id)" ng-disabled="initiatingWithdraw[payment.userID._id]" ng-class = "{'loading': initiatingWithdraw[payment.userID._id]}" class="ui button primary" lx-ripple>Initiate Payment</button>
-				    		<button ng-if="payment.withdrawlRefrence" ng-init = "updatingWithdraw[payment.userID._id] = false" ng-click = "updateWithdraw(payment.userID._id)" ng-disabled="updatingWithdraw[payment.userID._id]" ng-class = "{'loading': updatingWithdraw[payment.userID._id]}" class="ui button brown" lx-ripple>Complete Payment</button>
+				    		<button ng-if="payment.withdrawlRefrence" ng-init = "updatingWithdraw[payment.userID._id] = false" ng-click = "completeWithdraw(payment.userID._id)" ng-disabled="updatingWithdraw[payment.userID._id]" ng-class = "{'loading': updatingWithdraw[payment.userID._id]}" class="ui button brown" lx-ripple>Complete Payment</button>
 				    	</div>
 		            </div>
 	          	</div>

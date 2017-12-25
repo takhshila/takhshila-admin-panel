@@ -3,7 +3,8 @@
 angular.module('takhshilaApp')
   .controller('AdminPaymentsCtrl', function ($rootScope, $scope, $http) {
     $scope.payments = [];
-  	$scope.initiatingWithdraw = [];
+  	$scope.updatingWithdraw = [];
+    $scope.initiatingWithdraw = [];
     $scope.errorMessage = null;
   	$scope.hasMoreData = false;
 
@@ -11,7 +12,7 @@ angular.module('takhshilaApp')
   	var dataPerPage = 20;
   	
   	$scope.getPaymentWallet = function(){
-  		$http.get('/api/v1/wallets/?page=' + currentPage + '&perPage=' + dataPerPage)
+  		return $http.get('/api/v1/wallets/?page=' + currentPage + '&perPage=' + dataPerPage)
   		.then(function(response){
   			$rootScope.isLoading = false;
   			$scope.payments = response.data;
@@ -33,6 +34,27 @@ angular.module('takhshilaApp')
       })
       .catch(function(err){
         $scope.initiatingWithdraw[userID] = false;
+        $scope.errorMessage = err.data;
+        console.log(err);
+      })
+    }
+
+    $scope.completeWithdraw = function(userID){
+      $scope.errorMessage = null;
+      $scope.updatingWithdraw[userID] = true;
+      $http.post('/api/v1/transactions/withdraw/complete/' + userID)
+      .then(function(response){
+        $scope.getPaymentWallet()
+        .then(function(){
+          $scope.updatingWithdraw[userID] = false;
+        })
+        .catch(function(err){
+          console.log(err);
+          $scope.updatingWithdraw[userID] = false;
+        })
+      })
+      .catch(function(err){
+        $scope.updatingWithdraw[userID] = false;
         $scope.errorMessage = err.data;
         console.log(err);
       })
