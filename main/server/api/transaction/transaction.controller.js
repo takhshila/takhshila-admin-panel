@@ -14,6 +14,7 @@ var _ = require('lodash'),
     Transaction = require('./transaction.model'),
     Userclass = require('../userclass/userclass.model'),
     Scheduler = require('../scheduler/scheduler.model'),
+    BankAccount = require('../bankAccount/bankAccount.model'),
     Notification = require('../notification/notification.model'),
     Transactionhistory = require('../transactionhistory/transactionhistory.model'),
     transactionHistoryController = require('../transactionhistory/transactionhistory.controller'),
@@ -307,25 +308,37 @@ exports.initiateWithdraw = function(req, res) {
       if(err){ reject({status: 403, data: err}); }
       var withdrawBalance = walletData.withdrawBalance;
       if(withdrawBalance >  0){
-        var transactionData = {
-          userID: userID,
-          transactionType: 'Debit',
-          transactionIdentifier: 'walletCashDeducted',
-          transactionDescription: 'Wallet cash deducted for auto withdraw.',
-          transactionAmount: withdrawBalance,
-          status: 'pending'
-        };
-        Transaction.create(transactionData, function(err, transaction){
+        BankAccount
+        .findOne({
+          userID: userID
+        })
+        .populate('bankID')
+        .exec(function(err, bankAccountData){
           if(err){ reject({status: 403, data: err}); }
-          walletData.nonWithdrawBalance = walletData.nonWithdrawBalance + withdrawBalance;
-          walletData.withdrawBalance = walletData.withdrawBalance - withdrawBalance;
-          walletData.totalBalance = walletData.totalBalance - withdrawBalance;
-          walletData.withdrawlRefrence = transaction._id;
-          walletData.save(function(err){
-            if(err){ reject({status: 403, data: err}); }
-            resolve(transaction);
-          });
-        });
+          if(bankAccountData && bankAccountData.bankID){
+            var transactionData = {
+              userID: userID,
+              transactionType: 'Debit',
+              transactionIdentifier: 'walletCashDeducted',
+              transactionDescription: 'Wallet cash deducted for auto withdraw.',
+              transactionAmount: withdrawBalance,
+              status: 'pending'
+            };
+            Transaction.create(transactionData, function(err, transaction){
+              if(err){ reject({status: 403, data: err}); }
+              walletData.nonWithdrawBalance = walletData.nonWithdrawBalance + withdrawBalance;
+              walletData.withdrawBalance = walletData.withdrawBalance - withdrawBalance;
+              walletData.totalBalance = walletData.totalBalance - withdrawBalance;
+              walletData.withdrawlRefrence = transaction._id;
+              walletData.save(function(err){
+                if(err){ reject({status: 403, data: err}); }
+                resolve(bankAccountData);
+              });
+            });
+          }else{
+            reject({status: 403, data: 'User does not have bank account linked to his account.'});
+          }
+        })
       }else{
         reject({status: 403, data: 'Insufficient wallet balance to be withdrawn'});
       }
@@ -344,37 +357,43 @@ exports.initiateWithdraw = function(req, res) {
 // Initiate withdrawal transaction in the DB.
 exports.completeWithdraw = function(req, res) {
   var userID = req.params.id;
+  var transactionDetails = req.body;
   var updateWithdrawPromise = new Promise(function(resolve, reject){
-    Wallet.findOne({
-      userID: userID
-    })
-    .populate('withdrawlRefrence')
-    .exec(function(err, walletData){
-      if(err){ reject({status: 403, data: err}); }
-      if(walletData.nonWithdrawBalance > 0){
-        if(walletData.withdrawlRefrence){
-          if(walletData.withdrawlRefrence.transactionAmount > 0){
-            var transactionData = walletData.withdrawlRefrence;
-            transactionData.status = 'success';
-            transactionData.save(function(err){
-              if(err){ reject({status: 403, data: err}); }
-              walletData.nonWithdrawBalance = walletData.nonWithdrawBalance - walletData.withdrawlRefrence.transactionAmount;
-              walletData.withdrawlRefrence = null;
-              walletData.save(function(err){
+    if(transactionDetails && transactionDetails.impsTransactionID){
+      Wallet.findOne({
+        userID: userID
+      })
+      .populate('withdrawlRefrence')
+      .exec(function(err, walletData){
+        if(err){ reject({status: 403, data: err}); }
+        if(walletData.nonWithdrawBalance > 0){
+          if(walletData.withdrawlRefrence){
+            if(walletData.withdrawlRefrence.transactionAmount > 0){
+              var transactionData = walletData.withdrawlRefrence;
+              transactionData.status = 'success';
+              transactionData.transactionData = transactionDetails;
+              transactionData.save(function(err){
                 if(err){ reject({status: 403, data: err}); }
-                resolve(walletData);
-              })
-            });
+                walletData.nonWithdrawBalance = walletData.nonWithdrawBalance - walletData.withdrawlRefrence.transactionAmount;
+                walletData.withdrawlRefrence = null;
+                walletData.save(function(err){
+                  if(err){ reject({status: 403, data: err}); }
+                  resolve(walletData);
+                })
+              });
+            }else{
+              reject({status: 403, data: 'Invalid amount initiated to be withdrawn'});
+            }
           }else{
-            reject({status: 403, data: 'Invalid amount initiated to be withdrawn'});
+            reject({status: 403, data: 'The withdrawal has not been initiated.'});
           }
         }else{
-          reject({status: 403, data: 'The withdrawal has not been initiated.'});
+          reject({status: 403, data: 'Insufficient wallet balance to be withdrawn'});
         }
-      }else{
-        reject({status: 403, data: 'Insufficient wallet balance to be withdrawn'});
-      }
-    });
+      });
+    }else{
+      reject({status: 403, data: 'Please specify the IMPS transaction ID.'});
+    }
   });
 
   updateWithdrawPromise

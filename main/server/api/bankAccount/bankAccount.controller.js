@@ -23,10 +23,16 @@ exports.getBankAccounts = function(req, res) {
 
 // Get a single bankAccount
 exports.show = function(req, res) {
-  BankAccount.findById(req.params.id, function (err, bankAccount) {
+  BankAccount.findOne({
+    userID: req.params.id
+  })
+  .sort({
+    dateTime: 'desc'
+  })
+  .populate('userID', 'name')
+  .exec(function (err, bankAccounts) {
     if(err) { return handleError(res, err); }
-    if(!bankAccount) { return res.status(404).send('Not Found'); }
-    return res.json(bankAccount);
+    return res.status(200).json(bankAccounts);
   });
 };
 

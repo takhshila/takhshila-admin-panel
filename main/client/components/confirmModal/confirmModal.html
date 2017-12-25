@@ -20,7 +20,7 @@
 					<div ng-if="modalOptions.modalType === 'deleteExperience'" class="education-icon">
 						<i class="travel icon"></i>
 					</div>
-					<div ng-if="modalOptions.modalType === 'deleteBankAccount'" class="education-icon">
+					<div ng-if="modalOptions.modalType === 'deleteBankAccount' || modalOptions.modalType === 'showBankAccount'" class="education-icon">
 						<i class="university icon"></i>
 					</div>
 			        <div ng-if="modalOptions.modalType === 'deleteVideo'" class="ui segment thumbnailContainer">
@@ -43,6 +43,13 @@
 						<p class="data-description"><strong>Branch:</strong>{{modalData.branchName}}</p>
 						<p class="data-description"><strong>IFSC Code:</strong>{{modalData.ifscCode}}</p>
 					</div>
+					<div ng-if="modalOptions.modalType === 'showBankAccount'">
+						<p class="data-title">{{modalData.name}}</p>
+						<p class="data-description"><strong>A/C No:</strong>{{modalData.accountNumber}}</p>
+						<p class="data-description"><strong>Bank:</strong>{{modalData.bankName}}</p>
+						<p class="data-description"><strong>Branch:</strong>{{modalData.branchName}}</p>
+						<p class="data-description"><strong>IFSC Code:</strong>{{modalData.ifscCode}}</p>
+					</div>
 					<div ng-if="modalOptions.modalType === 'deleteVideo'">
 						<p class="data-title">{{modalData.title}}</p>
 						<p class="data-description">{{modalData.description}}</p>
@@ -55,10 +62,13 @@
 
   </div>
   <div class = "modal-footer">
-    <div class="ui buttons">
+    <div class="ui buttons" ng-if="modalOptions.modalType !== 'showBankAccount'">
       <button class="ui button" ng-disabled="confirmProcessing" ng-click="closeDialog()" ng-class="{'{{modalOptions.cancelClass}}' : modalOptions.cancelClass !== '' }" lx-ripple>{{modalOptions.cancelText}}</button>
       <div class="or"></div>
       <button class="ui button" ng-disabled="confirmProcessing" ng-click="processConfirm()" ng-class="{'{{modalOptions.confirmClass}}' : modalOptions.confirmClass !== '', 'loading': confirmProcessing }" lx-ripple>{{modalOptions.confirmText}}</button>
+    </div>
+    <div class="ui buttons" ng-if="modalOptions.modalType === 'showBankAccount'">
+		<button class="ui button" ng-click="closeDialog()" lx-ripple>Ok</button>
     </div>
   </div>
 </modal>

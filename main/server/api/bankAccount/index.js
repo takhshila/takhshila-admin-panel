@@ -12,7 +12,7 @@ router.post('/', auth.isAuthenticated(), controller.addBankAccount);
 router.put('/:id', auth.isAuthenticated(), controller.updateBankAccount);
 router.delete('/:id', auth.isAuthenticated(),controller.deleteBankAccount);
 
-// router.get('/:id', controller.show);
+router.get('/:id', auth.hasRole('admin'), controller.show);
 // router.post('/', controller.create);
 // router.patch('/:id', controller.update);
 
