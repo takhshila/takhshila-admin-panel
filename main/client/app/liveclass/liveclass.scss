@@ -1,14 +1,62 @@
 #liveClass{
-	video{
-		width: 500px;
-		&.self-video,
-		&.peer-video{
-		    transform: rotateY(180deg);
-		    -webkit-transform:rotateY(180deg); /* Safari and Chrome */
-		    -moz-transform:rotateY(180deg); /* Firefox */
+    background-color: #43c6ac;
+    background-image: linear-gradient(to left,#191654,#43c6ac);
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100%;
+    width: 100%;
+    padding-top: 50px;
+    overflow: hidden;
+    video{
+		-webkit-box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		box-sizing: border-box;
+		-webkit-transition: .4s all;
+		-o-transition: .4s all;
+		transition: .4s all;
+    }
+    .video-container{
+    	position: relative;
+	    width: 95%;
+	    border: 1px solid #fff;
+	    margin: 0px auto;
+		.self-video{
+			width: 50%;
+			float: right;
+			&.hidden{
+				display: none;
+			}
 		}
-		&.peer-screen-video{
-
+		.peer-video{
+			width: 50%;
+			float: left;
+			background: #fff;
+			&.corner{
+				position: absolute;
+				bottom: 0px;
+				width: 150px;
+				height: 150px;
+				right: 0px;
+			}
 		}
-	}
+		.peer-screen-video{
+			display: none;
+			width: 100%;
+			&.visible{
+				display: block;
+			}
+		}
+    }
+    .video-action-container{
+    	position: relative;
+	    width: 95%;
+	    border: 1px solid yellow;
+	    margin: 0px auto;
+	    i{
+			font-weight: bold;
+			font-size: 25px;
+			line-height: 27px;
+			margin-left: -7px;
+	    }
+    }
 }

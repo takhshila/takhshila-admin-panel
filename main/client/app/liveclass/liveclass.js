@@ -7,6 +7,7 @@ angular.module('takhshilaApp')
         url: '/liveclass/:classID',
         templateUrl: 'app/liveclass/liveclass.html',
         controller: 'LiveclassCtrl',
-        authenticate: true
+        authenticate: true,
+        navStick: false
       });
   });

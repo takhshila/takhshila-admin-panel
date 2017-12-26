@@ -1,14 +1,16 @@
+<navbar></navbar>
 <div class="container" id = "liveClass">
 	<div class="row">
-		<div class="col-md-3 col-sm-3">
-			<div class="pure-u-2-3" id="video-container">
-				<video id="self-video" class="self-video" autoplay muted="true" volume="0"></video>
-				<video id="peer-video" class="peer-video" autoplay></video>
-				<video id="peer-screen-video" class="peer-screen-video" autoplay muted="true" volume="0"></video>
-				<button id = "shareScreen" ng-click="shareScreen()">Share Screen</button>
-			</div>
+		<div class="video-container">
+			<video id="peer-video" class="peer-video" autoplay></video>
+			<video id="self-video" class="self-video" autoplay muted="true" volume="0"></video>
+			<video id="peer-screen-video" class="peer-screen-video" autoplay muted="true" volume="0"></video>
+			<div class="clear"></div>
 		</div>
-
-		<h1 id="my-id"></h1>
+		<div class="video-action-container">
+			<button id="shareScreen" class="md-fab md-fab-bottom-left md-button md-ink-ripple ui button purple" ng-click="shareScreen()">
+				<i class="tv icon"></i>
+			</button>
+		</div>
 	</div>
 </div>

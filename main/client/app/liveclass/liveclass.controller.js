@@ -101,7 +101,10 @@ angular.module('takhshilaApp')
 				if(call.metadata.streamType === 'video'){
 					$('#peer-video').prop('src', URL.createObjectURL(stream));
 				}else if(call.metadata.streamType === 'screen'){
-					$('#peer-screen-video').prop('src', URL.createObjectURL(stream));
+					// $('#peer-screen-video').prop('src', URL.createObjectURL(stream));
+					$('#peer-screen-video').prop('src', URL.createObjectURL(stream)).addClass('visible');
+					$('.self-video').addClass('hidden');
+					$('.peer-video').addClass('corner');
 				}
 			});
 			// if(receiverPeerID && window.screenStream){
@@ -134,7 +137,10 @@ angular.module('takhshilaApp')
 			screenCall = peer.call(receiverPeerID, window.screenStream, {metadata: {streamType: "screen"}});
 			screenCall.on('stream', function(stream){
 				if(stream){
-					$('#peer-screen-video').prop('src', URL.createObjectURL(stream));
+					// $('#peer-screen-video').prop('src', URL.createObjectURL(stream));
+					$('#peer-screen-video').prop('src', URL.createObjectURL(stream)).addClass('visible');
+					$('.self-video').addClass('hidden');
+					$('.peer-video').addClass('corner');
 				}
 			});
 		}
@@ -149,6 +155,7 @@ angular.module('takhshilaApp')
     }
 
 	$window.addEventListener("message", function(msg){
+		console.log("Message received", msg);
 		if( !msg.data ) {
 			return;
 		} else if ( msg.data.sourceId ) {
@@ -170,14 +177,16 @@ angular.module('takhshilaApp')
 
 			navigator.getUserMedia(constraints, function(stream){
 				window.screenStream = stream;
-				$('#peer-screen-video').prop('src', URL.createObjectURL(window.screenStream));
+				$('#peer-screen-video').prop('src', URL.createObjectURL(window.screenStream)).addClass('visible');
+				$('.self-video').addClass('hidden');
+				$('.peer-video').addClass('corner');
 				if(receiverPeerID && window.screenStream){
 					screenCall = peer.call(receiverPeerID, window.screenStream, {metadata: {streamType: "screen"}});
 				}
 			}, function(err){ 
 				console.log("Stremm error: ", err);
 			});
-		} else if( msg.data === 'addon-installed' ) {
+		} else if( msg.data === 'takhshila-addon-installed' ) {
 			extensionInstalled = true;
 		}
 	}, false);
@@ -185,7 +194,7 @@ angular.module('takhshilaApp')
 
     $rootScope.$watch('loggedIn', function(status){
       if(status === true){
-      	$window.postMessage('check-addon-installed', '*' );
+      	$window.postMessage('takhshila-check-addon-installed', '*' );
         $rootScope.isLoading = false;
         connectPeer();
       }
