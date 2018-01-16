@@ -7,6 +7,7 @@ angular.module('takhshilaApp')
   	var cartService = {
   		addToCart: function(cartData){
         cart.teacherID = cartData.teacherID;
+        cart.requestedTopic = cartData.requestedTopic;
   			cart.teacherDetails = cartData.teacherDetails;
   			cart.currency = cartData.currency;
   			cart.classData = [];

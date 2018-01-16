@@ -42,6 +42,7 @@ exports.index = function(req, res) {
   })
   .populate('studentID', 'name country profilePhoto')
   .populate('teacherID', 'name country profilePhoto')
+  .populate('requestedTopic')
   .exec(function (err, userclasss) {
     if(err) { return handleError(res, err); }
     return res.status(200).json(userclasss);
@@ -103,6 +104,7 @@ exports.create = function(req, res) {
     var _data = {
       studentID: req.user._id,
       teacherID: req.body.teacherID,
+      requestedTopic: req.body.requestedTopic,
       requestedTime: {
         start: (moment(req.body.classData[i].start, 'YYYY-MM-DD HH:mm').valueOf()),
         end: (moment(req.body.classData[i].end, 'YYYY-MM-DD HH:mm').valueOf()),

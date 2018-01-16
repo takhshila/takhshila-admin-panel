@@ -2,6 +2,7 @@
 
 var _ = require('lodash');
 var Notification = require('./notification.model');
+var Topic = require('../topic/topic.model');
 
 // Get list of notifications
 exports.index = function(req, res) {
@@ -9,11 +10,17 @@ exports.index = function(req, res) {
   Notification
   .find({ forUser: userID })
   .populate('fromUser', '-hashedPassword -salt')
-  .populate('referenceClass')
+  .populate({
+    path: 'referenceClass'
+  })
   .sort({'createdOn': 'desc'})
   .exec(function (err, notifications) {
     if(err) { return handleError(res, err); }
-    return res.status(200).json(notifications);
+    Topic.populate(notifications, {
+      path: 'referenceClass.requestedTopic'
+    }, function(err, response){
+      return res.status(200).json(response);
+    })
   });
 };
 

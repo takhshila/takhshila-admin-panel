@@ -38,11 +38,17 @@
 			<div class="notification-content-container" ng-if="notification.notificationType === 'requestConfirmed'">
 				<div class="notification-title">
 					<span>
-						<strong>{{notification.fromUser.name.firstName}} {{notification.fromUser.name.lastName}}</strong> confirmed your request for class
+						<strong>{{notification.fromUser.name.firstName}} {{notification.fromUser.name.lastName}}</strong> confirmed your request for a class
+					</span>
+				</div>
+				<div class="notification-content">
 						<span class="class-date">
-							<strong>on</strong> {{notification.referenceClass.requestedTime.start | amDateFormat:'dddd, MMMM Do \'YY'}} <strong> from </strong> {{notification.referenceClass.requestedTime.start | amDateFormat:'h:mm a'}} <strong> to </strong>{{notification.referenceClass.requestedTime.end | amDateFormat:'h:mm a'}}
+							<strong>Date: </strong> {{notification.referenceClass.requestedTime.start | amDateFormat:'dddd, MMMM Do \'YY'}} <strong> from </strong> {{notification.referenceClass.requestedTime.start | amDateFormat:'h:mm a'}} <strong> to </strong>{{notification.referenceClass.requestedTime.end | amDateFormat:'h:mm a'}}
 						</span>
-						<p>** Please make yourself available atleast 15 mins before the start of the class.</p>
+						<span class="class-date">
+							<strong>Topic: </strong> {{notification.referenceClass.requestedTopic.topicName}}
+						</span>
+						<p class="additional-message">Please make yourself available at least 10 mins before the start of the class.</p>
 					</span>
 				</div>	
 			</div>
@@ -54,7 +60,10 @@
 				</div>
 				<div class="notification-content">
 					<span class="class-date">
-						<strong>on</strong> {{notification.referenceClass.requestedTime.start | amDateFormat:'dddd, MMMM Do \'YY'}} <strong> from </strong> {{notification.referenceClass.requestedTime.start | amDateFormat:'h:mm a'}} <strong> to </strong>{{notification.referenceClass.requestedTime.end | amDateFormat:'h:mm a'}}
+						<strong>Date: </strong> {{notification.referenceClass.requestedTime.start | amDateFormat:'dddd, MMMM Do \'YY'}} <strong> from </strong> {{notification.referenceClass.requestedTime.start | amDateFormat:'h:mm a'}} <strong> to </strong>{{notification.referenceClass.requestedTime.end | amDateFormat:'h:mm a'}}
+					</span>
+					<span class="class-date">
+						<strong>Topic: </strong> {{notification.referenceClass.requestedTopic.topicName}}
 					</span>
 				</div>
 				<div class="notification-actions">
@@ -64,10 +73,10 @@
 						<button ng-disabled="notification.processing" ng-click="denyClass($event, $index)" ng-class = "{'loading': notification.processingDeny}" class="ui button red" lx-ripple>Deny</button>
 					</div>
 					<div ng-if="notification.referenceClass.status=='confirmed'">
-						<p>You confirmed this class.</p>
+						<p class="class-confirmed">You confirmed this class.</p>
 					</div>
 					<div ng-if="notification.referenceClass.status=='denied'">
-						<p>You denied this class.</p>
+						<p class="class-denied">You denied this class.</p>
 					</div>
 				</div>
 			</div>

@@ -40,7 +40,8 @@ angular.module('takhshilaApp')
         }
     	var transactionData = {
     		currency: $scope.cartData.currency,
-    		teacherID: $scope.cartData.teacherID,
+            teacherID: $scope.cartData.teacherID,
+    		requestedTopic: $scope.cartData.requestedTopic,
     		classData: $scope.cartData.classData
     	}
     	transactionFactory.initiatePayment(transactionData)
@@ -49,7 +50,7 @@ angular.module('takhshilaApp')
         		$scope.paymentData = response.paymentData;
         		$rootScope.$broadcast('processFormSubmit', {formName: 'paymentRedirect'});
             }else{
-                $state.go('classBookResponse', {'status': 'success', 'txnID': response.transactionId});
+                $state.go('bookingStatus', {'status': 'success', 'txnID': response.transactionId});
             }
     		// var paymentForm = angular.element('#paymentRedirect');
     		// paymentForm.click();

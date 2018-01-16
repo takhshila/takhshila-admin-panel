@@ -21,7 +21,7 @@ exports.searchTeacher = function(req, res) {
       var promiseList = users.map(function(user, index){
         return new Promise(function(resolve, reject){
           var found = _.find(user.specialization, function(obj){
-            if(obj.topic.topicName.toLowerCase() === req.query.topic.toLowerCase()){
+            if(obj.topic && obj.topic.topicName.toLowerCase() === req.query.topic.toLowerCase()){
               var queryLevel = req.query.level.toLowerCase().split(',');
               for(var i = 0; i < obj.level.length; i++){
                 if(queryLevel.indexOf(obj.level[i].toLowerCase()) !== -1){
@@ -74,13 +74,15 @@ exports.searchTeacher = function(req, res) {
                 resolve(selectedUsers);
               })
             })
+          }else{
+            resolve();
           }
         })
       })
     }
 
     Promise.all(promiseList)
-    .then(function(data){
+    .then(function(){
       console.log(selectedUsers[0].videos);
       for(var i = 0; i < selectedUsers.length; i++){
         var totalRating = 0;
@@ -94,6 +96,7 @@ exports.searchTeacher = function(req, res) {
       return res.status(200).json(selectedUsers);
     })
     .catch(function(err){
+      console.log(err);
       return res.status(200).json(selectedUsers);
     })
   });

@@ -73,12 +73,34 @@
 		    	.notification-content{
 		    		margin-top: 5px;
 		    		font-size: 0.9rem;
+		    		.class-date{
+		    			display: block;
+		    		}
+		    		.additional-message,
+		    		.class-denied{
+		    			font-size: 12px;
+		    			font-weight: bold;
+		    			margin-top: 10px;
+		    			color: #DB2828;
+		    		}
 		    	}
 		    	.notification-actions{
 		    		margin-top: 5px;
 		    		button{
 						padding: 10px 25px;
 						font-size: 0.8rem;
+		    		}
+		    		.class-confirmed{
+		    			font-size: 12px;
+		    			font-weight: bold;
+		    			margin-top: 10px;
+		    			color: #21ba45;
+		    		}
+		    		.class-denied{
+		    			font-size: 12px;
+		    			font-weight: bold;
+		    			margin-top: 10px;
+		    			color: #DB2828;
 		    		}
 		    	}
 		    }

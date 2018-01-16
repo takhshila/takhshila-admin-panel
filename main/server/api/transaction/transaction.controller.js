@@ -72,6 +72,7 @@ exports.initiatePayment = function(req, res) {
         var _data = {
           studentID: req.user._id,
           teacherID: req.body.teacherID,
+          requestedTopic: req.body.requestedTopic,
           requestedTime: {
             start: (moment(req.body.classData[i].start, 'YYYY-MM-DD HH:mm').valueOf()),
             end: (moment(req.body.classData[i].end, 'YYYY-MM-DD HH:mm').valueOf()),
@@ -291,10 +292,10 @@ exports.updatePayment = function(req, res) {
   });
   updatePaymentPromise
   .then(function(data){
-    return res.redirect('/class/success/' + transactionData.txnid);
+    return res.redirect('/booking-status/success/' + transactionData.txnid);
   })
   .catch(function(err){
-    return res.redirect('/class/failure/' + transactionData.txnid);
+    return res.redirect('/booking-status/failure/' + transactionData.txnid);
   });
 };
 
@@ -606,6 +607,8 @@ function bookClass(classData, paymentRefrence){
 	          if(paymentRefrence){ singleClassData.paymentRefrence = paymentRefrence; }
 
 	          Userclass.create(singleClassData, function(err, userclass){
+              console.log("Error creating class");
+              console.log(err);
 	            var transactionData = {
 	              userID: userID,
 	              transactionType: 'Debit',

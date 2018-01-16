@@ -41,6 +41,10 @@
 			        	{{class.requestedTime.start | amDateFormat:'dddd, MMMM Do \'YY'}} <b>at</b> {{class.requestedTime.start | amDateFormat:'HH:mm'}}
 			        </span>
 			        <span class="meta-item">
+			        	<span class="header">Topic:</span>
+			        	{{class.requestedTopic.topicName}}
+			        </span>
+			        <span class="meta-item">
 			        	<span class="header">Live Class Link:</span>
 			        	{{class.liveClassLink || 'NA'}}
 			        </span>
@@ -76,6 +80,10 @@
 			        <span class="meta-item">
 			        	<span class="header">Date & Time:</span>
 			        	{{class.requestedTime.start | amDateFormat:'dddd, MMMM Do \'YY'}} <b>at</b> {{class.requestedTime.start | amDateFormat:'HH:mm'}}
+			        </span>
+			        <span class="meta-item">
+			        	<span class="header">Topic:</span>
+			        	{{class.requestedTopic.topicName}}
 			        </span>
 			        <span class="meta-item">
 			        	<span class="header">Live Class Link:</span>

@@ -3,6 +3,8 @@
 angular.module('takhshilaApp')
 .controller('UserCtrl', function ($rootScope, $scope, $state, $stateParams, $timeout, $compile, $http, $mdDialog, uiCalendarConfig, userFactory, userClassFactory, videoFactory, cart) {
   $rootScope.isLoading = true;
+  $scope.requestedTopic = null;
+  $scope.requestedTopicError = null;
 
   // var weekDays = ['sunday', 'monday', 'tuesday', 'wednessday', 'thursday', 'friday', 'saturday'];
 
@@ -26,51 +28,57 @@ angular.module('takhshilaApp')
     })
   }
 
-    $scope.showVideoModal = function(index){
-      console.log("videoClicked", index);
-      var parentEl = angular.element(document.body);
-      $mdDialog.show({
-        templateUrl: 'components/videoPlayerModal/videoPlayerModal.html',
-        controller: 'VideoPlayerModalCtrl',
-        parent: parentEl,
-        disableParentScroll: true,
-        clickOutsideToClose: true,
-        locals: {
-          index: index,
-          videos: $scope.demoVideos
-        }
-      });
-    }
+  $scope.showVideoModal = function(index){
+    console.log("videoClicked", index);
+    var parentEl = angular.element(document.body);
+    $mdDialog.show({
+      templateUrl: 'components/videoPlayerModal/videoPlayerModal.html',
+      controller: 'VideoPlayerModalCtrl',
+      parent: parentEl,
+      disableParentScroll: true,
+      clickOutsideToClose: true,
+      locals: {
+        index: index,
+        videos: $scope.demoVideos
+      }
+    });
+  }
 
   $scope.bookClass = function(){
-    if($scope.selectedSessions.length){
-      var cartData = {
-        teacherID: $stateParams.ID,
-        teacherDetails: $scope.user,
-        currency: $scope.user.ratePerHour.currency,
-        classData: $scope.selectedSessions
+    $scope.requestedTopicError = null;
+    if($scope.requestedTopic){
+      if($scope.selectedSessions.length){
+        var cartData = {
+          teacherID: $stateParams.ID,
+          teacherDetails: $scope.user,
+          requestedTopic: $scope.requestedTopic,
+          currency: $scope.user.ratePerHour.currency,
+          classData: $scope.selectedSessions
+        }
+        cart.addToCart(cartData);
+        console.log(cartData);
+        $state.go('checkout');
       }
-      cart.addToCart(cartData);
-      $state.go('checkout');
-      // for(var i = 0; i < $scope.selectedSessions.length; i++){
-      //   $scope.selectedSessions[i].start = moment($scope.selectedSessions[i].start, 'MMM DD, YYYY HH:mm').format();
-      //   $scope.selectedSessions[i].end = moment($scope.selectedSessions[i].end, 'MMM DD, YYYY HH:mm').format();
-      // }
-      // var _classData = {
-      //   teacherID: $stateParams.ID,
-      //   classData: $scope.selectedSessions
-      // }
-      // console.log(_classData);
-      // userClassFactory.requestClass('', _classData)
-      // .success(function(response){
-      //   console.log(response);
-      //   $('#availabilityCalendar').fullCalendar('refetchEvents')
-      // })
-      // .error(function(err){
-      //   console.log(err);
-      // });
+    }else{
+      $scope.requestedTopicError = 'Please select the subject or topic'
     }
   }
+
+  $scope.addFieldValue = function(item){
+    $scope.requestedTopic = item._id;
+    $scope.requestedTopicError = null;
+  }
+  $scope.clearField = function(){
+    $scope.requestedTopic = null;
+  }
+
+  $scope.getTopics = function(index, searcTerm) {
+    return $http.get('/api/v1/topics/search/'+searcTerm).then(function(response){
+      return response.data.map(function(item){
+        return item;
+      });
+    });
+  };
 
   $scope.getEvents = function(start, end, timezone, callback){
     userFactory.getAvailability($stateParams.ID, {start: start, end: end})

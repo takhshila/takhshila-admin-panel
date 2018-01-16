@@ -21,7 +21,7 @@
           <div class="description">
             <div class="price-container">
               <div ng-if="!edit.ratePerHour.editing">
-                <strong>Price:</strong><span class="price">{{currentUser.ratePerHour.value ? currentUser.ratePerHour.currency : ''}} {{currentUser.ratePerHour.value || "Not set"}} {{currentUser.ratePerHour.value ? 'per hour' : ''}}</span>
+                <strong>Price:</strong><span class="price">{{currentUser.ratePerHour.base ? currentUser.ratePerHour.currency : ''}} {{currentUser.ratePerHour.base || "Not set"}} {{currentUser.ratePerHour.base ? 'per hour' : ''}}</span>
                 <a class="edit-action" ng-click="editRatePerHour($event)">
                   <i class="write icon"></i>
                 </a>

@@ -188,6 +188,21 @@
                   <div class = "clear"></div>
                 </div>
               </div>
+              <md-input-container class="requestedTopicContainer">
+                <label>Enter subject or topic.</label>
+                <input
+                name = "requestedTopic"
+                type="text"
+                ng-change="clearField()"
+                ng-model="requestedTopic"
+                uib-typeahead="topic.topicName for topic in getTopics($index, $viewValue)"
+                typeahead-loading="loading"
+                typeahead-on-select="addFieldValue($item)"
+                typeahead-no-results="noResults"
+                required
+                />
+                <span class="ui basic red top pointing label" ng-if="requestedTopicError">{{requestedTopicError}}</span>
+              </md-input-container>
               <span class = "bookClassButtonContainer">
                 <button ng-click = "loggedIn ? bookClass($event) : showLoginModal($event)" class = "ui button primary">Book Class Now</button>
                 <button class = "ui primary basic button">Talk to Teacher</button>

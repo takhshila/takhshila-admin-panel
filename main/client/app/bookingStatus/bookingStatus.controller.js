@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('takhshilaApp')
-.controller('ClassCtrl', function ($rootScope, $scope, $http, $state, $stateParams, Auth, userFactory) {
+.controller('BookingStatusCtrl', function ($rootScope, $scope, $http, $state, $stateParams, Auth, userFactory) {
 	var transactionID = $stateParams.txnID;
 	$scope.classBookStatus = $stateParams.status;
 	$scope.classInfo = null;
