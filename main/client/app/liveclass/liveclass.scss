@@ -18,7 +18,6 @@
     .video-container{
     	position: relative;
 	    width: 95%;
-	    border: 1px solid #fff;
 	    margin: 0px auto;
 		.self-video{
 			width: 50%;
@@ -31,26 +30,26 @@
 			width: 50%;
 			float: left;
 			background: #fff;
-			&.corner{
-				position: absolute;
-				bottom: 0px;
-				width: 150px;
-				height: 150px;
-				right: 0px;
-			}
 		}
 		.peer-screen-video{
 			display: none;
 			width: 100%;
-			&.visible{
-				display: block;
-			}
+		}
+		.expanded{
+			width: 100%;
+		}
+		.corner{
+			background: rgba(90,150,100,0.4);
+			position: absolute;
+			bottom: 0px;
+			width: 150px;
+			height: 150px;
+			right: 0px;
 		}
     }
     .video-action-container{
     	position: relative;
 	    width: 95%;
-	    border: 1px solid yellow;
 	    margin: 0px auto;
 	    i{
 			font-weight: bold;
@@ -58,5 +57,11 @@
 			line-height: 27px;
 			margin-left: -7px;
 	    }
+	    #toggleView{
+	    	display: none;
+	    }
     }
+	.visible{
+		display: block !important;
+	}
 }

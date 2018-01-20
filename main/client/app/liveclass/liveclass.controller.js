@@ -102,9 +102,11 @@ angular.module('takhshilaApp')
 					$('#peer-video').prop('src', URL.createObjectURL(stream));
 				}else if(call.metadata.streamType === 'screen'){
 					// $('#peer-screen-video').prop('src', URL.createObjectURL(stream));
-					$('#peer-screen-video').prop('src', URL.createObjectURL(stream)).addClass('visible');
-					$('.self-video').addClass('hidden');
-					$('.peer-video').addClass('corner');
+					$('#peer-screen-video').prop('src', URL.createObjectURL(stream)).removeClass('visible').addClass('visible');
+					$('#peer-screen-video').removeClass('corner');
+					$('#toggleView').removeClass('visible').addClass('visible');
+					$('.self-video').removeClass('hidden').addClass('hidden');
+					$('.peer-video').removeClass('corner').addClass('corner');
 				}
 			});
 			// if(receiverPeerID && window.screenStream){
@@ -138,9 +140,11 @@ angular.module('takhshilaApp')
 			screenCall.on('stream', function(stream){
 				if(stream){
 					// $('#peer-screen-video').prop('src', URL.createObjectURL(stream));
-					$('#peer-screen-video').prop('src', URL.createObjectURL(stream)).addClass('visible');
-					$('.self-video').addClass('hidden');
-					$('.peer-video').addClass('corner');
+					$('#peer-screen-video').prop('src', URL.createObjectURL(stream)).removeClass('visible').addClass('visible');
+					$('#peer-screen-video').removeClass('corner');
+					$('#toggleView').removeClass('visible').addClass('visible');
+					$('.self-video').removeClass('hidden').addClass('hidden');
+					$('.peer-video').removeClass('corner').addClass('corner');
 				}
 			});
 		}
@@ -151,6 +155,16 @@ angular.module('takhshilaApp')
     		$window.postMessage('requestScreenSourceId', '*' );
     	}else{
     		alert("Extension is not installed");
+    	}
+    }
+
+    $scope.toggleView = function(){
+    	if($('.peer-video').hasClass('corner')){
+    		$('.peer-video').removeClass('corner').addClass('expanded');
+    		$('.peer-screen-video').addClass('corner');
+    	}else{
+    		$('.peer-video').addClass('corner');
+    		$('.peer-screen-video').removeClass('corner').addClass('expanded');
     	}
     }
 
@@ -177,9 +191,11 @@ angular.module('takhshilaApp')
 
 			navigator.getUserMedia(constraints, function(stream){
 				window.screenStream = stream;
-				$('#peer-screen-video').prop('src', URL.createObjectURL(window.screenStream)).addClass('visible');
-				$('.self-video').addClass('hidden');
-				$('.peer-video').addClass('corner');
+				$('#peer-screen-video').prop('src', URL.createObjectURL(window.screenStream)).removeClass('visible').addClass('visible');
+				$('#peer-screen-video').removeClass('corner');
+				$('#toggleView').removeClass('visible').addClass('visible');
+				$('.self-video').removeClass('hidden').addClass('hidden');
+				$('.peer-video').removeClass('corner').addClass('corner');
 				if(receiverPeerID && window.screenStream){
 					screenCall = peer.call(receiverPeerID, window.screenStream, {metadata: {streamType: "screen"}});
 				}
