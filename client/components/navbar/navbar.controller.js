@@ -22,28 +22,6 @@ angular.module('takhshilaApp')
       }
     });
 
-    $rootScope.$watch('loggedIn', function(status){
-      if(status === true){
-        $rootScope.getLastClass()
-        .then(function(response){
-          var classData = response.data;
-          if(classData.status === 'completed'){
-            $rootScope.getUserClassReview(classData._id)
-            .then(function(reviews){
-              if(reviews.data.length === 0){
-                $rootScope.showReviewDialog = true;
-                $rootScope.reviewDialogData = classData;
-              }
-            }, function(err){
-              console.log(err);
-            })
-          }
-        }, function(err){
-          console.log(err);
-        });
-      }
-    });
-
     var toast = $mdToast.simple()
       .textContent('Your live class link is active.')
       .action('Go to class')

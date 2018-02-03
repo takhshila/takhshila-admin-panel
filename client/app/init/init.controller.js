@@ -20,7 +20,7 @@ angular.module('takhshilaApp')
               $state.go('main');
             }
             if(!$state.current.authenticate && loggedIn){
-              $state.go('main');
+              $state.go('admin');
             }
           }
           $scope.$watch(function(){
@@ -32,7 +32,7 @@ angular.module('takhshilaApp')
                 $state.go('main');
               }
               if(!$state.current.authenticate && data){
-                $state.go('main');
+                $state.go('admin');
               }
             }
             $rootScope.currentUser = Auth.getCurrentUser();

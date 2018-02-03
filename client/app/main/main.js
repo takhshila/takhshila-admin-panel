@@ -7,6 +7,7 @@ angular.module('takhshilaApp')
         url: '/',
         templateUrl: 'app/main/main.html',
         controller: 'MainCtrl',
-        navStick: false
+        navStick: true,
+        authenticate: false,
       });
   });

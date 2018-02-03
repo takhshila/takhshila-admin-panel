@@ -1,121 +1,69 @@
 <navbar></navbar>
 
-<div>
-	<div id="hero" class="static-header register-version">
-		<span class = "home-navbar-gradient"></span>
-		<div id="searchFormContainer">
-			<div class="search-form-container">
-				<form action="/search" method="get" class="col-md-8 col-md-offset-2 ui action input search-form" ng-submit="processSearch($event)">
-					<!-- <input type="text" name="topic" ng-model="search.topic" placeholder="Enter topic or subject...."> -->
-					<div class="search-text-input" ng-class="{'loading': specialization.loadingResults}">
-						<input type="text" ng-model="search.topic" placeholder="Enter topic or subject..." uib-typeahead="topic for topic in getTopicList($viewValue)" typeahead-loading="loading" typeahead-no-results="noResults">
+<md-content id="register-login" class="md-padding">
+	<md-card class="register-card">
+		<md-card-content>
+			<div class = "tab tab-signup" ng-class = "{'active': current == 'signup'}">
+				<div class="ui basic segment">
+					<div ng-if="giftFrom">
+						<h2 class="md-title">Admin Login Portal</h2>
 					</div>
-					<select class="ui compact selection dropdown" name="level" ng-model="search.level">
-						<option value="Basic" ng-selected="true">Class 6-8</option>
-						<option value="Intermediate">Class 9-10</option>
-						<option value="Advanced">Class 11-12</option>
-						<option value="Others">Non-Academic</option>
-					</select>
-					<div type="submit" class="ui green button" ng-click="processSearch($event)">
-						<i class="search icon"></i> Search
-					</div>
-				</form>
-			</div>
-		</div>
-		<div id="stepsContainer">
-			<div class="col-md-8 col-md-offset-2">
-				<div class="ui three steps">
-					<div class="active step">
-						<i class="search icon"></i>
-						<div class="content">
-							<div class="title">Search</div>
-							<div class="description">Search for teachers with<br> subject or topics you need<br> help with.</div>
-						</div>
-					</div>
+					<div class="ui form">
+						<form class="" name = "loginForm" novalidate autocomplete="off">
+							<div class="field form-error" ng-if = "loginError">
+								<div class="ui red message">{{loginErrorMessage}}</div>
+							</div>
 
-					<div class="active step">
-						<i class="users icon"></i>
-						<div class="content">
-							<div class="title">Schedule</div>
-							<div class="description">Choose the best teachers <br>from the list of industy <br>experts and schedule a class.</div>
-						</div>
-					</div>
+							<div layout-gt-sm="row">
+								<md-input-container class="md-block" flex-gt-sm="40" flex-xs="100">
+									<label>Country</label>
+									<md-select ng-model="selectedCountry">
+										<md-option ng-repeat="country in countries" ng-value="country">
+											{{country.name}}
+										</md-option>
+									</md-select>
+								</md-input-container>
 
-					<div class="active step">
-						<i class="laptop icon"></i>
-						<div class="content">
-							<div class="title">Learn</div>
-							<div class="description">Learn from the expert over<br> video chat with the <br>comfort of home.</div>
-						</div>
-					</div>
+								<md-input-container class="md-block" flex-gt-sm="60" flex-xs="100">
+									<label>Phone Number</label>
+									<input name="phone" ng-model="loginFormData.phone" required ng-pattern="/^[0-9]{10}$/" md-maxlength="10">
+									<div ng-messages="loginFormData.phone.$error" role="alert" multiple>
+										<div ng-message="required" class="my-message">Required.</div>
+										<div ng-message="md-maxlength" class="my-message">
+											Invalid phone number.
+										</div>
+										<div ng-message="pattern" class="my-message">
+											Invalid phone number.
+										</div>
+									</div>
+								</md-input-container>
+							</div>
 
-				</div>
-			</div>
-		</div>
-	</div>
+							<div layout-gt-sm="row">
+								<md-input-container class="md-block" flex-gt-sm="100" flex-xs="100">
+									<label>Password</label>
+									<input name="password" ng-model="loginFormData.password" type="password" md-maxlength="30" required>
+									<div ng-messages="loginFormData.password.$error" role="alert" multiple>
+										<div ng-message="required" class="my-message">You must enter the password.</div>
+										<div ng-message="md-maxlength" class="my-message">
+											Password seems to be too long.
+										</div>
+									</div>
+								</md-input-container>
+							</div>
 
-	<section id="featured-container" class="section dark">
-		<div class="container">
-			<div class="section-header center visible">
-				<h2>Our Community of <span class="highlight">Experts</span></h2>
-			</div>
-			<div class="row">
-				<div class="col-md-3 col-sm-3 col-xs-12">
-					<img class="ui medium circular image" src="https://semantic-ui.com/images/wireframe/square-image.png">
-					<span class="teacher-name">
-						Name
-					</span>
-				</div>
-				<div class="col-md-3 col-sm-3 col-xs-12">
-					<img class="ui medium circular image" src="https://semantic-ui.com/images/wireframe/square-image.png">
-					<span class="teacher-name">
-						Name
-					</span>
-				</div>
-				<div class="col-md-3 col-sm-3 col-xs-12">
-					<img class="ui medium circular image" src="https://semantic-ui.com/images/wireframe/square-image.png">
-					<span class="teacher-name">
-						Name
-					</span>
-				</div>
-				<div class="col-md-3 col-sm-3 col-xs-12">
-					<img class="ui medium circular image" src="https://semantic-ui.com/images/wireframe/square-image.png">
-					<span class="teacher-name">
-						Name
-					</span>
-				</div>
-			</div>
-			<div class="row button-container">
-				<button class="ui big primary basic button">View All Experts</button>
-			</div>
-		</div>
-	</section>
+							<br>
 
-	<section id="featured-container" class="section">
-		<div class="container">
-			<div class="section-header center visible">
-				<h2>What Our Students Have to Say About <span class="highlight">Takhshila</span></h2>
-			</div>
-			<div class="row slider-container">
-				<div class="slider-item">
-					<div class="col-md-6 col-sm-6 col-xs-12">
-						<img class="ui large image" src="https://cdn.verbling.com/888f63bdd405ee838c25f63de7169a159f5908c4/img/landing/home-testimonial-02.jpg">
-					</div>
-					<div class="col-md-6 col-sm-6 col-xs-12 testimonial-content-container">
-						<div class="testimonial-content">
-							Over time I’ve hit walls with online courses. But learning on Takhshila provides me more depth and help me prepare for the real world.
-						</div>
+							<button ng-init = "logging = false" ng-click = "validate(loginForm)" ng-disabled="logging" ng-class = "{'loading': logging}" class="ui button primary" lx-ripple>Login</button>
+							<div class = "row">
+								<div class = "col-md-12 col-sm-12 col-xs-12 login-modal-additional-link">
+								</div>
+							</div>
+						</form>
 					</div>
 				</div>
-				<a href="#" id="prev" class="arrow" ng-click="prev($event)">
-					<i class="angle left icon"></i>
-				</a>
-
-				<a href="#" id="next" class="arrow" ng-click="next($event)">
-					<i class="angle right icon"></i>
-				</a>
+				<div class = "login-modal-bottom text-center"></div>
 			</div>
-		</div>
-	</section>
-
-</div>
+		</md-card-content>
+	</md-card>
+</md-content>

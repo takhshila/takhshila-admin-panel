@@ -1,10 +1,5 @@
-<!-- <script src='http://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js'></script> -->
-<!-- <div class="announcement ui warning message" ng-if="!isProfileLive">
-  Your profile is not live.
-</div> -->
 <nav ng-controller = "NavbarCtrl" role="navigation" class="navbar" ng-class = "{'navbar-inverse navbar-fixed-top' : navStick, 'navbar-default' : !navStick, 'margin-top' : !isProfileLive}">
   <div class="col-md-12">
-    <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
         <button type="button" data-target="#navbarCollapse" data-toggle="collapse" class="navbar-toggle">
             <span class="sr-only">Toggle navigation</span>
@@ -17,28 +12,24 @@
     <!-- Collection of nav links, forms, and other content for toggling -->
     <div id="navbarCollapse" class="collapse navbar-collapse">
         <ul class="nav navbar-nav navbar-right">
-          <li ng-if = "!loggedIn" class="featured"><a href="#" ng-click = "showLoginModal($event)">Login / SignUp</a></li>
-          <li ng-if = "loggedIn">
+<!--           <li ng-if = "loggedIn">
             <notification-counter notification-count="notificationCount" notifications="notifications" update-notification = "updateNotification" confirm-class="confirmClass" deny-class="denyClass"></notification-counter>
-          </li>
+          </li> -->
           <li ng-if = "loggedIn" class="dropdown">
               <a data-toggle="dropdown" class="ui label dropdown-toggle" href="#">
                 <img class="ui right spaced avatar image" src="{{currentUser.profilePhoto.dataURI}}">
                 {{currentUser.name.firstName}}&nbsp;{{currentUser.name.lastName}} <b class="caret"></b>
               </a>
               <ul role="menu" class="dropdown-menu">
-                  <li><a ui-sref="profile()">Profile</a></li>
-                  <li><a ui-sref="class()">Classes</a></li>
-                  <li><a ui-sref="wallet()">Wallet</a></li>
-                  <li><a ui-sref="settings()">Settings</a></li>
+                  <li><a ui-sref="adminusers()">Users</a></li>
+                  <li><a ui-sref="admintopics()">Topics</a></li>
+                  <li><a ui-sref="adminvideos()">Videos</a></li>
+                  <li><a ui-sref="adminpayments()">Payments</a></li>
                   <li class="divider"></li>
                   <li><a href="#" ng-click = "logout()">Logout</a></li>
               </ul>
           </li>
-          <li ng-if = "!loggedIn" ng-class="{'sliding-middle-out': !navStick}"><a href="/teach">Are you a teacher?</a></li>
         </ul>
     </div>
   </div>
 </nav>
-
-<class-review ng-if = "loggedIn && showReviewDialog"></class-review>

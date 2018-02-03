@@ -10,28 +10,28 @@ angular.module('takhshilaApp')
         navStick: true,
         authenticate: true
       })
-      .state('admin-users', {
+      .state('adminusers', {
         url: '/admin/users',
         templateUrl: 'app/admin/admin-users/admin-users.html',
         controller: 'AdminUsersCtrl',
         navStick: true,
         authenticate: true
       })
-      .state('admin-topics', {
+      .state('admintopics', {
         url: '/admin/topics',
         templateUrl: 'app/admin/admin-topics/admin-topics.html',
         controller: 'AdminTopicsCtrl',
         navStick: true,
         authenticate: true
       })
-      .state('admin-videos', {
+      .state('adminvideos', {
         url: '/admin/videos',
         templateUrl: 'app/admin/admin-videos/admin-videos.html',
         controller: 'AdminVideosCtrl',
         navStick: true,
         authenticate: true
       })
-      .state('admin-payments', {
+      .state('adminpayments', {
         url: '/admin/payments',
         templateUrl: 'app/admin/admin-payments/admin-payments.html',
         controller: 'AdminPaymentsCtrl',
