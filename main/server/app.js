@@ -37,24 +37,26 @@ var fs = require('fs');
 
 var server = null;
 
-if(config.sslServer){
-	var options = {
-	  key: fs.readFileSync(config.root + '/server/cert/takhshila.key'),
-	  cert: fs.readFileSync(config.root + '/server/cert/364063541ec1b67e.crt'),
-	  ca: fs.readFileSync(config.root + '/server/cert/gd_bundle-g2-g1.crt')
-	};
-	// require('http').createServer(app).listen(80);
-	server = require('https').createServer(options, app);
-	// app.set('forceSSLOptions', {
-	//   enable301Redirects: true,
-	//   trustXFPHeader: false,
-	//   httpsPort: 443,
-	//   sslRequiredMessage: 'SSL Required.'
-	// });
-	// app.use(forceSSL);
-}else{
-	server = require('http').createServer(app);
-}
+// if(config.sslServer){
+// 	var options = {
+// 	  key: fs.readFileSync(config.root + '/server/cert/takhshila.key'),
+// 	  cert: fs.readFileSync(config.root + '/server/cert/364063541ec1b67e.crt'),
+// 	  ca: fs.readFileSync(config.root + '/server/cert/gd_bundle-g2-g1.crt')
+// 	};
+// 	// require('http').createServer(app).listen(80);
+// 	server = require('https').createServer(options, app);
+// 	// app.set('forceSSLOptions', {
+// 	//   enable301Redirects: true,
+// 	//   trustXFPHeader: false,
+// 	//   httpsPort: 443,
+// 	//   sslRequiredMessage: 'SSL Required.'
+// 	// });
+// 	// app.use(forceSSL);
+// }else{
+// 	server = require('http').createServer(app);
+// }
+
+server = require('http').createServer(app);
 
 var socketio = require('socket.io')(server, {
   serveClient: config.env !== 'production',

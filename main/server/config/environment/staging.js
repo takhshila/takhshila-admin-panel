@@ -10,11 +10,11 @@ module.exports = {
 
   // Server port
   port:     process.env.PORT ||
-            443,
+            8080,
 
   // MongoDB connection options
   mongo: {
-    uri:    'mongodb://takhshila-staging:takhshilaStaging123@localhost/takhshila-staging'
+    uri:    'mongodb://takhshila_staging:takhshilaStaging123@localhost/takhshila_staging'
   },
 
   sslServer: true,
