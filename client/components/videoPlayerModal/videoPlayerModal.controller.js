@@ -22,7 +22,7 @@ angular.module('takhshilaApp')
 	};
 
 	$scope.config.sources.push({
-		src: $sce.trustAsResourceUrl('videos/' + videos[index].videoFile),
+		src: $sce.trustAsResourceUrl(videos[index].videoAsset.mpeg[0].url),
 		type: "video/mp4"
 	});
 

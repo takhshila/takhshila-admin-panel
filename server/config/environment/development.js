@@ -4,6 +4,9 @@
 // ==================================
 module.exports = {
 	siteBase: 'http://localhost:9000',
+
+	// Server port
+	port: 	9002,
 	// MongoDB connection options
 	mongo: {
 		uri: 'mongodb://localhost/takhshila-dev'
@@ -28,6 +31,8 @@ module.exports = {
 		sender: "TKHSLA",
 		type: 3
 	},
+
+	sendTextMessage: false,
 
 	msg91: {
 		apiBase: "http://api.msg91.com/api/sendhttp.php",

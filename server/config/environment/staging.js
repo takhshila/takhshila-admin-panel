@@ -3,7 +3,7 @@
 // Production specific configuration
 // =================================
 module.exports = {
-  siteBase: 'https://www.takhshila.com',
+  siteBase: 'https://staging.takhshila.com',
   // Server IP
   ip:       process.env.IP ||
             undefined,
@@ -29,6 +29,8 @@ module.exports = {
       paymentResponse: '/payment/op/getPaymentResponse'
     }
   },
+
+  sendTextMessage: false,
 
   msg91: {
     apiBase: "http://api.msg91.com/api/sendhttp.php",

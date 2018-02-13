@@ -3,18 +3,21 @@
 		<div class="ui cards slider" id="video-slides-container">
 			<a ng-repeat="video in slides" class="red card video" style="width:{{slideWidth}}px;">
 				<div class="image">
-					<span style="background-image: url('thumbnails/{{video.thumbnailFile}}');width: {{slideWidth}}px;height: {{slideWidth}}px;">
+					<span style="background-image: url('{{video.thumbnail}}');width: {{slideWidth}}px;height: {{slideWidth}}px;">
 						<div class="video-data">
 							<span class="pending" ng-if="video.status==='pending'">Pending Review</span>
 							<span class="published" ng-if="video.status==='published'">Published</span>
 							<span class="unpublished" ng-if="video.status==='unpublished'">Unpublished</span>
+							<span class="processing" ng-if="video.status==='processing'">Processing</span>
 						</div>
 					</span>
 				</div>
 				<div class="video-slider-overlay-container">
-					<div class="video-slider-overlay">
-
-						<div class="dropdown" ng-if="canDelete || canEdit">
+					<div class="video-slider-overlay" ng-if="">
+						<div class = "video-title">
+							{{video.title}}
+						</div>
+						<div class="dropdown" ng-if="(canEdit || canDelete) && video.status !== 'processing'">
 							<div data-toggle="dropdown" class="ui label dropdown-toggle">
 								<i class="ellipsis vertical icon"></i>
 							</div>

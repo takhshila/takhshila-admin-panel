@@ -63,48 +63,82 @@ exports.selfVideo = function(req, res) {
   });
 };
 
-// Creates a new video in the DB.
 exports.create = function(req, res) {
+  var videoId = null;
+  var userId = req.user._id;
   var currentTimestamp = new Date().getTime();
   var files = req.files;
   var videoSource = files.file[0].path;
   var fileExtension = files.file[0].originalFilename.split('.').pop().toLowerCase();
   var newFileName = req.user._id + currentTimestamp;
-  var thumbDestination = 'uploads/thumbnails/';
-  var videoDestination = 'uploads/videos/';
+
+  var uploadPath = Helper.getUploadPath(userId);
+
+  var rawAssetsDir = 'assets/raw' + '/' + uploadPath;
+  var videoAssetsDir = 'assets/videos' + '/' + uploadPath;
+  var imageAssetsDir = 'assets/images' + '/' + uploadPath;
+
+  // Create directory if not exists
+  if (!fs.existsSync(rawAssetsDir)){
+    Helper.mkDirByPathSync(rawAssetsDir);
+  }
+  if (!fs.existsSync(imageAssetsDir)){
+    Helper.mkDirByPathSync(imageAssetsDir);
+  }
+  if (!fs.existsSync(videoAssetsDir)){
+    Helper.mkDirByPathSync(videoAssetsDir);
+  }
+
   var promise = new Promise(function(resolve, reject){
-    mv(videoSource, videoDestination+newFileName+'.'+fileExtension, function(err) {
+    var rawVideoFilePath = rawAssetsDir + '/' + newFileName + '.' + fileExtension
+    var transcodedVideoFilePath = videoAssetsDir + '/' + newFileName + '.mp4'
+    mv(videoSource, rawVideoFilePath, function(err) {
       if (err) { return handleError(res, err); }
-      ffmpeg(videoDestination+newFileName+'.'+fileExtension)
-      .takeScreenshots({
-        count: 1,
-        filename: newFileName + '.png',
-        folder: thumbDestination,
-      })
-      .on('start', function(cmd) {
-        console.log('Started ' + cmd);
-      })
-      .on('end', function(res) {
-        console.log('Finished encoding');
-        console.log(res);
-        resolve(newFileName + '.png');
-      })
-      .on('error', function(err) {
-        console.log('an error happened: ' + err.message);
-        reject(err.message);
+      var videoEntry = {
+        userId: req.user._id
+      }
+      Video.create(videoEntry, function(err, video){
+        if (err) { return handleError(res, err); }
+        videoId = video._id;
+        resolve(video);
+
+        Helper.transcodeVideo(rawVideoFilePath, transcodedVideoFilePath)
+        .then(function(response){
+          var transcodedVideoData = response;
+          Helper.generateThumbnails(transcodedVideoFilePath, imageAssetsDir, newFileName, 6)
+          .then(function(imageList){
+            Video.findById(videoId, function (err, video) {
+              video.status = 'pending'
+              video.videoAsset.mpeg.push({
+                bitrate: transcodedVideoData.bit_rate,
+                fileSize: response.size,
+                duration: transcodedVideoData.duration,
+                url: config.siteBase + '/' + transcodedVideoData.filename.split('assets/')[1],
+              })
+              for(var i = 0; i < imageList.length; i++){
+                video.imageAssets.push({
+                  url: config.siteBase + '/' + imageAssetsDir.split('assets/')[1] + '/' + imageList[i]
+                })
+              }
+              video.thumbnail = video.imageAssets[0].url;
+              video.save()
+            });
+          })
+        })
+        .catch(function(err){
+          if(videoId){
+            Video.findById(videoId, function (err, video) {
+              video.status = 'error'
+              video.save()
+              // video.imageAssets
+            });
+          }
+        })
       });
     });
   });
   promise.then(function(data){
-    var videoEntry = {
-      videoFile: newFileName+'.'+fileExtension,
-      thumbnailFile: newFileName + '.png',
-      userId: req.user._id
-    }
-    Video.create(videoEntry, function(err, video){
-      if (err) { return handleError(res, err); }
-      return res.status(201).json({success: true, video: video});
-    });
+    return res.status(201).json({success: true, video: data});
   })
   // return res.status(201).json({success: true});
 };
@@ -128,6 +162,12 @@ exports.update = function(req, res) {
     }
     if(req.body.description){
       videoData.description = req.body.description;
+    }
+    if(req.body.thumbnail){
+      var imageIndex = _.findIndex(video.imageAssets, function(obj){ return obj.url === req.body.thumbnail })
+      if(imageIndex !== -1){
+        videoData.thumbnail = req.body.thumbnail;
+      }
     }
     if(req.body.topics && req.body.topics.length > 0){
       video.topics = [];

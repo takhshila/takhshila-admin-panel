@@ -6,13 +6,21 @@ var mongoose = require('mongoose'),
 var VideoSchema = new Schema({
   title: {type: String, default: 'Untitled'},
   description: {type: String, default: ''},
-  videoFile: {type: String, required: true},
-  videoURI: {type: String, default: null},
-  thumbnailFile: {type: String, required: true},
-  thumbnailURI: {type: String, default: null},
+  videoAsset: {
+    mpeg: [{
+      bitrate: {type: Number, default: null},
+      fileSize: {type: Number, default: null},
+      duration: {type: Number, default: null},
+      url: {type: String, default: null},
+    }]
+  },
+  imageAssets: [{
+    url: {type: String, default: null},
+  }],
+  thumbnail: {type: String, default: null},
   topics: [{type: String, ref: 'Topic'}],
   userId: {type: String, ref: 'User', required: true},
-  status: {type: String, required: true, default: 'pending'},
+  status: {type: String, required: true, default: 'processing'},
   active: {type: Boolean, default: false},
   uploadedOn: {type: Date, default: Date.now}
 });
