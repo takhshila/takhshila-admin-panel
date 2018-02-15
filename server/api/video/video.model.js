@@ -17,6 +17,7 @@ var VideoSchema = new Schema({
   imageAssets: [{
     url: {type: String, default: null},
   }],
+  transcodeTime: {type: Number, default: null},
   thumbnail: {type: String, default: null},
   topics: [{type: String, ref: 'Topic'}],
   userId: {type: String, ref: 'User', required: true},

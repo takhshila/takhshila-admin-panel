@@ -104,11 +104,13 @@ exports.create = function(req, res) {
 
         Helper.transcodeVideo(rawVideoFilePath, transcodedVideoFilePath)
         .then(function(response){
-          var transcodedVideoData = response;
+          var transcodedVideoData = response.videoData
+          var transcodeTime = response.transcodeTime
           Helper.generateThumbnails(transcodedVideoFilePath, imageAssetsDir, newFileName, 6)
           .then(function(imageList){
             Video.findById(videoId, function (err, video) {
               video.status = 'pending'
+              video.transcodeTime = transcodeTime
               video.videoAsset.mpeg.push({
                 bitrate: transcodedVideoData.bit_rate,
                 fileSize: response.size,

@@ -1,5 +1,6 @@
 var config = require('../config/environment');
 var querystring = require('querystring');
+var moment = require('moment');
 var ffmpeg = require('fluent-ffmpeg');
 var request = require('request');
 const fs = require('fs');
@@ -100,6 +101,7 @@ exports.getUploadPath = function(userId){
 
 exports.transcodeVideo = function(sourceFilePath, destinationFilePath){
 	return new Promise(function(resolve, reject){
+		var startTime = endTime = totalTime = null
 		var transcodeCommand = ffmpeg(sourceFilePath)
 		transcodeCommand
 		.preset(function(command) {
@@ -127,14 +129,20 @@ exports.transcodeVideo = function(sourceFilePath, destinationFilePath){
 			}
 		})
 		.on('start', function(cmd) {
-			console.log('Started Transcoding');
+			startTime = moment.now()
+			console.log('Started Transcoding at: ' + startTime);
 			console.log(cmd);
 		})
 		.on('end', function(res) {
-			console.log('Finished Transcoding');
+			endTime = moment.now()
+			totalTime = moment.duration(moment(endTime).diff(moment(startTime))).asSeconds()
+			console.log('Finished Transcoding at: ' + endTime);
 			var videoDataCommand = ffmpeg(destinationFilePath)
 			videoDataCommand.ffprobe(function(err, data){
-				resolve(data.format);
+				resolve({
+					videoData: data.format,
+					transcodeTime: totalTime
+				});
 			})
 		})
 		.on('error', function(err) {
