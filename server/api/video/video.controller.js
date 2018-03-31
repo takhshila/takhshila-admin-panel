@@ -16,7 +16,7 @@ exports.index = function(req, res) {
   }
   Video
   .find(filterObj)
-  .limit(perPage)
+  .limit(parseInt(perPage))
   .skip(perPage * page)
   .populate('userId')
   .sort({

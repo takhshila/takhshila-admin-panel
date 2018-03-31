@@ -10,7 +10,7 @@ exports.index = function(req, res) {
   var page = req.query.page || 0;
   Topic
   .find({})
-  .limit(perPage)
+  .limit(parseInt(perPage))
   .skip(perPage * page)
   .populate('addedByID')
   .sort({
