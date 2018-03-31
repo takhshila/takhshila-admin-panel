@@ -1,0 +1,70 @@
+#admin-users{
+	.addVideoForm{
+		button{
+			border-radius: 0px;
+			padding: 10px 40px;
+			margin: 15px;
+		}
+	}
+	.ui{
+		margin: 0px;
+		border-radius: 0px;
+		box-shadow: none;
+		border: 1px solid rgba(34, 36, 38, 0.15);
+		&.segment{
+			.user-list{
+				p{
+					font-size: 14px;
+				}
+				.user-item{
+					padding: 15px;
+					border-bottom: 1px solid rgba(34, 36, 38, 0.15);
+					&:last-child{
+						border: 0px;
+					}
+				}
+				.user-image{
+					width: 80px;
+					height: 60px;
+					cursor: pointer;
+					span{
+						background-size: cover;
+						background-position: center;
+						width: 60px;
+						height: 60px;
+						display: block;
+					}
+				}
+				.user-details{
+					div,p{
+						display: block;
+						float: left;
+						line-height: 45px;
+						&.user-icon{
+							width: 15%;
+							i{
+								font-size: 45px;
+								color: #00B5AD;
+								line-height: 0.8;
+							}
+						}
+						&.user-description{
+							width: 80%;
+						}
+					}
+				}
+			}
+			.action-container{
+				margin-top: 10px;
+				width: 100%;
+				text-align: center;
+				.ui{
+					&.buttons{
+						min-width: 200px;
+						border: 0px;
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,93 @@
+/**
+ * App-wide Styles
+ */
+@import url('https://fonts.googleapis.com/css?family=Roboto:100,300,400');
+:focus {
+    outline: none;
+}
+ .main-shell {
+   .profile-container {
+     height: 100%;
+     font-size: 14px;
+
+     .profile-name {
+       font-weight: 500;
+     }
+   }
+ }
+.body-margin-top{
+  margin-top: 60px;
+}
+body.md-default-theme, body, html.md-default-theme, html {
+    color: rgba(0,0,0,0.87);
+    background-color: transparent;
+}
+h1 { font-size: 58px; font-weight: 300; display: block; }
+h2 { font-size: 47px; font-weight: 300; display: block; }
+h3 { font-size: 34px; font-weight: 300; display: block; }
+h4 { font-size: 28px; font-weight: 300; display: block; }
+h5 { font-size: 24px; font-weight: 300; display: block; }
+h6 { font-size: 20px; font-weight: 700; display: block; }
+.h7 { font-size: 17px; font-weight: 700; display: block; }
+
+.highlight { color: #00918b; }
+h1, .h1, h2, .h2, h3, .h3, h4, .h4 { margin-top: 20px; margin-bottom: 20px; }
+h5, .h5, h6, .h6, .h7 { margin-top: 20px; margin-bottom: 10px; }
+
+p { font-size: 16px; line-height: 27px; color: #1D1D1D; }
+small { font-weight: 300; font-size: 15px; line-height: 26px; }
+
+a { color: #00918b; text-decoration: none; }
+a:hover, a:active, a:focus { color: #00918b; text-decoration: none; outline: none; }
+::selection { background-color: #00918b; color: #fff; }
+
+hr { width: 100%; border-top: 1px solid #E9E9E9; display: inline-block; }
+
+hr { width: 100%; border-top: 1px solid #E9E9E9; display: inline-block; }
+
+.light { color: #fff; background: #333; }
+.dark { color: #000; background: #fff; }
+.highlight { color: #00918b; }
+.center {text-align:center;}
+.resp-center {text-align:center;}
+.no-data { 
+  font-size: 24px; 
+  color: rgba(34, 36, 38, 0.35); 
+  line-height: 5em; 
+  text-align: center; 
+  font-weight: bold; 
+  p{
+    font-size: 16px;
+    color: rgba(34, 36, 38, 0.45);
+    font-weight: normal;
+    padding-bottom: 20px;
+    margin-top: -10px; 
+  }
+}
+.container{
+  padding-bottom: 30px;
+}
+
+
+.icon-active { color: #00918b; }
+
+#mask { position: fixed;top: 0;left: 0;right: 0;bottom: 0;background-color: #F6F6F6;z-index: 10000;height: 100%; }
+#loader {width: 200px;height: 200px;position: absolute;left: 50%;top: 50%;background-image: url("../assets/images/loader.gif");background-repeat: no-repeat;background-position: center;margin: -100px 0 0 -100px; }
+
+
+// Component styles are injected through grunt
+// injector
+@import 'admin/admin-payments/admin-payments.scss';
+@import 'admin/admin-topics/admin-topics.scss';
+@import 'admin/admin-users/admin-users.scss';
+@import 'admin/admin-videos/admin-videos.scss';
+@import 'admin/admin.scss';
+@import 'main/main.scss';
+@import 'confirmModal/confirmModal.scss';
+@import 'footer/footer.scss';
+@import 'lxRipple/lxRipple.scss';
+@import 'lxTextField/lxTextField.scss';
+@import 'navbar/navbar.scss';
+@import 'videoPlayerModal/videoPlayerModal.scss';
+@import 'videoSlider/videoSlider.scss';
+// endinjector

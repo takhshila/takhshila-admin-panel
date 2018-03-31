@@ -1,0 +1,107 @@
+<navbar></navbar>
+
+<div class="container" id="admin-topics">
+	<div class="row">
+		<div class="ui green segment add-topic-container">
+			<h4 class="header">Add New Topic</h4>
+			<div class="ui fitted divider"></div>
+			<div class="ui form">
+				<form class="addTopicForm" name = "addTopicForm" novalidate>
+					<div layout-gt-sm="row">
+						<md-input-container class="md-block" flex-gt-sm="80" flex-xs="100">
+							<label>Topic name</label>
+							<!-- <input name="topicName" ng-model="addTopicFormData.topicName" name="" required md-maxlength="30"> -->
+							<input
+								name = "topics"
+								type="text"
+								ng-change="clearField()"
+								ng-model="addTopicFormData.topicName"
+								uib-typeahead="topic.topicName for topic in searchTopics($index, $viewValue)"
+								typeahead-loading="loading"
+								typeahead-on-select="addFieldValue($item)"
+								typeahead-no-results="noResults"
+								md-maxlength="30"
+								name="topicName"
+								required
+							/>
+							<div ng-messages="addTopicFormData.topicName.$error" role="alert" multiple>
+								<div ng-message="required" class="my-message">Required.</div>
+								<div ng-message="md-maxlength" class="my-message">
+									Topic name is too long.
+								</div>
+							</div>
+						</md-input-container>
+
+						<div class="md-block" flex-gt-sm="20" flex-xs="100">
+							<button ng-init = "addingTopic = false" ng-click = "addTopic(addTopicForm)" ng-disabled="addingTopic" ng-class = "{'loading': addingTopic}" class="ui button primary" lx-ripple>Add</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<br>
+	<div class="row">
+		<div class="ui piled segment">
+	      <div class="row">
+	        <div class="ui attached message">
+	          <div class="header">
+	          	<div class="row">
+		            <div class = "col-sm-3">Topic Name</div>
+		            <div class = "col-sm-2">Added On</div>
+		            <div class = "col-sm-2">Added By</div>
+		            <div class = "col-sm-2">Status</div>
+		            <div class = "col-sm-3">Actions</div>
+	          	</div>
+	          </div>
+	        </div>
+	        <div class="ui segment topic-list">
+	          	<div class="row topic-item" ng-repeat="topic in topics">
+		            <div class = "col-sm-3">
+				    	<div class="topic-details">
+					    	<div class="topic-name">
+					    		<p>{{topic.topicName}}</p>
+					    	</div>
+				    	</div>
+		            </div>
+		            <div class = "col-sm-2">
+				    	<div class="topic-type">
+				    		<p>{{topic.addedOn | amDateFormat:'DD-MM-YYYY'}}</p>
+				    	</div>
+		            </div>
+		            <div class = "col-sm-2">
+				    	<div class="topic-added-by">
+				    		<p>{{topic.addedByID.name.firstName}} {{topic.addedByID.name.lastName}}</p>
+				    	</div>
+		            </div>
+		            <div class = "col-sm-2">
+				    	<div class="topic-status">
+				    		<p ng-if="topic.active">Active</p>
+				    		<p ng-if="!topic.active">Inactive</p>
+				    	</div>
+		            </div>
+		            <div class = "col-sm-3">
+				    	<div class="topic-actions">
+				    		<button ng-init = "deletingTopic = false" ng-click = "deleteTopic(topic._id)" ng-disabled="deletingTopic" ng-class = "{'loading': deletingTopic}" class="ui button red" lx-ripple>Delete</button>
+				    		<button ng-if="!topic.active" ng-init = "publishingTopic = false" ng-click = "publishTopic(topic._id)" ng-disabled="publishingTopic" ng-class = "{'loading': publishingTopic}" class="ui button primary" lx-ripple>Publish</button>
+				    	</div>
+		            </div>
+	          	</div>
+	          	<div class="row" ng-if="topics.length == 0">
+	          		<div class="no-data">
+	          			No Topics Found
+	          		</div>	          		
+	          	</div>
+
+	            <div class="action-container centered" ng-if="hasMoreData">
+	              <div class="ui buttons">
+	                <button ng-class = "{'loading': loading}" ng-disabled="loading" ng-click="loadTransactionHistory()" class = "ui button basic primary">Load More</button>
+	              </div>
+	            </div>
+	            
+	        </div>
+	      </div>
+		</div>
+	</div>
+	<br>
+</div>

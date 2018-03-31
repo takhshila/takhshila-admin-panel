@@ -1,0 +1,328 @@
+/*Custom app CSS*/
+body{
+  height: auto !important;
+  overflow: visible !important;
+  background: #f1f1f1 !important;
+}
+a, span, .btn, .package-title, .package-price, .package-detail li, .overlay, .socials a, .switch p, .flex-manual .switch, .tab-title, .tab-info, .tab-desc, .icon {
+  -webkit-transition: all 200ms ease-out;
+  -moz-transition: all 200ms ease-out;
+  -o-transition: all 200ms ease-out;
+  transition: all 200ms ease-out;
+}
+body.body-margin-top{
+  background: #F2F2F2;
+}
+.clear,
+.clearfix{
+  clear: both;
+}
+.padding{
+  padding: 20px;
+}
+/*.ui.fluid.steps.box-shadow{
+box-shadow: 0px 0px 64px 0px rgba(197,197,197,.5);
+}*/
+.ui.fluid.steps.box-shadow
+{
+  position: relative;
+}
+.ui.fluid.steps.box-shadow:before, .ui.fluid.steps.box-shadow:after
+{
+  z-index: -1;
+  position: absolute;
+  content: "";
+  bottom: 15px;
+  left: 10px;
+  width: 50%;
+  top: 80%;
+  max-width:300px;
+  background: #777;
+  -webkit-box-shadow: 0 15px 10px #777;
+  -moz-box-shadow: 0 15px 10px #777;
+  box-shadow: 0 15px 10px #777;
+  -webkit-transform: rotate(-3deg);
+  -moz-transform: rotate(-3deg);
+  -o-transform: rotate(-3deg);
+  -ms-transform: rotate(-3deg);
+  transform: rotate(-3deg);
+}
+.ui.fluid.steps.box-shadow:after
+{
+  -webkit-transform: rotate(3deg);
+  -moz-transform: rotate(3deg);
+  -o-transform: rotate(3deg);
+  -ms-transform: rotate(3deg);
+  transform: rotate(3deg);
+  right: 10px;
+  left: auto;
+}
+.no-border-radius{
+  border-radius: 0px;
+}
+.border-radius{
+  border-radius: 3px;
+}
+.extra-margin-top-md {
+  margin-top: 8px !important;
+}
+.extra-margin-top-sm {
+  margin-top: 4px !important;
+}
+.extra-margin-top-lg {
+  margin-top: 12px !important;
+}
+.grayBg { background: #f0f0f0; text-align: center; }
+.background-overlay{
+  width:100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.15);
+  position: absolute;
+}
+.background-overlay-dark{
+  display: block;
+  position: absolute;
+  width:100%;
+  height: 100%;
+  text-align: center;
+  background-color: #0f0e0e;
+  -khtml-opacity: 0.35;
+  -moz-opacity: 0.35;
+  opacity: 0.35;
+}
+.brand-logo .sr-only .default-color {
+  color: #984BFC;
+}
+.brand-logo .sr-only {
+  clip: initial;
+  width: 250px;
+  height: 40px;
+  font-size: 25px;
+}
+.sliding-middle-out span{
+  padding: 10px 0px;
+  display: block;
+}
+.sliding-middle-out{
+  display: inline-block;
+  position: relative;
+  padding: 0px 15px !important;
+}
+.sliding-middle-out:after {
+  content: '';
+  display: block;
+  margin: auto;
+  height: 2px;
+  width: 0px;
+  background: transparent;
+  transition: width .25s ease, background-color .25s ease;
+}
+.sliding-middle-out:hover:after {
+  width: 100%;
+  background: #009c95;
+}
+
+.button .ripple {
+  z-index: -1;
+  background-color: #010c14;
+}
+.button {
+  z-index: 2;
+  display: inline-block;
+  vertical-align: top;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  font-weight: 400;
+  text-align: center;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.button, .button:hover, .button:active, .button:focus {
+  text-decoration: none;
+  outline: none;
+}
+.button::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+.button .ripple {
+  z-index: -1;
+}
+
+.static-header { background: url('../img/background/particle-bg.png') no-repeat center center; -webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover; background-attachment: fixed; min-height: 400px; position: relative; }
+.register-version.static-header {
+  width: 100%;
+  height: 450px;
+  background-position: center;
+  background-image: url('https://cdn.verbling.com/888f63bdd405ee838c25f63de7169a159f5908c4/img/landing/feature-hero-01.jpg');
+  background-size: cover;
+  position: relative;
+  background-attachment: scroll;
+  background-position-y: -315px;
+}
+.register-version.static-header::before {
+  position: absolute;;
+  content: '';
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0,0,0,.2);
+}
+#hero{
+  z-index: 9;
+}
+#searchFormContainer{
+  display: table;
+  width: 100%;
+  height: 100%;
+  .search-form-container{
+    width: 100%;
+    display: table-cell;
+    vertical-align: middle;
+    .search-text-input{
+      position: relative;
+      width: 62%;
+      input[type="text"]{
+        width: 100%;
+      }
+      .dropdown-menu{
+        width: 100%;
+      }
+    }
+    .ui{
+      &.input{
+       input{
+        font-size: 16px;
+        border-radius: 0px;
+        padding: 15px 10px;
+        width: 100%;
+       }
+       select{
+        font-size: 16px;
+        height: auto;
+       }
+       .button{
+          border-radius: 0px;
+          padding: 0px 40px;
+       }
+      }
+    }
+  }
+}
+
+#stepsContainer{
+  position: absolute;
+  width: 100%;
+  margin-top: -35px;
+}
+
+#featured-container{
+  padding-top: 100px;
+  z-index: 8;
+  .section-header h2{
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 40px;
+  }
+  .teacher-name{
+    margin-top: 15px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 20px;
+    display: block;
+  }
+  .button-container{
+    margin-top: 60px;
+    button{
+      width: 70%;
+    }
+  }
+  .slider-container{
+    .arrow{
+      position: absolute;
+      z-index: 9;
+      top: 0px;
+      top: 60%;
+      font-size: 5em;
+      i{
+        width: auto;
+      }
+    }
+    #next{
+      right: 0px;
+    }
+    #prev{
+      left: 5px;
+    }
+  }
+  .slider-item{
+    height: 350px;
+    img{
+      max-height: 350px;
+    }
+    .testimonial-content-container{
+      display: table;
+      height: 100%;
+    }
+    .testimonial-content{
+      display: table-cell;
+      vertical-align: middle;
+      font-size: 20px;
+      font-size: 2rem;
+      letter-spacing: .15px;
+      letter-spacing: .015rem;
+      line-height: 1.3em;
+    }
+  }
+}
+
+
+#register-login{
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+  background: transparent;
+  .login-card,
+  .register-card {
+    
+    max-width: 500px;
+    margin: 0 auto;
+    border: 0px;
+    box-shadow: none;
+  }
+  .md-title{
+    font-family: 'Roboto', sans-serif;
+    font-size: 32px;
+    font-weight: 400;
+    text-align: center;
+    margin: 0px;
+    line-height: 1.5;
+  }
+  .heading-text{
+    font-family: 'Roboto', sans-serif;
+    font-size: 25px;
+    text-align: center;
+    font-weight: 100;
+    margin: 10px 0px 20px 0px;
+  }
+  md-input-container label:not(.md-no-float):not(.md-container-ignore), md-input-container .md-placeholder{
+    font-weight: 400;
+  }
+  .message{
+    margin-bottom: 35px;
+    font-size: 13px;
+  }
+  button{
+    width: 100%;
+    text-align: center;
+  }
+}
+
+.love-message {
+  margin-top: 64px;
+  text-align: center;
+}
+//
+// 

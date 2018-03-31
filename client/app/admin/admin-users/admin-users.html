@@ -1,0 +1,73 @@
+<navbar></navbar>
+
+<div class="container" id="admin-users">
+	<div class="row">
+		<div class="ui piled segment">
+	      <div class="row">
+	        <div class="ui attached message">
+	          <div class="header">
+	          	<div class="row">
+		            <div class = "col-sm-3">User</div>
+		            <div class = "col-sm-2">User Type</div>
+		            <div class = "col-sm-2">Jined On</div>
+		            <div class = "col-sm-2">Status</div>
+		            <div class = "col-sm-3">Actions</div>
+	          	</div>
+	          </div>
+	        </div>
+	        <div class="ui segment user-list">
+	          	<div class="row user-item" ng-repeat="user in users">
+		            <div class = "col-sm-3">
+				    	<div class="user-details" ui-sref="user({ID:user._id})">
+				    		<div class="user-image" ng-click="showUserModal(user._id)">
+				    			<span style="background-image: url('{{user.profilePhoto.dataURI}}');">
+				    		</div>
+					    	<div class="user-name">
+					    		{{user.name.firstName}}&nbsp;&nbsp;{{user.name.lastName}}
+					    	</div>
+				    	</div>
+		            </div>
+		            <div class = "col-sm-2">
+				    	<div class="user-details">
+				    		<!-- <p>{{user.addedOn | amDateFormat:'DD-MM-YYYY'}}</p> -->
+				    		<p ng-if="user.isTeacher">Teacher</p>
+				    		<p ng-if="!user.isTeacher">Student</p>
+				    	</div>
+		            </div>
+		            <div class = "col-sm-2">
+				    	<div class="user-details">
+				    		<p>{{user.joinedOn | amDateFormat:'DD-MM-YYYY'}}</p>
+				    	</div>
+		            </div>
+		            <div class = "col-sm-2">
+				    	<div class="user-details">
+				    		<p ng-if="user.status==='active'">Active</p>
+				    		<p ng-if="user.status!=='active'">Inactive</p>
+				    	</div>
+		            </div>
+		            <div class = "col-sm-3">
+				    	<div class="user-actions">
+				    		<button ng-init = "deletingUser = false" ng-click = "deleteUser(user._id)" ng-disabled="deletingUser" ng-class = "{'loading': deletingUser}" class="ui button red" lx-ripple>Delete</button>
+				    		<button ng-if="!user.active" ng-init = "publishingUser = false" ng-click = "publishUser(user._id)" ng-disabled="publishingUser" ng-class = "{'loading': publishingUser}" class="ui button primary" lx-ripple>Publish</button>
+				    		<button ng-if="user.active" ng-init = "unpublishingUser = false" ng-click = "unpublishUser(user._id)" ng-disabled="unpublishingUser" ng-class = "{'loading': unpublishingUser}" class="ui button brown" lx-ripple>Unpublish</button>
+				    	</div>
+		            </div>
+	          	</div>
+	          	<div class="row" ng-if="users.length == 0">
+	          		<div class="no-data">
+	          			No Users Found
+	          		</div>	          		
+	          	</div>
+
+	            <div class="action-container centered" ng-if="hasMoreData">
+	              <div class="ui buttons">
+	                <button ng-class = "{'loading': loading}" ng-disabled="loading" ng-click="loadTransactionHistory()" class = "ui button basic primary">Load More</button>
+	              </div>
+	            </div>
+	            
+	        </div>
+	      </div>
+		</div>
+	</div>
+	<br>
+</div>

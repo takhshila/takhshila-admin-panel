@@ -1,0 +1,147 @@
+#video-player-modal{
+  width: 75vw;
+  height: 450px;
+  .heading-text{
+    font-size: 18px;
+    margin-bottom: 10px;
+    text-align: left;
+    padding: 10px;
+    padding-left: 0px;
+    i{
+      float: left;
+      cursor: pointer;
+      margin-right: 10px;
+      font-size: 30px;
+      font-weight: 100;
+      line-height: 18px;
+      margin-left: -10px;
+    }
+  }
+  .modal-content{
+    height: 100%;
+    overflow: hidden;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    background: #fff;
+    videogular{
+      width: 70%;
+      height: 450px;
+      float: left;
+    }
+    .video-details-container{
+      width: 30%;
+      height: 450px;
+      float: left;
+      padding: 10px;
+      .details-header{
+        border-bottom: 1px solid #e5e5e5;
+        padding-bottom: 10px;
+      }
+      .action-container{
+        margin-top: 30px;
+        button{
+          width: 100%;
+        }
+      }
+      .user-image{
+        width: 40px;
+        height: 40px;
+        float: left;
+        img{
+          width: 40px;
+        }
+      }
+      .user-details{
+        float: left;
+        padding-left: 10px;
+        .name{
+          font-weight: bold;
+          color: #00918b;
+          display: block;
+        }
+        .upload-date{
+          font-size: 0.85em;
+          display: block;
+        }
+      }
+    }
+    p{
+      font-size: 13px;
+      text-align: left;
+      font-weight: 100;
+    }
+  }
+  .modal-footer{
+    position: absolute;
+    bottom: 10px;
+    text-align: center;
+    width: 100%;
+  }
+  .remove{
+    position: absolute;
+    right: 0px;
+    top: 5px;
+    z-index: 999;
+    font-size: 20px;
+    cursor: pointer;
+  }
+}
+
+#profile-pic-modal{
+  height: 500px;
+  width: 620px;
+}
+#profile-pic-modal .form-error p{
+  text-align: center;
+  margin-top: 10px;
+}
+#profile-pic-modal .modal-content{
+  height: 100%;
+  overflow: hidden;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  background: #fff;
+}
+#profile-pic-modal .modal-footer{
+  position: absolute;
+  bottom: 10px;
+  text-align: center;
+  width: 100%;
+}
+#profile-pic-modal .heading-text{
+  font-size: 18px;
+  margin-bottom: 10px;
+  text-align: left;
+  padding: 10px;
+  padding-left: 0px;
+}
+#profile-pic-modal p{
+  font-size: 13px;
+  text-align: left;
+  font-weight: 100;
+}
+#profile-pic-modal .heading-text i{
+  float: left;
+  cursor: pointer;
+  margin-right: 10px;
+  font-size: 30px;
+  font-weight: 100;
+  line-height: 18px;
+  margin-left: -10px;
+}
+#profile-pic-modal .remove{
+  position: absolute;
+  right: 0px;
+  top: 5px;
+  z-index: 999;
+  font-size: 20px;
+  cursor: pointer;
+}
+.img-container {
+  width: 100%;
+}
+.cropper-container{
+  margin: 22px auto;
+}

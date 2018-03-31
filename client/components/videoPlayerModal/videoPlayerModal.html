@@ -1,0 +1,51 @@
+<modal id = "video-player-modal">
+  <div class = "modal-header">
+    <div class = "title">Watch Demo Video</div>
+    <i class="remove icon" ng-click = "closeDialog()"></i>
+  </div>
+  <div class = "modal-content">
+	<videogular vg-player-ready="onPlayerReady($API)" vg-auto-play="true">
+		<vg-media vg-src="config.sources">
+		</vg-media>
+
+		<vg-controls>
+			<vg-play-pause-button></vg-play-pause-button>
+			<vg-time-display>{{ currentTime | date:'mm:ss':'UTC' }}</vg-time-display>
+			<vg-scrub-bar>
+				<vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+			</vg-scrub-bar>
+			<vg-time-display>{{ timeLeft | date:'mm:ss':'UTC' }}</vg-time-display>
+			<vg-volume>
+				<vg-mute-button></vg-mute-button>
+				<vg-volume-bar></vg-volume-bar>
+			</vg-volume>
+			<vg-fullscreen-button></vg-fullscreen-button>
+		</vg-controls>
+
+		<vg-overlay-play></vg-overlay-play>
+		<vg-poster vg-url='controller.config.plugins.poster'></vg-poster>
+	</videogular>
+	<div class="video-details-container">
+		<div class="details-header">
+			<div class="user-image">
+				<img ng-src="{{video.userId.profilePhoto.dataURI}}" >
+			</div>
+			<div class="user-details">
+				<span class="name">
+					{{video.userId.name.firstName}} {{video.userId.name.lastName}}
+				</span>
+				<span class="upload-date">
+					<strong>Uploaded on: </strong>{{video.uploadedOn | amDateFormat:'MM-DD-YYYY HH:mm'}}
+				</span>
+			</div>
+			<div class="clear"></div>
+		</div>
+		<div class="action-container" ng-if="showBookClassOption">
+			<button ng-click="gotoUser(video.userId._id)" class = "ui button primary">Book Class Now</button>
+		</div>
+	</div>
+  </div>
+  <div class = "modal-footer">
+
+  </div>
+</modal>
